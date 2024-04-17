@@ -1,0 +1,17 @@
+.w-custom{
+    width: 30rem;
+}
+
+#buttonDiv{
+    border-radius: 0;
+}
+
+.custom-password-field {
+    border: none !important;
+    border-bottom: 1px solid black !important;
+
+    &:focus{
+        box-shadow: none
+    }
+}
+

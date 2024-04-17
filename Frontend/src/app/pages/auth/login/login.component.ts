@@ -1,29 +1,48 @@
-import { Component, OnInit } from '@angular/core';
-import { environment } from '../../../../environment/environment';
+import { Component } from '@angular/core';
+import { environment } from '../../../../environments/environment.development';
 import { UserLogin } from '../interfaces/auth.interface';
 import { CredentialResponse } from 'google-one-tap';
+import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../services/auth.service';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+
 declare global {
   namespace google {
-     export type GoogleOneTap = typeof import('google-one-tap');
+    export type GoogleOneTap = typeof import('google-one-tap');
   }
- }
-
+}
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
+  imports: [RouterLink, CommonModule, FormsModule,ReactiveFormsModule],
 })
-export class LoginComponent implements OnInit{
+export class LoginComponent {
   private clientId = environment.googleClientId;
-  nuevoUsr: UserLogin = {
+  user: UserLogin = {
     email: '',
     password: '',
   };
 
-  ngOnInit(): void {
+  showPassword = false;
+  loginForm: FormGroup;
+  errorMessageVisible = false;
+
+  constructor(
+    public router: Router,
+    public authService: AuthService,
+    private formBuilder: FormBuilder
+  ) {
+    this.loginForm = this.formBuilder.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', Validators.required]
+    });
+  }
+
+  ngAfterViewInit(): void {
     // @ts-ignore
     window.onGoogleLibraryLoad = () => {
       google.accounts.id.initialize({
@@ -43,7 +62,45 @@ export class LoginComponent implements OnInit{
     };
   }
 
-  async handleCredentialResponse(response : CredentialResponse) {
-    
+  async handleCredentialResponse(response: CredentialResponse) {}
+
+  login() {
+    const email = this.loginForm.get('email')?.value;
+    const password = this.loginForm.get('password')?.value;
+
+    this.user.email = email!;
+    this.user.password = password!;
+
+    console.log(this.user);
+
+    this.authService.login(this.user).subscribe((response) => {
+      if (response?.success) {
+        sessionStorage.setItem('token', response.data.token);
+        this.router.navigate(['']);
+      }else{}
+    }, (error)=>{
+        this.showErroMessage()
+    });
   }
+
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
+
+  showErroMessage(){
+    this.errorMessageVisible = true;
+    setTimeout(() => {
+      this.errorMessageVisible = false;
+    }, 2000);
+  }
+
+  clearFields() {
+    this.user = {
+      email: '',
+      password: '',
+    };
+  }
+
+ 
 }

@@ -54,6 +54,34 @@ class AuthController {
       throw error;
     }
   };
+
+  static register = async (req, res) => {
+    try {
+      const user = await auth.register(req.body);
+      const roleUserMsg = await this.createRoleUser(user, 2);
+
+      const response = {
+        success: true,
+        data: {
+          msg: "User created",
+          roleUserMsg,
+        },
+      };
+
+      res.status(StatusCodes.CREATED).json({ response });
+    } catch (error) {
+      
+    }
+  };
+
+  static createRoleUser = async (userId, roleId) => {
+    try {
+      await auth.createRoleUser(userId, roleId);
+      return "Role assigned successfully";
+    } catch (error) {
+      throw error;
+    }
+  };
 }
 
 module.exports = AuthController;

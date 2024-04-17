@@ -1,1 +1,65 @@
-<p>register works!</p>
+<div class="flex justify-center items-center h-screen">
+    <div class="w-custom">
+        <div class="mt-10 px-4 sm:px-8 md:px-12 lg:px-4 lg:mt-16 xl:px-8 xl:max-w-2xl">
+            <div class="mt-12">
+                <form class="grid grid-cols-2 gap-8">
+                    <div>
+                        <div class="text-sm font-bold text-gray-700 tracking-wide">
+                            Nombre
+                        </div>
+                        <input class="w-full text-lg py-2 border-b border-black focus:outline-none" type=""
+                            placeholder="Nombre" />
+                    </div>
+
+                    <div>
+                        <div class="text-sm font-bold text-gray-700 tracking-wide">
+                            Email
+                        </div>
+                        <input class="w-full text-lg py-2 border-b border-black focus:outline-none" type=""
+                            placeholder="example@gmail.com" />
+                    </div>
+                    <div>
+                        <div class="text-sm font-bold text-gray-700 tracking-wide">
+                            Primer apellido
+                        </div>
+                        <input class="w-full text-lg py-2 border-b border-black focus:outline-none" type=""
+                            placeholder="Primer apellido" />
+                    </div>
+                    <div>
+                        <div class="text-sm font-bold text-gray-700 tracking-wide">
+                            Contraseña
+                        </div>
+                        <input class="w-full text-lg py-2 border-b border-black focus:outline-none" type=""
+                            placeholder="Contraseña" />
+                    </div>
+                    <div>
+                        <div class="text-sm font-bold text-gray-700 tracking-wide">
+                            Segundo apellido
+                        </div>
+                        <input class="w-full text-lg py-2 border-b border-black focus:outline-none" type=""
+                            placeholder="Segundo apellido" />
+                    </div>
+                    <div>
+                        <div class="text-sm font-bold text-gray-700 tracking-wide">
+                            Confirmar contraseña
+                        </div>
+                        <input class="w-full text-lg py-2 border-b border-black focus:outline-none" type=""
+                            placeholder="Confirmar contraseña" />
+                    </div>
+                    <div class="col-span-2 mt-5">
+                        <button class="bg-black text-gray-100 p-4 w-40 hover:bg-gray-800">
+                            Registrarse
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="mt-12 text-sm font-display font-semibold text-gray-700 text-center">
+                    ¿Ya tienes cuenta?
+                    <a routerLink="/login" class="cursor-pointer text-indigo-600 hover:text-indigo-800">Inicia
+                        sesión</a>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
