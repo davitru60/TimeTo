@@ -12,7 +12,7 @@
                     </svg>
                     <span class="sr-only">Info</span>
                     <div>
-                        <span class="font-medium">Credenciales no válidas</span> 
+                        <span class="font-medium">Credenciales no válidas</span>
                     </div>
                 </div>
                 }
@@ -22,13 +22,17 @@
                         <div class="text-sm font-bold text-gray-700 tracking-wide">
                             Email
                         </div>
-                        <input type="text" formControlName="email" 
-                            class="w-full text-lg py-2 border-b border-black focus:outline-none custom-password-field"
-                            placeholder="mike@gmail.com" />
-                        <div *ngIf="loginForm.get('email')?.invalid && (loginForm.get('email')?.dirty || loginForm.get('email')?.touched)"
-                            class="text-red-500">
-                            El correo electrónico es inválido.
-                        </div>
+
+                        <input type="text" formControlName="email"
+                        [ngClass]="{'red-border': loginForm.get('email')?.invalid && (loginForm.get('email')?.dirty || loginForm.get('email')?.touched)}"
+                        class="w-full text-lg py-2 border-b border-black focus:outline-none custom-password-field"
+                        placeholder="mike@gmail.com" />
+                    
+                    <div *ngIf="loginForm.get('email')?.invalid && (loginForm.get('email')?.dirty || loginForm.get('email')?.touched)"
+                        class="text-red-500">
+                        El email es inválido.
+                    </div>
+
                     </div>
                     <div class="mt-8 relative">
                         <div class="flex justify-between items-center">
@@ -48,8 +52,15 @@
                                 placeholder="Enter your password" />
                             <button (click)="togglePasswordVisibility()" type="button"
                                 class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-auto focus:outline-none">
-                                <i *ngIf="!showPassword" class="far fa-eye"></i>
-                                <i *ngIf="showPassword" class="far fa-eye-slash"></i>
+
+                                @if(!showPassword){
+                                    <i class="far fa-eye"></i>
+                                }@else {
+                                    <i class="far fa-eye-slash"></i>
+                                }
+
+                            
+                                
                             </button>
                         </div>
                     </div>

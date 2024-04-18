@@ -1,65 +1,196 @@
 <div class="flex justify-center items-center h-screen">
     <div class="w-custom">
-        <div class="mt-10 px-4 sm:px-8 md:px-12 lg:px-4 lg:mt-16 xl:px-8 xl:max-w-2xl">
-            <div class="mt-12">
-                <form class="grid grid-cols-2 gap-8">
-                    <div>
-                        <div class="text-sm font-bold text-gray-700 tracking-wide">
-                            Nombre
-                        </div>
-                        <input class="w-full text-lg py-2 border-b border-black focus:outline-none" type=""
-                            placeholder="Nombre" />
-                    </div>
-
-                    <div>
-                        <div class="text-sm font-bold text-gray-700 tracking-wide">
-                            Email
-                        </div>
-                        <input class="w-full text-lg py-2 border-b border-black focus:outline-none" type=""
-                            placeholder="example@gmail.com" />
-                    </div>
-                    <div>
-                        <div class="text-sm font-bold text-gray-700 tracking-wide">
-                            Primer apellido
-                        </div>
-                        <input class="w-full text-lg py-2 border-b border-black focus:outline-none" type=""
-                            placeholder="Primer apellido" />
-                    </div>
-                    <div>
-                        <div class="text-sm font-bold text-gray-700 tracking-wide">
-                            Contraseña
-                        </div>
-                        <input class="w-full text-lg py-2 border-b border-black focus:outline-none" type=""
-                            placeholder="Contraseña" />
-                    </div>
-                    <div>
-                        <div class="text-sm font-bold text-gray-700 tracking-wide">
-                            Segundo apellido
-                        </div>
-                        <input class="w-full text-lg py-2 border-b border-black focus:outline-none" type=""
-                            placeholder="Segundo apellido" />
-                    </div>
-                    <div>
-                        <div class="text-sm font-bold text-gray-700 tracking-wide">
-                            Confirmar contraseña
-                        </div>
-                        <input class="w-full text-lg py-2 border-b border-black focus:outline-none" type=""
-                            placeholder="Confirmar contraseña" />
-                    </div>
-                    <div class="col-span-2 mt-5">
-                        <button class="bg-black text-gray-100 p-4 w-40 hover:bg-gray-800">
-                            Registrarse
-                        </button>
-                    </div>
-                </form>
-                
-                <div class="mt-12 text-sm font-display font-semibold text-gray-700 text-center">
-                    ¿Ya tienes cuenta?
-                    <a routerLink="/login" class="cursor-pointer text-indigo-600 hover:text-indigo-800">Inicia
-                        sesión</a>
+       <div class="mt-10 px-4 sm:px-8 md:px-12 lg:px-4 lg:mt-16 xl:px-8 xl:max-w-2xl">
+          <div class="mt-12">
+             <form [formGroup]="registerForm" (ngSubmit)="register()" class="grid grid-cols-2 gap-8">
+             <div>
+                <div class="text-sm font-bold text-gray-700 tracking-wide">
+                   Nombre
                 </div>
-            </div>
-            
-        </div>
+                <input type="text" formControlName="name"
+                   class="w-full text-lg py-2 border-b focus:outline-none custom-password-field"
+                   [ngClass]="{
+                   'red-border': (registerForm.get('name')?.invalid && (touch)) ||
+                   this.registerForm.get('name')?.errors?.['minlength'] || 
+                   this.registerForm.get('name')?.errors?.['maxlength'] ||
+                   (this.registerForm.get('name')?.errors?.['required'] && this.touch)
+                   }"
+                   placeholder="Nombre" />
+
+
+                @if(this.registerForm.get('name')?.errors?.['minlength'] || this.registerForm.get('name')?.errors?.['maxlength']){
+                <div class="text-red-500">
+                   El nombre debe tener entre 3 y 20 caracteres
+                </div>
+
+                }@else if (this.registerForm.get('name')?.errors?.['required'] && this.touch) {
+                <div class="text-red-500">
+                   El nombre es obligatorio
+                </div>
+                }
+             </div>
+             <div>
+                <div class="text-sm font-bold text-gray-700 tracking-wide">
+                   Email
+                </div>
+                <input type="text" formControlName="email" class="w-full text-lg py-2 border-b border-black focus:outline-none custom-password-field" 
+                   placeholder="example@gmail.com" 
+        
+                   [ngClass]="{
+                    'red-border':
+                   (this.registerForm.get('email')?.errors?.['required'] && this.touch) ||
+                   (this.registerForm.get('email')?.errors?.['email'])
+                   }"/>
+
+
+                    @if (this.registerForm.get('email')?.errors?.['required'] && this.touch) {
+                    <div class="text-red-500">
+                       El email es obligatorio
+                    </div>
+                    }@else if(this.registerForm.get('email')?.errors?.['email']){
+                        <div class="text-red-500">
+                            El email es inválido.
+                         </div>
+                    }
+
+
+             </div>
+             <div>
+                <div class="text-sm font-bold text-gray-700 tracking-wide">
+                   Primer apellido
+                </div>
+                <input type="text" formControlName="firstLastName"
+                   class="w-full text-lg py-2 border-b focus:outline-none custom-password-field"
+                   [ngClass]="{
+                   'red-border': (registerForm.get('firstLastName')?.invalid && (touch)) ||
+                   this.registerForm.get('firstLastName')?.errors?.['minlength'] || 
+                   this.registerForm.get('firstLastName')?.errors?.['maxlength'] ||
+                   (this.registerForm.get('firstLastName')?.errors?.['required'] && this.touch)
+                   }"
+                   placeholder="Primer apellido" />
+
+
+                @if(this.registerForm.get('firstLastName')?.errors?.['minlength'] || this.registerForm.get('firstLastName')?.errors?.['maxlength']){
+                <div class="text-red-500">
+                   El nombre debe tener entre 3 y 20 caracteres
+                </div>
+
+                }@else if (this.registerForm.get('firstLastName')?.errors?.['required'] && this.touch) {
+                <div class="text-red-500">
+                   El primer apellido es obligatorio
+                </div>
+                }
+             </div>
+             <div>
+                <div class="text-sm font-bold text-gray-700 tracking-wide">
+                   Contraseña
+                </div>
+                <div class="relative">
+                   <input [type]="showPassword ? 'text' : 'password'" formControlName="password"
+                      class="w-full text-lg py-2 pr-10 border-b border-black focus:outline-none custom-password-field"
+                      placeholder="Introduce tu contraseña" 
+                      
+                      [ngClass]="{
+                        'red-border': (this.registerForm.get('password')?.errors?.['pattern']) ||
+                        (this.registerForm.get('password')?.errors?.['required'] && this.touch)
+                    }"
+                      
+                      />
+
+                      
+                   <button (click)="togglePasswordVisibility()" type="button"
+                      class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-auto focus:outline-none">
+                   @if(!showPassword){
+                   <i class="far fa-eye"></i>
+                   }@else {
+                   <i class="far fa-eye-slash"></i>
+                   }
+                   </button>
+                </div>
+
+                @if(registerForm.get('password')?.errors?.['pattern']){
+                    <div class="text-red-500">
+                        La contraseña debe contener al menos 8 caracteres, una letra minúscula, una letra mayúscula y un dígito.
+                    </div>
+                }
+
+                @if(registerForm.get('password')?.errors?.['required'] && this.touch){
+                    <div class="text-red-500">
+                        La contraseña es obligatoria
+                    </div>
+                }
+               
+             </div>
+             <div>
+                <div class="text-sm font-bold text-gray-700 tracking-wide">
+                   Segundo apellido
+                </div>
+                <input type="text" formControlName="secondLastName"
+                   class="w-full text-lg py-2 border-b focus:outline-none custom-password-field"
+                   [ngClass]="{
+                   'red-border': (registerForm.get('secondLastName')?.invalid && (touch)) ||
+                   this.registerForm.get('secondLastName')?.errors?.['minlength'] || 
+                   this.registerForm.get('secondLastName')?.errors?.['maxlength'] ||
+                   (this.registerForm.get('secondLastName')?.errors?.['required'] && this.touch)
+                   }"
+                   placeholder="Segundo apellido" />
+
+
+                @if(this.registerForm.get('secondLastName')?.errors?.['minlength'] || this.registerForm.get('firstLastName')?.errors?.['maxlength']){
+                <div class="text-red-500">
+                   El nombre debe tener entre 3 y 20 caracteres
+                </div>
+
+                }@else if (this.registerForm.get('secondLastName')?.errors?.['required'] && this.touch) {
+                <div class="text-red-500">
+                   El segundo apellido es obligatorio
+                </div>
+                }
+             </div>
+             <div>
+                <div class="text-sm font-bold text-gray-700 tracking-wide">
+                   Confirmar contraseña
+                </div>
+                
+                <div class="relative">
+                   <input [type]="showPasswordConfirm ? 'text' : 'password'" formControlName="confirmPassword"
+                      class="w-full text-lg py-2 pr-10 border-b border-black focus:outline-none custom-password-field"
+                      [ngClass]="{
+                        'red-border': (!this.passwordsMatch())
+                        }"
+                      placeholder="Confirma tu contraseña" />
+                      
+                   <button (click)="togglePasswordConfirmVisibility()" type="button"
+                      class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-auto focus:outline-none">
+
+                   @if(!showPasswordConfirm){
+                   <i class="far fa-eye"></i>
+                   }@else {
+                   <i class="far fa-eye-slash"></i>
+                   }
+                   </button>
+                </div>
+
+                @if(!this.passwordsMatch()){
+                    <div class="text-red-500">
+                        Las contraseñas no coinciden
+                     </div>
+                }
+
+
+             </div>
+             <div class="col-span-2 mt-5">
+                <button type="submit" class="bg-black text-gray-100 p-4 w-40 hover:bg-gray-800">
+                Registrarse
+                </button>
+             </div>
+             </form>
+             <div class="mt-12 text-sm font-display font-semibold text-gray-700 text-center">
+                ¿Ya tienes cuenta?
+                <a routerLink="/login" class="cursor-pointer text-indigo-600 hover:text-indigo-800">Inicia
+                sesión</a>
+             </div>
+          </div>
+       </div>
     </div>
-</div>
+ </div>

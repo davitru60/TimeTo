@@ -46,7 +46,7 @@
         <!-- Mobile menu -->
         <div class="lg:hidden">
             <button type="button" id="triggerEl" (click)="toggleMenu()"
-                class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+                class=" items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
                 aria-controls="navbar-dropdown" [ariaExpanded]="false">
                 <span class="sr-only">Open main menu</span>
                 <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -58,25 +58,35 @@
         </div>
     </div>
 
-    <!-- Dropdown content -->
-    <div [class.hidden]="!isMenuOpen" class="relative bg-white mt-2 rounded-lg shadow-lg w-full lg:hidden">
-        <ul class="py-2">
+<!-- Fullscreen menu overlay -->
+<div [class.hidden]="!isMenuOpen" [@slideDown]="isMenuOpen ? 'visible' : 'hidden'" class="fixed inset-0 bg-gray-100 z-50"> <!-- Cambio de bg-white a bg-gray-100 -->
+    <!-- Menú desplegable -->
+    <div class="px-4 py-6 mx-auto lg:py-8 sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8"> 
+        <!-- Logo y otros elementos -->
+        <div class="flex justify-end items-center">
+            
+            <!-- Botón para cerrar el menú -->
+            <button type="button" (click)="toggleMenu()" class="text-gray-500 hover:text-gray-700 focus:outline-none">
+                <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        <!-- Opciones del menú -->
+        <ul class="py-2 flex justify-center items-center flex-col">
             <li>
-                <a href="/"
-                    class="block py-2 px-4 text-sm font-medium text-gray-700 hover:text-deep-purple-accent-400">Product</a>
+                <a href="/" class="block py-2 px-4 text-sm font-medium text-gray-700 hover:text-deep-purple-accent-400">Product</a>
             </li>
             <li>
-                <a href="/"
-                    class="block py-2 px-4 text-sm font-medium text-gray-700 hover:text-deep-purple-accent-400">Features</a>
+                <a href="/" class="block py-2 px-4 text-sm font-medium text-gray-700 hover:text-deep-purple-accent-400">Features</a>
             </li>
             <li>
-                <a href="/"
-                    class="block py-2 px-4 text-sm font-medium text-gray-700 hover:text-deep-purple-accent-400">Pricing</a>
+                <a href="/" class="block py-2 px-4 text-sm font-medium text-gray-700 hover:text-deep-purple-accent-400">Pricing</a>
             </li>
             <li>
-                <a href="/"
-                    class="block py-2 px-4 text-sm font-medium text-gray-700 hover:text-deep-purple-accent-400">About
-                    us</a>
+                <a href="/" class="block py-2 px-4 text-sm font-medium text-gray-700 hover:text-deep-purple-accent-400">About us</a>
             </li>
             <li>
                 <a routerLink="/login"
@@ -84,8 +94,7 @@
                     in</a>
             </li>
             <li>
-                <a href="/"
-                    class="block py-2 px-4 text-sm font-medium text-gray-700 hover:text-deep-purple-accent-400">Sign
+                <a href="/" class="block py-2 px-4 text-sm font-medium text-gray-700 hover:text-deep-purple-accent-400">Sign
                     up</a>
             </li>
         </ul>

@@ -1,13 +1,32 @@
 import { Component, OnInit, Renderer2, ElementRef } from '@angular/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { RouterLink } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { animate, state, style, transition, trigger } from '@angular/animations';
+
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [RouterLink],
+  imports: [CommonModule, RouterLink],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',
+  animations: [
+    trigger('slideDown', [
+      state('hidden', style({
+        opacity: 0,
+        transform: 'translateY(-100%)'
+      })),
+      state('visible', style({
+        opacity: 1,
+        transform: 'translateY(0)'
+      })),
+      transition('hidden => visible', animate('0.5s ease-in-out')),
+      transition('visible => hidden', animate('0.5s ease-in-out'))
+    ],
+    )
+  ]
+ 
 })
 export class NavbarComponent implements OnInit {
   [x: string]: any;
