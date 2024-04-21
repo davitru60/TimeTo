@@ -1,0 +1,54 @@
+<app-navbar></app-navbar>
+
+<form
+  [formGroup]="form"
+  (ngSubmit)="submitForm()"
+  class="w-full mx-auto bg-white p-8"
+>
+  <!-- Botones de Acción -->
+  <div class="flex gap-4 mb-8">
+    <button
+      type="button"
+      (click)="addTextField()"
+      class="bg-blue-600 text-white p-3 rounded-md hover:bg-blue-700 transition duration-200"
+    >
+      Agregar Campo de Texto
+    </button>
+    <button
+      type="button"
+      (click)="addImageField()"
+      class="bg-purple-600 text-white p-3 rounded-md hover:bg-purple-700 transition duration-200"
+    >
+      Agregar Campo de Imagen
+    </button>
+    <button
+      type="submit"
+      class="bg-green-600 text-white p-3 rounded-md hover:bg-green-700 transition duration-200"
+    >
+      Enviar
+    </button>
+  </div>
+
+  <!-- Campos Dinámicos -->
+  <div formArrayName="dynamicFields" class="space-y-8 overflow-y-auto">
+    <div *ngFor="let field of dynamicFields.controls; let i = index" [formGroupName]="i" class="p-4 bg-gray-50 rounded-md shadow-sm">
+      <div class="flex justify-between items-center">
+        <ng-container [ngSwitch]="field.get('type')?.value">
+          <div *ngSwitchCase="'text'">
+            <app-text-field></app-text-field>
+          </div>
+          <div *ngSwitchCase="'image'">
+            <app-image-field></app-image-field>
+          </div>
+        </ng-container>
+        <button
+          type="button"
+          (click)="removeField(i)"
+          class="text-white bg-red-500 hover:bg-red-600 p-2 rounded-md transition duration-200"
+        >
+          Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+</form>

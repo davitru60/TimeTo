@@ -1,0 +1,13 @@
+<div class="pagination-controls py-10">
+  <button (click)="previousPage()" [disabled]="currentPage === 1">Anterior</button>
+  
+  <span *ngFor="let page of getPageArray(); let i = index">
+    <button (click)="setPage(i + 1)" [disabled]="currentPage === i + 1">{{ i + 1 }}</button>
+  </span>
+  
+  <button (click)="nextPage()" [disabled]="currentPage === totalPages">Siguiente</button>
+
+  <select (change)="changeItemsPerPage($event)">
+    <option *ngFor="let option of [1, 5, 10, 20]" [value]="option">{{ option }}</option>
+  </select>
+</div>

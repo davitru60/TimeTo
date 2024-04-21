@@ -5,7 +5,9 @@ module.exports = {
     "./node_modules/flowbite/**/*.js"
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {}
+    },
   },
   plugins: [
     require('flowbite/plugin')

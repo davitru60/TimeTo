@@ -1,0 +1,20 @@
+<div class="flex-1">
+  <input
+    [formControlName]="'file'"
+    type="file"
+    (change)="onFileChange($event)"
+    class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition duration-200"
+  />
+  <div class="mt-2 flex flex-col gap-2">
+    <input
+      [formControlName]="'fileName'"
+      class="p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+      placeholder="Nombre del archivo"
+    />
+    <input
+      [formControlName]="'description'"
+      class="p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+      placeholder="Descripción de la imagen"
+    />
+  </div>
+</div>

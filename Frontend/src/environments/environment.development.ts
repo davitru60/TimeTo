@@ -4,10 +4,15 @@ export const environment = {
 }
 
 export const endpoints ={
-    authEndpoint: '/auth'
+    authEndpoint: '/auth',
+    projectEndpoint: '/projects',
 }
 
 export const authRoutes = {
     login:'/login',
     register: '/register'
+}
+
+export const projectRoutes = {
+    getAllProjects: '/projects'
 }
