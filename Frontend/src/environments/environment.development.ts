@@ -14,5 +14,8 @@ export const authRoutes = {
 }
 
 export const projectRoutes = {
-    getAllProjects: '/projects'
+    getAllProjects: '/projects',
+    uploadImage: '/upload-image/',
+    getProjectImage: '/project-images/',
+    getProjectTexts: '/project-texts/'
 }

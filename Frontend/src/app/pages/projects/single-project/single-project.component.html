@@ -1,1 +1,42 @@
-<app-dynamic></app-dynamic>
+<app-navbar></app-navbar>
+
+
+<div class="p-5">
+  <button class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300 ease-in-out"
+    (click)="toggleEditMode()">
+    {{ isEditMode ? 'Exit Edit Mode' : 'Enter Edit Mode' }}
+  </button>
+</div>
+
+
+<!-- Modo de Edición -->
+@if(isEditMode){
+  <app-project-form></app-project-form>
+}@else if (!isEditMode) {
+  <div class="mt-6">
+    <div class="w-full space-y-4">
+      <div *ngFor="let field of fields" class="w-full">
+        @if(field.f_type_id === 1){
+          <img [src]="field.path" 
+          class="w-full h-96 object-cover" />
+        }@else if(field.f_type_id === 2){
+          <div class="flex justify-center">
+            <div class="w-full max-w-2xl text-left py-10 px-4 sm:py-20 sm:px-6">
+              <h1 class="text-lg font-medium">
+                {{ field.category }}
+              </h1>
+          
+              <h1 class="text-3xl font-extrabold mt-4"> 
+                {{ field.title }}
+              </h1>
+          
+              <p class="text-lg mt-2" [innerHTML]="field.text"></p> 
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}
+
+

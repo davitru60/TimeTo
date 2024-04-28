@@ -1,0 +1,99 @@
+
+<form [formGroup]="form" (ngSubmit)="submitForm()" class="w-full mx-auto bg-white p-8">
+  <div class="flex justify-start space-x-4 py-6">
+    <button
+      type="button"
+      (click)="addImageField()"
+      class="bg-gray-300 text-gray-800 px-3 py-2 rounded-sm hover:bg-gray-400 transition duration-200"
+    >
+      + Imagen
+    </button>
+    <button
+      type="button"
+      (click)="addTextEditor()"
+      class="bg-gray-300 text-gray-800 px-3 py-2 rounded-sm hover:bg-gray-400 transition duration-200"
+    >
+      + Editor de Texto
+    </button>
+    <button
+      type="button"
+      (click)="addTextImageField()"
+      class="bg-gray-300 text-gray-800 px-3 py-2 rounded-sm hover:bg-gray-400 transition duration-200"
+    >
+      + Campo de Texto e Imagen
+    </button>
+    <button
+      type="submit"
+      class="bg-gray-300 text-gray-800 px-3 py-2 rounded-sm hover:bg-gray-400 transition duration-200"
+    >
+      Enviar
+    </button>
+  </div>
+
+  <div formArrayName="dynamicFields" class="space-y-6" cdkDropList (cdkDropListDropped)="onDrop($event)">
+
+    <div
+      *ngFor="let field of dynamicFields.controls; let i = index"
+      [formGroupName]="i"
+      class="p-4"
+      cdkDrag
+    >
+      <div class="flex items-center justify-between p-4">
+        <ng-container [ngSwitch]="field.get('type')?.value">
+          
+          <div *ngSwitchCase="'image'">
+            <input
+              [formControlName]="'value'"
+              type="file"
+              (change)="onFileChange($event, i)"
+              class="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition duration-200"
+            />
+          </div>
+
+   
+          <div *ngSwitchCase="'editor'">
+
+            <input
+            id="editorTitle"
+            type="text"
+            [formControlName]="'title'"
+            class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-blue-500 transition duration-200"
+            placeholder="Ingrese el título"
+          />
+
+            <quill-editor
+              [formControlName]="'content'"
+              [modules]="editorModules"
+            ></quill-editor>
+            
+          </div>
+
+          <div *ngSwitchCase="'text-image'">
+            <div class="flex flex-col space-y-4">
+              <input
+                [formControlName]="'text'"
+                placeholder="Ingrese texto"
+                class="p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition duration-200"
+              />
+              <input
+                [formControlName]="'image'"
+                type="file"
+                (change)="onFileChange($event, i)"
+                class="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition duration-200"
+              />
+            </div>
+          </div>
+        </ng-container>
+
+        <button
+          type="button"
+          (click)="removeField(i)"
+          class="text-white bg-red-500 hover:bg-red-600 p-3 rounded-md transition duration-200"
+        >
+          Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+</form>
+

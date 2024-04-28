@@ -2,6 +2,8 @@ const { StatusCodes } = require("http-status-codes");
 const project = require("./project.database");
 const Dropbox = require("dropbox").Dropbox;
 const fetch = require("isomorphic-fetch");
+const multer = require('multer');
+const upload = multer();
 
 const dbx = new Dropbox({
   accessToken: process.env.DROPBOX_TOKEN,
@@ -11,7 +13,6 @@ const dbx = new Dropbox({
 class ProjectController {
   static getAllProjects = async (req, res) => {
     try {
-      // Obtener todos los proyectos
       const projects = await project.getAllProjects();
 
       for (let i = 0; i < projects.length; i++) {
@@ -39,19 +40,28 @@ class ProjectController {
     try {
       const projectId = req.params.id;
 
-      const imagePaths = await project.getProjectImages(projectId);
-
+      const images = await project.getProjectImages(projectId);  
+      console.log(images)
+  
       // Mapear las rutas de las imágenes a URL de visualización en Dropbox
-      const imageUrls = imagePaths.map(
-        (entry) =>
-          `${process.env.REQUEST_URL}${process.env.PORT}${
-            process.env.IMAGE_REQUEST
-          }/show-image?path=${encodeURIComponent(
-            process.env.FOLDER_PATH + "/" + entry.dataValues.path
-          )}`
-      );
+      images.forEach((entry) => {
+        const imagePath = entry.dataValues.path;
+        const imageUrl = `${process.env.REQUEST_URL}${process.env.PORT}${process.env.IMAGE_REQUEST}/show-image?path=${encodeURIComponent(
+          process.env.FOLDER_PATH + "/" + imagePath
+        )}`;
 
-      res.status(StatusCodes.OK).json(imageUrls);
+        entry.dataValues.path = imageUrl;
+      });
+  
+ 
+      const response = {
+        success: true,
+        data: {
+          images: images,
+        },
+      };
+  
+      res.status(StatusCodes.OK).json(response);
     } catch (error) {
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
@@ -66,7 +76,6 @@ class ProjectController {
 
       res.set("Content-Type", response.result.fileBinary[".tag"]);
 
-      // Enviar la imagen como respuesta
       res.send(response.result.fileBinary);
     } catch (error) {
       res
@@ -74,6 +83,76 @@ class ProjectController {
         .json({ error: "Error getting the image from Dropbox", error });
     }
   };
+
+ 
+  static uploadImage =  [upload.any('image'), async (req, res) => {
+    try {
+      if (!req.files || req.files.length === 0) {
+        return res.status(StatusCodes.BAD_REQUEST).json({ error: "Images hasn't been provided" });
+      }
+
+      const projectId= req.params.id
+
+      const imageUrls = []; 
+      const imageOriginalNames = []
+
+      console.log(req.files)
+
+      for (let i = 0; i < req.files.length; i++) {
+        const file = req.files[i];
+        const response = await dbx.filesUpload({
+          path: `/Fotos/${file.originalname}`,
+          contents: file.buffer,
+        });
+
+        imageUrls.push(response.result.path_display); 
+        imageOriginalNames.push(file.originalname)
+    
+      }
+    
+   const result = await project.uploadImage(projectId, imageOriginalNames);
+
+      if (!result) {
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+          success: false,
+          data: {},
+        });
+      }
+      
+
+      
+
+      res.status(StatusCodes.OK).json({
+        imageUrls,
+      });
+
+
+    } catch (error) {
+      console.error("Error uploading images:", error);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: "Error al subir las imágenes a Dropbox", detail: error });
+    }
+  }];
+
+  static getProjectTexts = async(req,res)=>{
+
+    try{
+      const projectId = req.params.id;
+
+      const texts = await project.getProjectTexts(projectId);
+  
+      const response = {
+        success: true,
+        data: {
+          texts: texts,
+        },
+      };
+      res.status(StatusCodes.OK).json(response);
+    }catch(error){
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: "Error getting project texts", detail: error });
+    }
+  }
+
+ 
 }
 
 module.exports = ProjectController;

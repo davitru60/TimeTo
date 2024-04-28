@@ -14,4 +14,17 @@ export class ProjectService {
   getAllProjects(): Observable<ProjectResponse>{
     return this.http.get<ProjectResponse>(environment.baseUrl+endpoints.projectEndpoint+projectRoutes.getAllProjects)
   }
+
+  uploadImage(projectId:number, formData:FormData):Observable<any>{
+    return this.http.post<any>(environment.baseUrl+endpoints.projectEndpoint+projectRoutes.uploadImage+projectId, formData);
+  }
+
+  getProjectImages(projectId:number): Observable<any>{
+    return this.http.get<any>(environment.baseUrl+endpoints.projectEndpoint+projectRoutes.getProjectImage+projectId)
+  }
+  
+  getProjectTexts(projectId: number): Observable<any> {
+    return this.http.get<any>(environment.baseUrl+endpoints.projectEndpoint+projectRoutes.getProjectTexts+projectId)
+  }
+
 }

@@ -1,6 +1,6 @@
 'use strict';
 
-const userFactory = require ('../api/auth/user.factory')
+const userFactory = require ('../api/users/user.factory')
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {

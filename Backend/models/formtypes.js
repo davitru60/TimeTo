@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class ProjectImage extends Model {
+  class FormTypes extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -13,16 +13,13 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
-  ProjectImage.init({
-    project_id: DataTypes.INTEGER,
-    f_type_id: DataTypes.INTEGER,
-    path: DataTypes.STRING,
-    index: DataTypes.INTEGER
+  FormTypes.init({
+    type: DataTypes.STRING
   }, {
     sequelize,
     timestamps:false,
-    tableName: 'project_images',
-    modelName: 'ProjectImage',
+    tableName: 'form_types',
+    modelName: 'FormType',
   });
-  return ProjectImage;
+  return FormTypes;
 };
