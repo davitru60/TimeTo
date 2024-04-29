@@ -11,3 +11,15 @@ export interface ProjectResponse{
         projects: Project []
     }
 }
+
+export interface ProjectImagesResponse{
+    success:boolean;
+    data:{
+        images:string []
+    }
+}
+
+export interface ImageOrderPut{
+    previousIndex:number
+    newIndex:number
+}

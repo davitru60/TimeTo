@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { ProjectService } from '../services/project.service';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { combineLatest, filter, map } from 'rxjs';
+import { ProjectImagesResponse } from '../interfaces/project.interface';
 
 
 @Component({
@@ -46,6 +47,8 @@ export class SingleProjectComponent {
     combineLatest([imagesObservable, textsObservable]).subscribe(
       ([images, texts]) => {
         this.fields = this.combineAndSortFields(images, texts);
+        console.log(this.fields)
+
       },
       (error) => {
         console.error("Error al combinar datos:", error);
@@ -55,7 +58,7 @@ export class SingleProjectComponent {
 
   getImagesObservable(projectId: number) {
     return this.projectService.getProjectImages(projectId).pipe(
-      map((response) => {
+      map((response:ProjectImagesResponse) => {
         if (response.success) {
           return response.data.images;
           

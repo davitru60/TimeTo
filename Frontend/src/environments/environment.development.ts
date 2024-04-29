@@ -17,5 +17,6 @@ export const projectRoutes = {
     getAllProjects: '/projects',
     uploadImage: '/upload-image/',
     getProjectImage: '/project-images/',
-    getProjectTexts: '/project-texts/'
+    getProjectTexts: '/project-texts/',
+    updateImageOrder: '/project-images-order/'
 }

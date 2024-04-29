@@ -17,6 +17,7 @@ import {
 import { ProjectService } from '../services/project.service';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { combineLatest, filter, map } from 'rxjs';
+import { ImageOrderPut } from '../interfaces/project.interface';
 
 @Component({
   selector: 'app-project-form',
@@ -37,6 +38,13 @@ export class ProjectFormComponent implements OnInit {
   projectId: number = 0;
 
   fields: any[] = [];
+
+  imageOrder:ImageOrderPut = {
+    previousIndex: 0,
+    newIndex: 0
+  }
+  
+
 
   editorModules = {
     toolbar: [
@@ -65,7 +73,7 @@ export class ProjectFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.projectId = this.route.snapshot.params['id'];
-    this.loadProjectData(this.projectId); 
+    this.loadProjectData(this.projectId);
   }
 
   get dynamicFields(): FormArray {
@@ -98,7 +106,7 @@ export class ProjectFormComponent implements OnInit {
       map((response) => {
         if (response.success) {
           return response.data.images;
-          
+
         } else {
           throw new Error("Error al obtener imágenes");
         }
@@ -118,33 +126,44 @@ export class ProjectFormComponent implements OnInit {
     );
   }
 
-  populateForm(fields: any[]): void {
+  combineAndSortFields(images: any[], texts: any[]) {
+    if (!Array.isArray(images) || !Array.isArray(texts)) {
+      console.error("Error: Los datos no son arrays.");
+      return [];
+    }
 
+    // Combina y ordena por `index`
+    const combinedFields = [...images, ...texts].sort((a, b) => a.index - b.index);
+    return combinedFields;
+  }
+
+  populateForm(fields: any[]): void {
     fields.forEach((field) => {
-      if(field.f_type_id==1){
+
+      if (field.f_type_id == 1) {
         this.addImageField(field.path);
-      }else if(field.f_type_id ==2){
-        this.addTextEditor(field.text,field.title);
-      }else if(field.f_type_id ==3){
+      } else if (field.f_type_id == 2) {
+        this.addTextEditor(field.text, field.title);
+      } else if (field.f_type_id == 3) {
         this.addTextImageField(field.text, field.image);
-      }else{
+      } else {
         console.warn('Tipo de campo desconocido:', field.type);
       }
-      
+
     });
   }
 
-  addImageField(value: any = null): void {
+  addImageField(imageField:any = null): void {
     this.dynamicFields.push(
       this.fb.group({
         type: 'image',
-        value: value,
+        path: imageField.path,
         index: this.dynamicFields.length,
       })
     );
   }
 
-  addTextEditor(content: string = '',title:string=''): void {
+  addTextEditor(content: string = '', title: string = ''): void {
     this.dynamicFields.push(
       this.fb.group({
         type: 'editor',
@@ -189,11 +208,39 @@ export class ProjectFormComponent implements OnInit {
       control.get('index')?.setValue(i);
     });
 
+
+    // Prepara el arreglo para enviar al servidor
+    const reorderedFields = this.dynamicFields.controls.map((control) => {
+      const type = control.get('type')?.value;
+      const id = control.get('id')?.value; 
+      const index = control.get('index')?.value;  
+
+      return { id, type, previousIndex: prevIndex, newIndex: index };
+    });
+
+    reorderedFields.forEach((field) => {
+      switch (field.type) {
+        case 'image':
+            this.imageOrder.previousIndex=field.previousIndex
+            this.imageOrder.newIndex=field.newIndex
+            this.updateImageOrder(this.imageOrder)
+          break;
   
-    console.log(
-      'Nuevo orden de elementos:',
-      this.dynamicFields.controls.map((control) => control.value)
-    );
+        case 'editor':
+          
+          break;
+  
+        case 'text-image':
+         
+          break;
+  
+        default:
+          console.warn(`Tipo de campo desconocido: ${field.type}`);
+          break;
+      }
+    });
+
+
   }
 
   onFileChange(event: any, index: number): void {
@@ -257,14 +304,19 @@ export class ProjectFormComponent implements OnInit {
     );
   }
 
-  combineAndSortFields(images: any[], texts: any[]) {
-    if (!Array.isArray(images) || !Array.isArray(texts)) {
-      console.error("Error: Los datos no son arrays.");
-      return [];
-    }
-
-    // Combina y ordena por `index`
-    const combinedFields = [...images, ...texts].sort((a, b) => a.index - b.index);
-    return combinedFields;
+  updateImageOrder(imageOrder:ImageOrderPut) {
+    this.projectService.updateImageOrder(this.projectId, imageOrder).subscribe(
+      (response: any) => {
+        if (response.success) {
+          console.log('Order updated successfully');
+        } else {
+          console.warn('Failed to update order:', response);
+        }
+      },
+      (error: any) => {
+        console.error('Error while updating image order:', error);
+      }
+    );
   }
+  
 }

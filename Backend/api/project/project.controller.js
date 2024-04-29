@@ -120,8 +120,6 @@ class ProjectController {
       }
       
 
-      
-
       res.status(StatusCodes.OK).json({
         imageUrls,
       });
@@ -152,6 +150,40 @@ class ProjectController {
     }
   }
 
+
+
+  static updateImageOrder = async(req,res) => {
+
+    try{
+      const projectId = req.params.id
+      
+
+      const updatedOrder = project.updateImageOrder(projectId,req.body)
+  
+      if(updatedOrder){
+        const response = {
+          success:true,
+          msg: 'Images order has been successfully updated',
+        }
+  
+        res.status(StatusCodes.OK).json(response)
+      }else{
+        const response = {
+          success:false,
+          msg:'Failed to update image order'
+        }
+        res.status(StatusCodes.BAD_REQUEST).json(response)
+      }
+    }catch(error){
+      console.error('Error updating', error);
+      const response = {
+        success:false,
+        msg:'Failed to update image order'
+      }
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(response)
+    }
+ 
+  }
  
 }
 

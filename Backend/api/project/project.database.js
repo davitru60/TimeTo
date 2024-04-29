@@ -83,6 +83,42 @@ class Project {
     }
   }
 
+  static updateImageOrder = async(projectId,body) =>{
+    let result = true;
+
+    try{
+      const image = await models.ProjectImage.findOne({
+        where: {
+          project_id: projectId,
+          index: body.previousIndex   
+        },
+        attributes:{exclude: ['id']}
+      });
+
+      if(image){
+        await models.ProjectImage.update(
+          { index: body.newIndex }, // Fields to update
+          {
+            where: {
+              project_id: projectId,
+              index: body.previousIndex,
+            },
+          }
+        );
+        result = true
+      }else{
+        result = false
+      }
+
+
+    }catch(error){
+      console.error('Error updating the image order', error)
+    }
+
+    return result
+  }
+
+
 
  
 
