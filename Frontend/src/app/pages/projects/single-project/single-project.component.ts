@@ -6,14 +6,15 @@ import { ProjectService } from '../services/project.service';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { combineLatest, filter, map } from 'rxjs';
 import { ProjectImagesResponse } from '../interfaces/project.interface';
+import { GoogleAuthComponent } from "../../auth/login/google-auth/google-auth.component";
 
 
 @Component({
-  selector: 'app-single-project',
-  standalone: true,
-  templateUrl: './single-project.component.html',
-  styleUrl: './single-project.component.scss',
-  imports: [CommonModule, NavbarComponent, ProjectFormComponent],
+    selector: 'app-single-project',
+    standalone: true,
+    templateUrl: './single-project.component.html',
+    styleUrl: './single-project.component.scss',
+    imports: [CommonModule, NavbarComponent, ProjectFormComponent, GoogleAuthComponent]
 })
 export class SingleProjectComponent {
   isEditMode = false;
@@ -47,7 +48,7 @@ export class SingleProjectComponent {
     combineLatest([imagesObservable, textsObservable]).subscribe(
       ([images, texts]) => {
         this.fields = this.combineAndSortFields(images, texts);
-        console.log(this.fields)
+      
 
       },
       (error) => {

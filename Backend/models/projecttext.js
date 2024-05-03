@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   ProjectText.init({
+    proj_text_id: DataTypes.INTEGER,
     project_id: DataTypes.INTEGER,
     f_type_id: DataTypes.INTEGER,
     category: DataTypes.STRING,

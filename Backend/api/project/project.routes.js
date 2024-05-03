@@ -11,6 +11,7 @@ router.post('/upload-image/:id',project.uploadImage)
 router.get('/project-texts/:id',project.getProjectTexts)
 
 router.put('/project-images-order/:id',project.updateImageOrder)
+router.put('/project-editor-order/:id',project.updateEditorOrder)
 
 
 

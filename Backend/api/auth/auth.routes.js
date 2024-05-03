@@ -8,6 +8,7 @@ const { check, body } = require("express-validator");
 
 
 router.post("/login", auth.login);
+router.post("/google-sign-in", auth.googleSignIn)
 router.post("/register",auth.register)
 
 module.exports = router;

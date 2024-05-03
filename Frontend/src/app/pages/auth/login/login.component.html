@@ -64,11 +64,12 @@
                             </button>
                         </div>
                     </div>
-                    <div class="mt-10 flex justify-center items-center">
+                    <div class="mt-10 flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
                         <button type="submit" class="bg-black text-gray-100 p-4 w-32 hover:bg-gray-800">
                             Log In
                         </button>
-                        <div id="buttonDiv" class="ml-4"></div>
+                        <app-google-auth></app-google-auth>
+                        
                     </div>
                 </form>
                 <div class="mt-12 text-sm font-display font-semibold text-gray-700 text-center">

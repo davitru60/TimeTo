@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { LoginResponse, LoginResponseError, RegisterResponse, UserLogin, UserRegister } from './../interfaces/auth.interface';
+import { GoogleSignInToken, LoginResponse, LoginResponseError, RegisterResponse, UserLogin, UserRegister } from './../interfaces/auth.interface';
 import { authRoutes, endpoints, environment } from '../../../../environments/environment.development';
 import { catchError, tap,of, map, throwError } from 'rxjs';
 
@@ -10,7 +10,6 @@ import { catchError, tap,of, map, throwError } from 'rxjs';
 })
 export class AuthService {
   private loggedIn = sessionStorage.getItem('token') ? true : false;
-  private jwtHelper = new JwtHelperService();
 
   constructor(private http:HttpClient) { 
    
@@ -34,6 +33,10 @@ export class AuthService {
           return throwError(errorResponse);
         })
       );
+  }
+
+  googleSignIn(idToken:GoogleSignInToken){
+    return this.http.post<any>(environment.baseUrl+endpoints.authEndpoint+authRoutes.googleSignIn,idToken)
   }
 
   register(user: UserRegister){

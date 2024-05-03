@@ -36,3 +36,7 @@ export interface RegisterResponse{
         roleUserMsg?: string
     }
 }
+
+export interface GoogleSignInToken{
+    id_token: string;
+}

@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   HomeProjectImage.init({
+    project_id: DataTypes.INTEGER,
     project_img_id: DataTypes.INTEGER,
   }, {
     sequelize,

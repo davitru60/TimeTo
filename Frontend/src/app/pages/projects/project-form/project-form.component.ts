@@ -17,7 +17,7 @@ import {
 import { ProjectService } from '../services/project.service';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { combineLatest, filter, map } from 'rxjs';
-import { ImageOrderPut } from '../interfaces/project.interface';
+import { EditorOrderPut, FormFields, ImageOrderPut } from '../interfaces/project.interface';
 
 @Component({
   selector: 'app-project-form',
@@ -37,13 +37,20 @@ export class ProjectFormComponent implements OnInit {
   content: any = '';
   projectId: number = 0;
 
-  fields: any[] = [];
+  fields: FormFields[] = []
 
   imageOrder:ImageOrderPut = {
+    proj_img_id: 0,
     previousIndex: 0,
-    newIndex: 0
+    newIndex: 0,
+    
   }
   
+  editorOrder:EditorOrderPut = {
+    proj_text_id: 0,
+    previousIndex: 0,
+    newIndex: 0,
+  }
 
 
   editorModules = {
@@ -94,6 +101,7 @@ export class ProjectFormComponent implements OnInit {
       ([images, texts]) => {
         this.fields = this.combineAndSortFields(images, texts);
         this.populateForm(this.fields)
+  
       },
       (error) => {
         console.error("Error al combinar datos:", error);
@@ -132,55 +140,77 @@ export class ProjectFormComponent implements OnInit {
       return [];
     }
 
-    // Combina y ordena por `index`
     const combinedFields = [...images, ...texts].sort((a, b) => a.index - b.index);
     return combinedFields;
   }
 
-  populateForm(fields: any[]): void {
+  populateForm(fields: FormFields []): void {
+  
     fields.forEach((field) => {
-
-      if (field.f_type_id == 1) {
-        this.addImageField(field.path);
-      } else if (field.f_type_id == 2) {
-        this.addTextEditor(field.text, field.title);
-      } else if (field.f_type_id == 3) {
-        this.addTextImageField(field.text, field.image);
-      } else {
-        console.warn('Tipo de campo desconocido:', field.type);
+      switch (field.f_type_id) {
+        case 1: // Imágenes
+          this.addImageField(field);
+          break;
+  
+        case 2: // Editores de texto
+          this.addTextEditor(field);
+          break;
+  
+        case 3: // Texto con imagen
+          this.addTextImageField(field);
+          break;
+  
+        default:
+          console.warn('Tipo de campo desconocido:', field.f_type_id);
+          break;
       }
-
     });
   }
 
-  addImageField(imageField:any = null): void {
+  addImageField(field?: FormFields): void {
+    const imagePath = field?.path || '';
+    const projImgId = field?.proj_img_id || '';
+    const index = field?.index || '';
+
+
     this.dynamicFields.push(
       this.fb.group({
         type: 'image',
-        path: imageField.path,
-        index: this.dynamicFields.length,
+        path: imagePath,
+        proj_img_id: projImgId, 
+        index: index
       })
     );
   }
 
-  addTextEditor(content: string = '', title: string = ''): void {
+  addTextEditor(field?: FormFields): void {
+    const text = field?.text || '';
+    const title = field?.title || '';
+    const projTextId = field?.proj_text_id || ''; 
+    const index = field?.index || '';
+  
     this.dynamicFields.push(
       this.fb.group({
         type: 'editor',
         title,
-        content,
-        index: this.dynamicFields.length,
+        content: text,
+        proj_text_id: projTextId, 
+        index: index
       })
     );
   }
 
-  addTextImageField(text: string = '', image: any = null): void {
+  addTextImageField(field?: FormFields): void {
+    const text = field?.text || '';
+    const image = field?.image || null;
+    const index = field?.index || '';
+
     this.dynamicFields.push(
       this.fb.group({
         type: 'text-image',
         text,
         image,
-        index: this.dynamicFields.length,
+        index: index
       })
     );
   }
@@ -196,38 +226,68 @@ export class ProjectFormComponent implements OnInit {
   onDrop(event: CdkDragDrop<FormArray>): void {
     const prevIndex = event.previousIndex;
     const newIndex = event.currentIndex;
-
-    console.log(
-      `Moviendo elemento desde el índice ${prevIndex} al índice ${newIndex}`
-    );
+    console.log("New index",newIndex)
 
     moveItemInArray(this.dynamicFields.controls, prevIndex, newIndex);
 
-    // Reasigna el índice a cada control para mantener el orden
     this.dynamicFields.controls.forEach((control, i) => {
       control.get('index')?.setValue(i);
     });
 
 
-    // Prepara el arreglo para enviar al servidor
-    const reorderedFields = this.dynamicFields.controls.map((control) => {
-      const type = control.get('type')?.value;
-      const id = control.get('id')?.value; 
-      const index = control.get('index')?.value;  
 
-      return { id, type, previousIndex: prevIndex, newIndex: index };
+    const reorderedFields = this.dynamicFields.controls.map((control) => {
+      const type = control.get('type')?.value ?? 'unknown';
+      const index = control.get('index')?.value;
+      const proj_text_id = control.get('proj_text_id')?.value ?? null;
+      const proj_img_id = control.get('proj_img_id')?.value ?? null;  
+    
+  
+      if (type === 'image') {
+        return { 
+          type, 
+          previousIndex: prevIndex, 
+          newIndex: index, 
+          proj_img_id,
+          proj_text_id: null,
+        };
+      }
+    
+
+      if (type === 'editor') {
+        return { 
+          type, 
+          previousIndex: prevIndex, 
+          newIndex: index, 
+          proj_text_id, 
+          proj_img_id: null,
+        };
+      }
+    
+      return { 
+        type, 
+        previousIndex: prevIndex, 
+        newIndex: index, 
+        proj_text_id, 
+        proj_img_id,
+      };
     });
+
 
     reorderedFields.forEach((field) => {
       switch (field.type) {
         case 'image':
+            this.imageOrder.proj_img_id= field.proj_img_id
             this.imageOrder.previousIndex=field.previousIndex
             this.imageOrder.newIndex=field.newIndex
             this.updateImageOrder(this.imageOrder)
           break;
   
         case 'editor':
-          
+          this.editorOrder.proj_text_id= field.proj_text_id
+          this.editorOrder.previousIndex=field.previousIndex
+          this.editorOrder.newIndex=field.newIndex
+          this.updateEditorOrder(this.editorOrder)
           break;
   
         case 'text-image':
@@ -308,7 +368,7 @@ export class ProjectFormComponent implements OnInit {
     this.projectService.updateImageOrder(this.projectId, imageOrder).subscribe(
       (response: any) => {
         if (response.success) {
-          console.log('Order updated successfully');
+          console.log('Image order updated successfully');
         } else {
           console.warn('Failed to update order:', response);
         }
@@ -317,6 +377,22 @@ export class ProjectFormComponent implements OnInit {
         console.error('Error while updating image order:', error);
       }
     );
+  }
+
+  updateEditorOrder(editorOrder: EditorOrderPut) {
+    this.projectService.updateEditorOrder(this.projectId,editorOrder).subscribe(
+      (response:any)=>{
+        if(response.success){
+          console.log('Editor updated successfully');
+        }else{
+          console.warn('Failed to update editor order:', response);
+        }
+      },
+      (error:any) =>{
+        console.error('Error while updating editor order:', error);
+      }
+    )
+    
   }
   
 }

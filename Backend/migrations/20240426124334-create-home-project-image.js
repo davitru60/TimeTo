@@ -23,6 +23,18 @@ module.exports = {
         }
       },
 
+      project_id:{
+        type: Sequelize.INTEGER,
+        references:{
+          model:{
+            tableName: "projects"
+          },
+          key: "project_id",
+          primaryKey:true,
+          allowNull:false,
+
+        }
+      },
 
     });
   },

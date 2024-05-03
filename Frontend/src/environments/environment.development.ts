@@ -10,7 +10,8 @@ export const endpoints ={
 
 export const authRoutes = {
     login:'/login',
-    register: '/register'
+    register: '/register',
+    googleSignIn: '/google-sign-in'
 }
 
 export const projectRoutes = {
@@ -18,5 +19,6 @@ export const projectRoutes = {
     uploadImage: '/upload-image/',
     getProjectImage: '/project-images/',
     getProjectTexts: '/project-texts/',
-    updateImageOrder: '/project-images-order/'
+    updateImageOrder: '/project-images-order/',
+    updateEditorOrder: '/project-editor-order/'
 }

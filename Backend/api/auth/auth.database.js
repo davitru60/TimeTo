@@ -28,7 +28,25 @@ class Auth {
     return result;
   };
 
-  static async getRoles(userId) {
+  static emailExists = async(email) =>{
+    let result = null;
+
+    try{
+      result = await models.User.findOne({
+        where: { email: email },
+        attributes: { exclude: ["id"] },
+      });
+
+    }catch(error){
+      console.error("Error finding the user:", error);
+      throw error;
+    }
+
+    
+    return result;
+  }
+
+  static getRoles = async (userId) => {
     try {
       const result = await models.sequelize.query(queries.getUsers, {
         replacements: { userId },
@@ -40,24 +58,31 @@ class Auth {
     }
   }
 
-  static async register(body) {
+  static register = async(body) => {
     try {
-      const hashedPass = await bcrypt.hash(body.password, 10);
+      let hashedPass = ''; 
+      if (body.password) {
+        hashedPass = await bcrypt.hash(body.password, 10); 
+      }
+  
       const user = await models.sequelize.query(queries.registerUser, {
         replacements: {
           name: body.name,
           first_surname: body.first_surname,
           second_surname: body.second_surname,
           email: body.email,
-          password: hashedPass,
+          password: hashedPass, 
         },
         type: QueryTypes.INSERT,
       });
-      return user[0];
+      
+  
+      return user[0]; 
     } catch (error) {
-      throw error;
+      console.error('Error al registrar el usuario:', error);
+      throw error; // Lanza el error para que se maneje en otro lugar
     }
-  }
+  };
 
   static async createRoleUser(userId, roleId) {
     try {

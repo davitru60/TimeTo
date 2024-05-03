@@ -150,8 +150,6 @@ class ProjectController {
     }
   }
 
-
-
   static updateImageOrder = async(req,res) => {
 
     try{
@@ -184,6 +182,40 @@ class ProjectController {
     }
  
   }
+
+  static updateEditorOrder = async(req,res) => {
+
+    try{
+      const projectId = req.params.id
+      
+      const updatedOrder = project.updateEditorOrder(projectId,req.body)
+  
+      if(updatedOrder){
+        const response = {
+          success:true,
+          msg: 'Editor order has been successfully updated',
+        }
+  
+        res.status(StatusCodes.OK).json(response)
+      }else{
+        const response = {
+          success:false,
+          msg:'Failed to update editor order'
+        }
+        res.status(StatusCodes.BAD_REQUEST).json(response)
+      }
+    }catch(error){
+      console.error('Error updating', error);
+      const response = {
+        success:false,
+        msg:'Failed to update editor order'
+      }
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(response)
+    }
+ 
+  }
+
+
  
 }
 

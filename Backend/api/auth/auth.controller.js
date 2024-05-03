@@ -1,6 +1,7 @@
 const { generateJWT } = require("../../helpers/generateJWT");
 const { StatusCodes } = require("http-status-codes");
 const auth = require("./auth.database");
+const { googleVerify } = require("../../helpers/googleVerify");
 
 class AuthController {
   static login = async (req, res) => {
@@ -45,6 +46,48 @@ class AuthController {
       res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(response);
     }
   };
+
+  static googleSignIn = async(req,res) =>{
+    const idToken = req.body.id_token;
+
+    try {
+      const googleUser = await googleVerify(idToken);
+      console.log(googleUser)
+      
+      const user = await auth.emailExists(googleUser.email);
+
+     if(!user){
+        const newUser = {
+          name: googleUser.given_name,
+          first_surname: googleUser.family_name,
+          second_surname: '', 
+          email: googleUser.email,
+          password: '', 
+        };
+        const userId = await auth.register(newUser);
+        await auth.createRoleUser(userId, 2);
+      }
+
+      const response = {
+        success: true,
+        msg: 'Google Auth Success',
+        data: {
+          user: googleUser, 
+        },
+      }; 
+  
+      return res.status(StatusCodes.OK).json(response);
+  
+    } catch (error) {
+      console.error('Error interno:', error);
+  
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        success: false,
+        msg: 'Error interno al verificar el token',
+      });
+    }
+
+  }
 
   static getRoles = async (userId) => {
     try {
