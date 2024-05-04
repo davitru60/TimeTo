@@ -18,10 +18,7 @@ class AuthController {
           success: true,
           msg: "Logged succesfully",
           data: {
-            user_id: user.user_id,
-            name: user.name,
             token: token,
-            roles: roles,
           },
         };
 
@@ -52,9 +49,12 @@ class AuthController {
 
     try {
       const googleUser = await googleVerify(idToken);
-      console.log(googleUser)
-      
       const user = await auth.emailExists(googleUser.email);
+
+      const userId = user.dataValues.user_id
+      
+      const roles = await this.getRoles(userId)
+      const token = generateJWT(userId, roles);
 
      if(!user){
         const newUser = {
@@ -72,7 +72,7 @@ class AuthController {
         success: true,
         msg: 'Google Auth Success',
         data: {
-          user: googleUser, 
+          token:token
         },
       }; 
   

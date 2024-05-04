@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { SocialAuthService, GoogleSigninButtonModule,SocialUser } from '@abacritt/angularx-social-login';
 import { AuthService } from '../../services/auth.service';
 import { GoogleSignInToken } from '../../interfaces/auth.interface';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-google-auth',
@@ -19,7 +20,9 @@ export class GoogleAuthComponent implements OnInit {
     id_token: ''
   }
 
-  constructor(private socialAuthService: SocialAuthService, private authService:AuthService) { }
+  constructor(private socialAuthService: SocialAuthService, private authService:AuthService,
+    public router: Router,
+  ) { }
 
   ngOnInit() {
     this.socialAuthService.authState.subscribe((user) => {
@@ -28,21 +31,23 @@ export class GoogleAuthComponent implements OnInit {
 
       if (this.loggedIn && user) {
         this.googleToken.id_token=user.idToken
-        this.sendAuthToken(this.googleToken)
+        this.googleSignIn(this.googleToken)
       }
 
     });
   }
 
-
-  sendAuthToken(signInToken:GoogleSignInToken){
+  googleSignIn(signInToken:GoogleSignInToken){
     this.authService.googleSignIn(signInToken).subscribe((response)=>{
       if (response.success) {
-        console.log('Token enviado exitosamente');
+        sessionStorage.setItem('token', response.data.token);
+        this.router.navigate(['']);
       } else {
         console.error('Error al enviar el token:', response.message);
       }
     })
   }
+
+
 
 }

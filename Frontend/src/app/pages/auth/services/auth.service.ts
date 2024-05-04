@@ -19,7 +19,6 @@ export class AuthService {
     return this.http.post<LoginResponse>(environment.baseUrl + endpoints.authEndpoint + authRoutes.login, user)
       .pipe(
         map((auth: LoginResponse) => {
-          localStorage.setItem('token', auth.data.token);
           this.loggedIn = true;
           return auth; 
         }),
@@ -35,8 +34,19 @@ export class AuthService {
       );
   }
 
-  googleSignIn(idToken:GoogleSignInToken){
-    return this.http.post<any>(environment.baseUrl+endpoints.authEndpoint+authRoutes.googleSignIn,idToken)
+  googleSignIn(idToken: GoogleSignInToken) {
+    return this.http.post<any>(environment.baseUrl + endpoints.authEndpoint + authRoutes.googleSignIn, idToken).pipe(
+      map((response) => {
+        if (response.success) {
+          this.loggedIn = true; 
+        }
+        return response;
+      }),
+      catchError((error: HttpErrorResponse) => {
+        console.error('Google Sign-In error:', error.message || 'Unknown error');
+        return throwError(error);
+      })
+    );
   }
 
   register(user: UserRegister){

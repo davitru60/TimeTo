@@ -46,8 +46,6 @@ export class LoginComponent {
     this.user.email = email!;
     this.user.password = password!;
 
-    console.log(this.user);
-
     this.authService.login(this.user).subscribe((response) => {
       if (response?.success) {
         sessionStorage.setItem('token', response.data.token);
@@ -58,7 +56,7 @@ export class LoginComponent {
     });
   }
 
-
+ 
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
   }

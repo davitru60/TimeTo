@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
@@ -8,6 +8,8 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { AuthService } from '../services/auth.service';
+import { UserRegister } from '../interfaces/auth.interface';
 
 @Component({
   selector: 'app-register',
@@ -20,10 +22,18 @@ export class RegisterComponent {
   showPassword = false;
   showPasswordConfirm = false;
 
+  user: UserRegister = {
+    name: '',
+    first_surname: '',
+    second_surname: '',
+    email: '',
+    password: ''
+  }
+
   registerForm: FormGroup;
   touch: boolean = false;
 
-  constructor(private formBuilder: FormBuilder) {
+  constructor(private formBuilder: FormBuilder,private authService: AuthService, public router: Router) {
     this.registerForm = this.formBuilder.group({
       name: [
         '',
@@ -43,7 +53,16 @@ export class RegisterComponent {
 
   register() {
     if (this.registerForm.status != 'INVALID') {
+      this.user.name = this.registerForm.get('name')?.value || '';
+      this.user.first_surname = this.registerForm.get('firstLastName')?.value || '';
+      this.user.second_surname = this.registerForm.get('secondLastName')?.value || '';
+      this.user.email = this.registerForm.get('email')?.value || '';
+      this.user.password = this.registerForm.get('password')?.value || '';
       
+      this.authService.register(this.user).subscribe(
+        (response)=>{
+          this.router.navigate(['/login']);
+      })
     } else {
       this.touch = true;
     }
