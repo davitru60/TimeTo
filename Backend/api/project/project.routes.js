@@ -2,6 +2,12 @@ const { Router } = require("express");
 const router = Router();
 const project = require("./project.controller")
 
+const { ensureDropboxToken } = require("../../middlewares/dropboxToken");
+
+// Usar el middleware antes de las rutas que necesiten acceso a Dropbox
+router.use(ensureDropboxToken);
+
+
 
 router.get('/projects',project.getAllProjects)
 router.get('/project-images/:id',project.getProjectImages)

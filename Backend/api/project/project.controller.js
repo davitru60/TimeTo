@@ -5,14 +5,12 @@ const fetch = require("isomorphic-fetch");
 const multer = require('multer');
 const upload = multer();
 
-const dbx = new Dropbox({
-  accessToken: process.env.DROPBOX_TOKEN,
-  fetch,
-});
 
 class ProjectController {
+  
   static getAllProjects = async (req, res) => {
     try {
+      
       const projects = await project.getAllProjects();
 
       for (let i = 0; i < projects.length; i++) {
@@ -38,6 +36,7 @@ class ProjectController {
 
   static getProjectImages = async (req, res) => {
     try {
+      
       const projectId = req.params.id;
 
       const images = await project.getProjectImages(projectId);  
@@ -71,16 +70,40 @@ class ProjectController {
 
   static showImage = async (req, res) => {
     try {
+      const dbx = req.dbx;
+      if (!dbx) {
+        return res.status(StatusCodes.UNAUTHORIZED).json({
+          success: false,
+          message: "Dropbox client not found. Authentication required.",
+        });
+      }
+  
       const imagePath = req.query.path;
+      if (!imagePath) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          success: false,
+          message: "No image path provided.",
+        });
+      }
+  
       const response = await dbx.filesDownload({ path: imagePath });
-
+  
+      if (!response.result.fileBinary) {
+        return res.status(StatusCodes.NOT_FOUND).json({
+          success: false,
+          message: "Image not found in Dropbox.",
+        });
+      }
+  
       res.set("Content-Type", response.result.fileBinary[".tag"]);
-
       res.send(response.result.fileBinary);
     } catch (error) {
-      res
-        .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .json({ error: "Error getting the image from Dropbox", error });
+      console.error("Error in showImage:", error);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        success: false,
+        message: "Error retrieving image from Dropbox.",
+        detail: error,
+      });
     }
   };
 
@@ -90,6 +113,8 @@ class ProjectController {
       if (!req.files || req.files.length === 0) {
         return res.status(StatusCodes.BAD_REQUEST).json({ error: "Images hasn't been provided" });
       }
+
+      const dbx = req.dbx;
 
       const projectId= req.params.id
 
@@ -214,9 +239,6 @@ class ProjectController {
     }
  
   }
-
-
- 
 }
 
 module.exports = ProjectController;
