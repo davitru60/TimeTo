@@ -1,0 +1,6 @@
+<div *ngIf="isOpen" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div class="bg-white p-6 rounded-lg relative w-1/2">
+      <button (click)="close()" class="absolute top-2 right-2 text-gray-600">X</button>
+      <ng-content></ng-content>
+    </div>
+  </div>

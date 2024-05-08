@@ -10,19 +10,6 @@ module.exports = {
         type: Sequelize.INTEGER
       },
 
-      project_img_id:{
-        type: Sequelize.INTEGER,
-        references:{
-          model:{
-            tableName: "project_images"
-          },
-          key: "proj_img_id",
-          primaryKey:true,
-          allowNull:false,
-
-        }
-      },
-
       project_id:{
         type: Sequelize.INTEGER,
         references:{
@@ -35,6 +22,10 @@ module.exports = {
 
         }
       },
+
+      path:{
+        type: Sequelize.STRING
+      }
 
     });
   },

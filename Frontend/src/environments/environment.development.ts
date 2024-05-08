@@ -20,5 +20,6 @@ export const projectRoutes = {
     getProjectImage: '/project-images/',
     getProjectTexts: '/project-texts/',
     updateImageOrder: '/project-images-order/',
-    updateEditorOrder: '/project-editor-order/'
+    updateEditorOrder: '/project-editor-order/',
+    deleteImage: '/project-images/'
 }

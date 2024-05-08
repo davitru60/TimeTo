@@ -239,6 +239,42 @@ class ProjectController {
     }
  
   }
+
+
+  static deleteImage = async (req,res) =>{
+    try {
+      const projImgId = req.params.id; 
+  
+  
+      const isDeleted = await project.deleteImage(projImgId);
+  
+      if (isDeleted) {
+        // Respuesta para eliminación exitosa
+        const response = {
+          success: true,
+          msg: 'Image has been successfully deleted',
+        };
+        res.status(StatusCodes.OK).json(response); 
+      } else {
+
+        const response = {
+          success: false,
+          msg: 'Failed to delete image',
+        };
+        res.status(StatusCodes.BAD_REQUEST).json(response); 
+      }
+    } catch (error) {
+      console.error('Error deleting image:', error); 
+      const response = {
+        success: false,
+        msg: 'Failed to delete image due to server error',
+      };
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(response); 
+    }
+  }
+
+
+
 }
 
 module.exports = ProjectController;

@@ -14,8 +14,9 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   HomeProjectImage.init({
+    path: DataTypes.STRING,
     project_id: DataTypes.INTEGER,
-    project_img_id: DataTypes.INTEGER,
+
   }, {
     sequelize,
     timestamps:false,

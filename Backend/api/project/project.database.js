@@ -5,7 +5,8 @@ class Project {
   static getAllProjects = async () => {
     try {
       const projects = await models.sequelize.query(
-        `SELECT p.project_id,p.name,p.description,pi.path from home_project_imgs hpi JOIN project_images pi ON hpi.project_img_id = pi.proj_img_id JOIN projects p ON hpi.project_id = p.project_id;`,
+        `SELECT p.project_id,p.name,p.description, hpi.path from home_project_imgs hpi
+        JOIN projects p ON hpi.project_id = p.project_id;`,
         { type: Sequelize.QueryTypes.SELECT }
       );
       return projects;
@@ -78,7 +79,6 @@ class Project {
 
   static updateImageOrder = async (projectId, body) => {
     let result = true;
-    console.log("Imagenes a ordenar", body);
 
     try {
       const image = await models.ProjectImage.findOne({
@@ -114,8 +114,10 @@ class Project {
   static updateEditorOrder = async (projectId, body) => {
     let result = true;
 
+    console.log("Editor body",body)
+
     try {
-      const image = await models.ProjectText.findOne({
+      const text = await models.ProjectText.findOne({
         where: {
           proj_text_id: body.proj_text_id,
           project_id: projectId,
@@ -124,7 +126,9 @@ class Project {
         attributes: { exclude: ["id"] },
       });
 
-      if (image) {
+      console.log("Imagen",text)
+
+      if (text) {
         await models.ProjectText.update(
           { index: body.newIndex },
           {
@@ -143,6 +147,36 @@ class Project {
     }
 
     return result;
+  };
+
+  static deleteImage = async (projImgId) => {
+    let result = true;
+  
+    try {
+      const image = await models.ProjectImage.findOne({
+        where: {
+          proj_img_id: projImgId,
+        },
+        attributes: { exclude: ["id"] },
+      });
+  
+      if (image) {
+        await models.ProjectImage.destroy({
+          where: {
+            proj_img_id: projImgId,
+          },
+        });
+        console.log("Imagen eliminada con éxito:", image);
+      } else {
+        console.warn("La imagen no se encontró con el ID:", projImgId);
+        result = false;
+      }
+    } catch (error) {
+      console.error("Error al eliminar la imagen:", error);
+      result = false; 
+    }
+  
+    return result; 
   };
 }
 

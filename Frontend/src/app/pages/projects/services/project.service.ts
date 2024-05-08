@@ -35,4 +35,8 @@ export class ProjectService {
     return this.http.put<any> (environment.baseUrl + endpoints.projectEndpoint+projectRoutes.updateEditorOrder+projectId,editorOrder)
   }
 
+  deleteImage(projImgId:number){
+    return this.http.delete<any>(environment.baseUrl+ endpoints.projectEndpoint+projectRoutes.deleteImage+projImgId)
+  }
+
 }
