@@ -80,7 +80,7 @@ class Auth {
       return user[0]; 
     } catch (error) {
       console.error('Error al registrar el usuario:', error);
-      throw error; // Lanza el error para que se maneje en otro lugar
+      throw error; 
     }
   };
 

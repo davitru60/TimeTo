@@ -114,6 +114,7 @@ class ProjectController {
         return res.status(StatusCodes.BAD_REQUEST).json({ error: "Images hasn't been provided" });
       }
 
+      
       const dbx = req.dbx;
 
       const projectId= req.params.id
@@ -121,7 +122,8 @@ class ProjectController {
       const imageUrls = []; 
       const imageOriginalNames = []
 
-      console.log(req.files)
+      console.log("Fich",req.body)
+
 
       for (let i = 0; i < req.files.length; i++) {
         const file = req.files[i];
@@ -134,8 +136,9 @@ class ProjectController {
         imageOriginalNames.push(file.originalname)
     
       }
+
     
-   const result = await project.uploadImage(projectId, imageOriginalNames);
+   const result = await project.uploadImage(projectId, imageOriginalNames,req.body);
 
       if (!result) {
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({

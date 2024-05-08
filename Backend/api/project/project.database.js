@@ -1,12 +1,12 @@
 const models = require("../../models");
-const { Sequelize } = require("sequelize");
+const { Sequelize,QueryTypes } = require("sequelize");
+const queries = require('./project.queries');
 
 class Project {
   static getAllProjects = async () => {
     try {
       const projects = await models.sequelize.query(
-        `SELECT p.project_id,p.name,p.description, hpi.path from home_project_imgs hpi
-        JOIN projects p ON hpi.project_id = p.project_id;`,
+        queries.getAllProjects,
         { type: Sequelize.QueryTypes.SELECT }
       );
       return projects;
@@ -32,16 +32,24 @@ class Project {
     }
   };
 
-  static uploadImage = async (projectId, body) => {
+  static uploadImage = async (projectId, imageOriginalName,body) => {
     let result = true;
     const createdImages = [];
 
+    console.log(body)
+
     try {
-      for (const item of body) {
-        const image = await models.ProjectImage.create({
-          path: item,
-          project_id: projectId,
-        });
+      for (const item of imageOriginalName) {
+        const image = await models.sequelize.query(queries.uploadImage,{
+          replacements:{
+            project_id:projectId,
+            f_type_id: body.f_type_id,
+            path: item,
+            index: body.index
+            
+          },
+          type: QueryTypes.INSERT,
+        })
 
         if (!image) {
           result = false;

@@ -42,3 +42,9 @@ export interface Project {
     index?:number;
   }
   
+
+  export interface ImageAdd {
+    f_type_id: number;
+    index:number;
+    image: string;
+  }
