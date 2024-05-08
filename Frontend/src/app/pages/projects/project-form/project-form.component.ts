@@ -278,78 +278,73 @@ export class ProjectFormComponent implements OnInit {
   }
 
   onDrop(event: CdkDragDrop<FormArray>): void {
-    const prevIndex = event.previousIndex;
-    const newIndex = event.currentIndex;
-    console.log("New index",newIndex)
+    const previousOrder = this.dynamicFields.controls.map((control) => {
+      return {
+        type: control.get('type')?.value,
+        proj_text_id: control.get('proj_text_id')?.value,
+        proj_img_id: control.get('proj_img_id')?.value,
+      };
+    });
 
-    moveItemInArray(this.dynamicFields.controls, prevIndex, newIndex);
+    moveItemInArray(this.dynamicFields.controls, event.previousIndex, event.currentIndex);
 
+    // Update indices
     this.dynamicFields.controls.forEach((control, i) => {
       control.get('index')?.setValue(i);
     });
 
-
-
-    const reorderedFields = this.dynamicFields.controls.map((control) => {
-      const type = control.get('type')?.value ?? 'unknown';
-      const index = control.get('index')?.value;
-      const proj_text_id = control.get('proj_text_id')?.value ?? null;
-      const proj_img_id = control.get('proj_img_id')?.value ?? null;  
-    
-  
-      if (type === 'image') {
-        return { 
-          type, 
-          previousIndex: prevIndex, 
-          newIndex: index, 
-          proj_img_id,
-          proj_text_id: null,
-        };
-      }
-    
-
-      if (type === 'editor') {
-        return { 
-          type, 
-          previousIndex: prevIndex, 
-          newIndex: index, 
-          proj_text_id, 
-          proj_img_id: null,
-        };
-      }
-    
-      return { 
-        type, 
-        previousIndex: prevIndex, 
-        newIndex: index, 
-        proj_text_id, 
-        proj_img_id,
+    const newOrder = this.dynamicFields.controls.map((control) => {
+      return {
+        type: control.get('type')?.value,
+        proj_text_id: control.get('proj_text_id')?.value,
+        proj_img_id: control.get('proj_img_id')?.value,
       };
     });
 
+    // Find the mapping of previous to new indices
+    const indexMapping = newOrder.map((newItem, i) => {
+      const previousIndex = previousOrder.findIndex((oldItem) => {
+        if (newItem.proj_img_id) {
+          return oldItem.proj_img_id === newItem.proj_img_id;
+        }
+        if (newItem.proj_text_id) {
+          return oldItem.proj_text_id === newItem.proj_text_id;
+        }
+        return false;
+      });
 
-    reorderedFields.forEach((field) => {
+      return {
+        type: newItem.type,
+        newIndex: i,
+        previousIndex,
+        proj_img_id: newItem.proj_img_id,
+        proj_text_id: newItem.proj_text_id,
+      };
+    });
+
+    // Now you have an accurate mapping of previous to new indices
+    console.log('Updated field index mapping:', indexMapping);
+
+    indexMapping.forEach((field) => {
       switch (field.type) {
         case 'image':
-            this.imageOrder.proj_img_id= field.proj_img_id
-            this.imageOrder.previousIndex=field.previousIndex
-            this.imageOrder.newIndex=field.newIndex
-            this.updateImageOrder(this.imageOrder)
+          this.imageOrder.proj_img_id = field.proj_img_id;
+          this.imageOrder.previousIndex = field.previousIndex;
+          this.imageOrder.newIndex = field.newIndex;
+          this.updateImageOrder(this.imageOrder);
           break;
-  
+
         case 'editor':
-          this.editorOrder.proj_text_id= field.proj_text_id
-          this.editorOrder.previousIndex=field.previousIndex
-          this.editorOrder.newIndex=field.newIndex
-          this.updateEditorOrder(this.editorOrder)
+          this.editorOrder.proj_text_id = field.proj_text_id;
+          this.editorOrder.previousIndex = field.previousIndex;
+          this.editorOrder.newIndex = field.newIndex;
+          this.updateEditorOrder(this.editorOrder);
           break;
-  
-        case 'text-image':
-         
-          break;
-  
+
+        // Handle other cases if needed
+
         default:
-          console.warn(`Tipo de campo desconocido: ${field.type}`);
+          console.warn(`Unknown field type: ${field.type}`);
           break;
       }
     });
