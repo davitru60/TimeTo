@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { JwtHelperService } from '@auth0/angular-jwt';
 import { GoogleSignInToken, LoginResponse, LoginResponseError, RegisterResponse, UserLogin, UserRegister } from './../interfaces/auth.interface';
 import { authRoutes, endpoints, environment } from '../../../../environments/environment.development';
-import { catchError, tap,of, map, throwError } from 'rxjs';
+import { catchError,map, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'

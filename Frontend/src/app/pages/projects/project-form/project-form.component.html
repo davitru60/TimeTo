@@ -15,18 +15,21 @@
       [cdkDragDisabled]="isEditingText">
       <div class="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
         <ng-container [ngSwitch]="field.get('type')?.value">
+
           
           <!-- Campo de imagen -->
           <div *ngSwitchCase="'image'" class="w-full md:w-1/2">
-            <ng-container *ngIf="!dynamicFields.at(i).get('path')?.value">
-              <label class="block text-gray-700 font-bold">Imagen:</label>
-              <input
-                type="file"
-                [formControlName]="'value'"
-                (change)="onFileChange($event, i)"
-                class="w-full p-3 border border-gray-300 focus:outline-none focus:border-blue-500 transition duration-200"
-              />
-            </ng-container>
+            @if(!dynamicFields.at(i).get('path')?.value){
+              <ng-container>
+                <label class="block text-gray-700 font-bold">Imagen:</label>
+                <input
+                  type="file"
+                  [formControlName]="'value'"
+                  (change)="onFileChange($event, i)"
+                  class="w-full p-3 border border-gray-300 focus:outline-none focus:border-blue-500 transition duration-200"
+                />
+              </ng-container>
+            }
           
           
             <div *ngIf="dynamicFields.at(i).get('path')?.value">
@@ -40,7 +43,7 @@
             </div>
           </div>
           
-          <app-modal [isOpen]="isModalOpen" (closeEvent)="closeModal()">
+          <app-modal [isModalOpen]="isModalOpen" (closeEvent)="closeModal()">
             <label class="block text-gray-700 font-bold">Subir nueva imagen:</label>
             <input
               type="file"

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { EditorOrderPut, ImageOrderPut, ProjectImagesResponse, ProjectResponse } from '../interfaces/project.interface';
+import { EditorOrderPut, ImageOrderPut, ProjectImagesResponse, ProjectGet } from '../interfaces/project.interface';
 import { endpoints, environment, projectRoutes } from '../../../../environments/environment.development';
 
 @Injectable({
@@ -11,16 +11,20 @@ export class ProjectService {
 
   constructor(private http: HttpClient) { }
 
-  getAllProjects(): Observable<ProjectResponse>{
-    return this.http.get<ProjectResponse>(environment.baseUrl+endpoints.projectEndpoint+projectRoutes.getAllProjects)
+  getAllProjects(): Observable<ProjectGet>{
+    return this.http.get<ProjectGet>(environment.baseUrl+endpoints.projectEndpoint+projectRoutes.getAllProjects)
   }
 
-  uploadImage(projectId:number, formData:FormData):Observable<any>{
-    return this.http.post<any>(environment.baseUrl+endpoints.projectEndpoint+projectRoutes.uploadImage+projectId, formData);
+  createProject(formData:FormData){
+    return this.http.post<any>(environment.baseUrl+endpoints.projectEndpoint+projectRoutes.createProject,formData)
+  }
+
+  addImageToProject(projectId:number, formData:FormData):Observable<any>{
+    return this.http.post<any>(environment.baseUrl+endpoints.projectEndpoint+projectRoutes.addImageToProject+projectId, formData);
   }
 
   getProjectImages(projectId:number): Observable<ProjectImagesResponse>{
-    return this.http.get<ProjectImagesResponse>(environment.baseUrl+endpoints.projectEndpoint+projectRoutes.getProjectImage+projectId)
+    return this.http.get<ProjectImagesResponse>(environment.baseUrl+endpoints.projectEndpoint+projectRoutes.getProjectImages+projectId)
   }
   
   getProjectTexts(projectId: number): Observable<any> {

@@ -3,30 +3,30 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { animate, state, style, transition, trigger } from '@angular/animations';
+import { AuthService } from '../../pages/auth/services/auth.service';
+import { UserProfileComponent } from "./user-profile/user-profile.component";
 
 
 @Component({
-  selector: 'app-navbar',
-  standalone: true,
-  imports: [CommonModule, RouterLink],
-  templateUrl: './navbar.component.html',
-  styleUrl: './navbar.component.scss',
-  animations: [
-    trigger('slideDown', [
-      state('hidden', style({
-        opacity: 0,
-        transform: 'translateY(-100%)'
-      })),
-      state('visible', style({
-        opacity: 1,
-        transform: 'translateY(0)'
-      })),
-      transition('hidden => visible', animate('0.5s ease-in-out')),
-      transition('visible => hidden', animate('0.5s ease-in-out'))
+    selector: 'app-navbar',
+    standalone: true,
+    templateUrl: './navbar.component.html',
+    styleUrl: './navbar.component.scss',
+    animations: [
+        trigger('slideDown', [
+            state('hidden', style({
+                opacity: 0,
+                transform: 'translateY(-100%)'
+            })),
+            state('visible', style({
+                opacity: 1,
+                transform: 'translateY(0)'
+            })),
+            transition('hidden => visible', animate('0.5s ease-in-out')),
+            transition('visible => hidden', animate('0.5s ease-in-out'))
+        ])
     ],
-    )
-  ]
- 
+    imports: [CommonModule, RouterLink, UserProfileComponent]
 })
 export class NavbarComponent implements OnInit {
   [x: string]: any;
@@ -35,7 +35,8 @@ export class NavbarComponent implements OnInit {
   constructor(
     private breakpointObserver: BreakpointObserver,
     private renderer: Renderer2,
-    private el: ElementRef
+    private el: ElementRef,
+    public authService:AuthService
   ) {}
 
   ngOnInit() {

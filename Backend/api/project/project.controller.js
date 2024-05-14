@@ -1,9 +1,5 @@
 const { StatusCodes } = require("http-status-codes");
 const project = require("./project.database");
-const Dropbox = require("dropbox").Dropbox;
-const fetch = require("isomorphic-fetch");
-const multer = require('multer');
-const upload = multer();
 
 
 class ProjectController {
@@ -97,6 +93,7 @@ class ProjectController {
   
       res.set("Content-Type", response.result.fileBinary[".tag"]);
       res.send(response.result.fileBinary);
+
     } catch (error) {
       console.error("Error in showImage:", error);
       res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -107,22 +104,73 @@ class ProjectController {
     }
   };
 
- 
-  static uploadImage =  [upload.any('image'), async (req, res) => {
-    try {
-      if (!req.files || req.files.length === 0) {
-        return res.status(StatusCodes.BAD_REQUEST).json({ error: "Images hasn't been provided" });
+
+
+  static createProject = async(req,res)=>{
+    try{
+      const projectId = await project.createProject(req.body)
+      const imageOriginalNames = await ProjectController.uploadImageToDropbox(req);
+
+      const projectImg = {
+        project_id:projectId,
+        path: imageOriginalNames
       }
 
-      
-      const dbx = req.dbx;
+      console.log(projectImg.path)
+      const result = await project.addImageToProjectCreate(projectImg)
 
-      const projectId= req.params.id
+      if(result){
+        res.status(StatusCodes.OK).json({ success: true, message: 'Project created successfully.' });
+      }else{
+          res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false, message: 'Failed to add images to the project' });
+      }
+
+
+    }catch(error){
+
+    }
+  }
+
+
+  static addImageToProject = async(req,res) =>{
+    try {
+      const projectId = req.params.id;
+      const imageOriginalNames = await ProjectController.uploadImageToDropbox(req);
+      const result = await project.addImageToProject(projectId, imageOriginalNames, req.body);
+
+      if (!result) {
+          return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+              success: false,
+              data: {},
+          });
+      }
+
+      res.status(StatusCodes.OK).json({
+          success: true,
+          message: 'Images uploaded successfully.',
+      });
+  } catch (error) {
+      console.error("Error adding images to project:", error);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+          success: false,
+          error: "Error adding images to project",
+          detail: error
+      });
+  }
+
+  }
+ 
+
+  static uploadImageToDropbox = async (req) => {
+    try {
+      if (!req.files || req.length === 0) {
+        console.log("Images hasn't been provided");
+      }
+
+      const dbx = req.dbx;
 
       const imageUrls = []; 
       const imageOriginalNames = []
-
-      console.log("Fich",req.body)
 
 
       for (let i = 0; i < req.files.length; i++) {
@@ -134,30 +182,16 @@ class ProjectController {
 
         imageUrls.push(response.result.path_display); 
         imageOriginalNames.push(file.originalname)
-    
+
       }
 
-    
-   const result = await project.uploadImage(projectId, imageOriginalNames,req.body);
-
-      if (!result) {
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-          success: false,
-          data: {},
-        });
-      }
-      
-
-      res.status(StatusCodes.OK).json({
-        imageUrls,
-      });
+    return imageOriginalNames;
 
 
     } catch (error) {
       console.error("Error uploading images:", error);
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: "Error al subir las imágenes a Dropbox", detail: error });
     }
-  }];
+  };
 
   static getProjectTexts = async(req,res)=>{
 
@@ -182,8 +216,7 @@ class ProjectController {
 
     try{
       const projectId = req.params.id
-      
-
+    
       const updatedOrder = project.updateImageOrder(projectId,req.body)
   
       if(updatedOrder){

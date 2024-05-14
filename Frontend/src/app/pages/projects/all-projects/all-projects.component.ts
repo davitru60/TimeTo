@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { NavbarComponent } from '../../../shared/navbar/navbar.component';
 import { ProjectService } from '../services/project.service';
-import { Project, ProjectResponse } from '../interfaces/project.interface';
+import { Project, ProjectGet } from '../interfaces/project.interface';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { NgxPaginationModule } from 'ngx-pagination';
@@ -28,7 +28,7 @@ export class AllProjectsComponent {
   getAllProjects() {
     this.projectService
       .getAllProjects()
-      .subscribe((response: ProjectResponse) => {
+      .subscribe((response: ProjectGet) => {
         this.projects = response.data.projects;
         console.log(this.projects)
       });

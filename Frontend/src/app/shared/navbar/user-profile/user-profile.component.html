@@ -1,0 +1,53 @@
+@if(isLoading){
+    <app-loader></app-loader>
+}
+
+<div id="dropdown-menu" class="relative inline-block" (click)="toggleDropdown()">
+    <!-- Dropdown Button -->
+    <button
+        class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 text- ring-slate-100 transition hover:shadow-md hover:ring-2 overflow-hidden">
+        <img class="w-full object-cover"
+            src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?crop=top&cs=tinysrgb&fit=crop&fm=jpg&h=100&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTY2Mjk2MTgwNw&ixlib=rb-1.2.1&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=100"
+            alt="Profile" />
+    </button>
+
+    <!-- Dropdown Menu -->
+    @if(isDropdownOpen){
+    <div [@fadeInOut] class="absolute right-0 mt-3 flex w-60 flex-col gap-3 rounded-xl bg-white p-4 text-black shadow-lg">
+        <div class="flex gap-3 items-center justify-center">
+            <div class="flex items-center justify-center rounded-full h-12 w-12 overflow-hidden">
+                <img class="w-full object-cover"
+                    src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?crop=top&cs=tinysrgb&fit=crop&fm=jpg&h=100&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTY2Mjk2MTgwNw&ixlib=rb-1.2.1&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=100"
+                    alt="Profile" />
+            </div>
+        </div>
+
+        <div class="flex flex-col text-center">
+            <span>David Trujillo Carrero</span>
+            <div class="text-xs text-slate-400">prueba&#64;gmail.com</div>
+        </div>
+
+        <div class="flex flex-col">
+            <a (click)="openModal()" class="flex items-center gap-3 rounded-md py-2 px-3 hover:bg-gray-100">
+                <span> &#9679; Añadir proyecto</span>
+            </a>
+
+            <a [routerLink]="['/my-account']" class="flex items-center gap-3 rounded-md py-2 px-3 hover:bg-gray-100">
+                <span> &#9679; Mi cuenta</span>
+            </a>
+        </div>
+
+        <button
+            class="flex justify-center gap-3 rounded-md bg-red-600 py-2 px-3 font-semibold hover:bg-red-500 focus:ring-2 focus:ring-red-400"
+            (click)="logout()" [disabled]="isLoading">
+            <span>Cerrar sesión</span>
+        </button>
+    </div>
+    }
+
+
+</div>
+
+<app-add-project [isModalOpen]="isModalOpen" (closeEvent)="closeModal()">
+
+  

@@ -32,7 +32,42 @@ class Project {
     }
   };
 
-  static uploadImage = async (projectId, imageOriginalName,body) => {
+
+  static createProject = async(body) =>{
+    const project = await models.sequelize.query(queries.createProject,{
+      replacements: {
+        name: body.name,
+        description: body.description
+      },
+      type:QueryTypes.INSERT
+    })
+
+    return project[0]
+  }
+
+  static addImageToProjectCreate = async(body) =>{
+    const result = true;
+    try{
+      const image = await models.sequelize.query(queries.addImageToProjectCreate,{
+        replacements: {
+          project_id:body.project_id,
+          path: body.path
+        }
+      })
+
+      if(image){
+        result=true
+      }else{
+        result = false
+      }
+
+    }catch(error){
+
+    }
+    return result
+  }
+
+  static addImageToProject = async (projectId, imageOriginalName,body) => {
     let result = true;
     const createdImages = [];
 
@@ -40,7 +75,7 @@ class Project {
 
     try {
       for (const item of imageOriginalName) {
-        const image = await models.sequelize.query(queries.uploadImage,{
+        const image = await models.sequelize.query(queries.addImageToProject,{
           replacements:{
             project_id:projectId,
             f_type_id: body.f_type_id,

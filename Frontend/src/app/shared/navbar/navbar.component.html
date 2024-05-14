@@ -4,99 +4,104 @@
         <ul class="items-center hidden space-x-8 lg:flex">
             <li>
                 <a href="/" aria-label="Our product" title="Our product"
-                    class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400">Product</a>
-            </li>
-            <li>
-                <a href="/" aria-label="Our product" title="Our product"
-                    class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400">Features</a>
+                    class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400">Contenidos</a>
             </li>
             <li>
                 <a routerLink="/projects" aria-label="Product pricing" title="Product pricing"
                     class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400">Proyectos</a>
             </li>
         </ul>
-        <a href="/" aria-label="Company" title="Company" class="inline-flex items-center">
-            <svg class="w-8 text-deep-purple-accent-400" viewBox="0 0 24 24" stroke-linejoin="round" stroke-width="2"
-                stroke-linecap="round" stroke-miterlimit="10" stroke="currentColor" fill="none">
-                <rect x="3" y="1" width="7" height="12"></rect>
-                <rect x="3" y="17" width="7" height="6"></rect>
-                <rect x="14" y="1" width="7" height="6"></rect>
-                <rect x="14" y="11" width="7" height="12"></rect>
-            </svg>
-            <span class="ml-2 text-xl font-bold tracking-wide text-gray-800 uppercase">Company</span>
-        </a>
-        <ul class="items-center hidden space-x-8 lg:flex">
+        <div class="flex items-center justify-between w-full lg:w-auto">
+            <a href="/" aria-label="Company" title="Company" class="inline-flex items-center">
+                <svg class="w-8 text-deep-purple-accent-400" viewBox="0 0 24 24" stroke-linejoin="round"
+                    stroke-width="2" stroke-linecap="round" stroke-miterlimit="10" stroke="currentColor" fill="none">
+                    <rect x="3" y="1" width="7" height="12"></rect>
+                    <rect x="3" y="17" width="7" height="6"></rect>
+                    <rect x="14" y="1" width="7" height="6"></rect>
+                    <rect x="14" y="11" width="7" height="12"></rect>
+                </svg>
+                <span class="ml-2 text-xl font-bold tracking-wide text-gray-800 uppercase">Company</span>
+            </a>
+
+            <!-- Mobile menu and profile -->
+            <div class="flex items-center lg:hidden">
+                <button type="button" id="triggerEl" (click)="toggleMenu()"
+                    class="mr-4 p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+                    aria-controls="navbar-dropdown" [ariaExpanded]="false">
+                    <span class="sr-only">Open main menu</span>
+                    <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 17 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M1 1h15M1 7h15M1 13h15" />
+                    </svg>
+                </button>
+              
+            </div>
+        </div>
+
+        <ul class="items-center lg:space-x-8 lg:flex sm:block">
             <li>
                 <a href="/" aria-label="About us" title="About us"
-                    class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400">About
-                    us</a>
+                    class="hidden font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400 sm:hidden lg:inline-block">Sobre
+                    nosotros</a>
             </li>
+            @if(!authService.isLogged()){
             <li>
                 <a routerLink="/login"
                     class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400">Sign
                     in</a>
             </li>
-            <li>
-                <a href="/register" aria-label="Sign up" title="Sign up"
-                    class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400">Sign
-                    up</a>
-            </li>
-        </ul>
 
-        <!-- Mobile menu -->
-        <div class="lg:hidden">
-            <button type="button" id="triggerEl" (click)="toggleMenu()"
-                class=" items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
-                aria-controls="navbar-dropdown" [ariaExpanded]="false">
-                <span class="sr-only">Open main menu</span>
-                <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                    viewBox="0 0 17 14">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M1 1h15M1 7h15M1 13h15" />
-                </svg>
-            </button>
-        </div>
+            }@else {
+                <app-user-profile></app-user-profile>
+            }
+        </ul>
     </div>
 
-<!-- Fullscreen menu overlay -->
-<div [class.hidden]="!isMenuOpen" [@slideDown]="isMenuOpen ? 'visible' : 'hidden'" class="fixed inset-0 bg-gray-100 z-50"> <!-- Cambio de bg-white a bg-gray-100 -->
-    <!-- Menú desplegable -->
-    <div class="px-4 py-6 mx-auto lg:py-8 sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8"> 
-        <!-- Logo y otros elementos -->
-        <div class="flex justify-end items-center">
-            
-            <!-- Botón para cerrar el menú -->
-            <button type="button" (click)="toggleMenu()" class="text-gray-500 hover:text-gray-700 focus:outline-none">
-                <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-            </button>
+    <!-- Fullscreen menu overlay -->
+    <div [class.hidden]="!isMenuOpen" [@slideDown]="isMenuOpen ? 'visible' : 'hidden'"
+        class="fixed inset-0 bg-gray-100 z-50">
+        <!-- Menú desplegable -->
+        <div class="px-4 py-6 mx-auto lg:py-8 sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8">
+            <!-- Logo y otros elementos -->
+            <div class="flex justify-end items-center">
+                <!-- Botón para cerrar el menú -->
+                <button type="button" (click)="toggleMenu()"
+                    class="text-gray-500 hover:text-gray-700 focus:outline-none">
+                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+
+            <ul class="py-2 flex justify-center items-center flex-col">
+                <li>
+                    <a href="/"
+                        class="block py-2 px-4 text-sm font-medium text-gray-700 hover:text-deep-purple-accent-400">Features</a>
+                </li>
+                <li>
+                    <a routerLink="/projects"
+                        class="block py-2 px-4 text-sm font-medium text-gray-700 hover:text-deep-purple-accent-400">Proyectos</a>
+                </li>
+                <li>
+                    <a href="/"
+                        class="block py-2 px-4 text-sm font-medium text-gray-700 hover:text-deep-purple-accent-400">Sobre
+                        nosotros</a>
+                </li>
+                <li>
+                    <a routerLink="/login"
+                        class="block py-2 px-4 text-sm font-medium text-gray-700 hover:text-deep-purple-accent-400">Sign
+                        in</a>
+                </li>
+                <li>
+                    <a href="/"
+                        class="block py-2 px-4 text-sm font-medium text-gray-700 hover:text-deep-purple-accent-400">Sign
+                        up</a>
+                </li>
+            </ul>
         </div>
-        <!-- Opciones del menú -->
-        <ul class="py-2 flex justify-center items-center flex-col">
-            <li>
-                <a href="/" class="block py-2 px-4 text-sm font-medium text-gray-700 hover:text-deep-purple-accent-400">Product</a>
-            </li>
-            <li>
-                <a href="/" class="block py-2 px-4 text-sm font-medium text-gray-700 hover:text-deep-purple-accent-400">Features</a>
-            </li>
-            <li>
-                <a routerLink="/projects" class="block py-2 px-4 text-sm font-medium text-gray-700 hover:text-deep-purple-accent-400">Proyectos</a>
-            </li>
-            <li>
-                <a href="/" class="block py-2 px-4 text-sm font-medium text-gray-700 hover:text-deep-purple-accent-400">About us</a>
-            </li>
-            <li>
-                <a routerLink="/login"
-                    class="block py-2 px-4 text-sm font-medium text-gray-700 hover:text-deep-purple-accent-400">Sign
-                    in</a>
-            </li>
-            <li>
-                <a href="/" class="block py-2 px-4 text-sm font-medium text-gray-700 hover:text-deep-purple-accent-400">Sign
-                    up</a>
-            </li>
-        </ul>
     </div>
 </div>
+

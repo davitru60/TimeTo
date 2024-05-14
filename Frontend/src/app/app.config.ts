@@ -7,10 +7,6 @@ import { GoogleLoginProvider } from '@abacritt/angularx-social-login';
 import { routes } from './app.routes';
 import { environment } from '../environments/environment.development';
 
-const googleLoginOptions = {
-  scope: 'profile email',
-  plugin_name:'sample_login' 
-}
 
 export const appConfig: ApplicationConfig = {
   providers: [
