@@ -31,6 +31,10 @@ export class ProjectService {
     return this.http.get<any>(environment.baseUrl+endpoints.projectEndpoint+projectRoutes.getProjectTexts+projectId)
   }
 
+  addEditor(projectId: number,formData:FormData){
+    return this.http.post<any>(environment.baseUrl+endpoints.projectEndpoint+projectRoutes.addProjectEditor+projectId,formData)
+  }
+
   updateImageOrder(projectId:number,imageOrder:ImageOrderPut){
     return this.http.put<any>(environment.baseUrl+endpoints.projectEndpoint+projectRoutes.updateImageOrder+projectId,imageOrder)
   }

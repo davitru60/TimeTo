@@ -9,20 +9,27 @@ const { uploadImageMiddleware,handleUploadImage} = require('../../middlewares/up
 router.use(ensureDropboxToken);
 
 
-
+//General
 router.get('/projects',project.getAllProjects)
 router.get('/project-images/:id',project.getProjectImages)
 router.get('/show-image',project.showImage)
 router.post('/projects',[uploadImageMiddleware,handleUploadImage],project.createProject)
-router.post('/project-images/:id',[uploadImageMiddleware,handleUploadImage],project.addImageToProject)
-router.post('/upload-image/:id',project.addImageToProject)
 
+//Project texts
 router.get('/project-texts/:id',project.getProjectTexts)
+//router.post('/project-texts/:id',project.addTextEditor)
 
+
+//Project images
+router.post('/project-images/:id',[uploadImageMiddleware,handleUploadImage],project.addImageToProject)
+router.delete('/project-images/:id',project.deleteImage)
+
+
+//Content order
 router.put('/project-images-order/:id',project.updateImageOrder)
 router.put('/project-editor-order/:id',project.updateEditorOrder)
 
-router.delete('/project-images/:id',project.deleteImage)
+
 
 
 

@@ -18,10 +18,11 @@ export const projectRoutes = {
     getAllProjects: '/projects',
     getProjectImages: '/project-images/',
     createProject: '/projects',
-    addImageToProject: '/project-images/',
-    uploadImage: '/upload-image/',
     getProjectTexts: '/project-texts/',
+    addImageToProject: '/project-images/',
+    deleteImage: '/project-images/',
+    addProjectEditor: '/project-editor',
     updateImageOrder: '/project-images-order/',
     updateEditorOrder: '/project-editor-order/',
-    deleteImage: '/project-images/'
+
 }

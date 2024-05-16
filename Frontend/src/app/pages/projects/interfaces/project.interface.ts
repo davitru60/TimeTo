@@ -53,3 +53,8 @@ export interface ImageAdd {
   index: number;
   image: string;
 }
+
+export interface Modal {
+  type: string; // Tipo de modal ('image', 'editor', 'text-image', etc.)
+  isOpen: boolean; // Indica si el modal está abierto o cerrado
+}

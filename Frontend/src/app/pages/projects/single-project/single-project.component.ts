@@ -7,6 +7,7 @@ import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { combineLatest, filter, map } from 'rxjs';
 import { ProjectImagesResponse } from '../interfaces/project.interface';
 import { GoogleAuthComponent } from "../../auth/login/google-auth/google-auth.component";
+import { AngularSplitModule } from 'angular-split';
 
 
 @Component({
@@ -14,7 +15,7 @@ import { GoogleAuthComponent } from "../../auth/login/google-auth/google-auth.co
     standalone: true,
     templateUrl: './single-project.component.html',
     styleUrl: './single-project.component.scss',
-    imports: [CommonModule, NavbarComponent, ProjectFormComponent, GoogleAuthComponent]
+    imports: [CommonModule, NavbarComponent, ProjectFormComponent, GoogleAuthComponent,AngularSplitModule]
 })
 export class SingleProjectComponent {
   isEditMode = false;

@@ -1,93 +1,151 @@
-<form [formGroup]="form" (ngSubmit)="submitForm()" class="w-full mx-auto bg-white p-8 lg:w-3/4">
+<form [formGroup]="form"  class="w-full mx-auto bg-white p-8 lg:w-3/4">
   <!-- Botones de acción -->
-
-  <app-button-group
-  (addImageField)="addImageField()"
-  (addTextEditor)="addTextEditor()"
-  (addTextImageField)="addTextImageField()"
-  (submitForm)="submitForm()"
-  ></app-button-group>
-
+  <app-button-group (addImageField)="addImageField()" (addTextEditor)="addTextEditor()"
+    (addTextImageField)="addTextImageField()"></app-button-group>
 
   <!-- Campos dinámicos -->
   <div formArrayName="dynamicFields" class="space-y-6" cdkDropList (cdkDropListDropped)="onDrop($event)">
     <div *ngFor="let field of dynamicFields.controls; let i = index" [formGroupName]="i" class="p-4" cdkDrag
       [cdkDragDisabled]="isEditingText">
+
+      <h2 class="text-lg font-semibold">Sección {{i + 1}}</h2>
+
       <div class="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
+
         <ng-container [ngSwitch]="field.get('type')?.value">
 
-          
+
           <!-- Campo de imagen -->
           <div *ngSwitchCase="'image'" class="w-full md:w-1/2">
-            @if(!dynamicFields.at(i).get('path')?.value){
-              <ng-container>
-                <label class="block text-gray-700 font-bold">Imagen:</label>
-                <input
-                  type="file"
-                  [formControlName]="'value'"
-                  (change)="onFileChange($event, i)"
-                  class="w-full p-3 border border-gray-300 focus:outline-none focus:border-blue-500 transition duration-200"
-                />
+            <div class="flex items-center space-x-4">
+
+              <ng-container *ngIf="dynamicFields.at(i).get('path')?.value; else addImageEdit">
+                <button (click)="openEditModal(i)" class="p-2 bg-blue-500 text-white rounded">Editar</button>
+                <button (click)="removeField(i)" class="p-2 bg-red-500 text-white rounded">Eliminar</button>
               </ng-container>
-            }
-          
-          
-            <div *ngIf="dynamicFields.at(i).get('path')?.value">
-              <label class="font-bold">Previsualización:</label>
-              <img
-                [src]="dynamicFields.at(i).get('path')?.value"
-                alt="Vista previa de imagen"
-                class="max-w-full h-auto"
-              />
-              <button (click)="openModal()" class="mt-2 p-2 bg-blue-500 text-white rounded">Editar</button>
+              <ng-template #addImageEdit>
+                <button (click)="openAddModal(i)" class="p-2 bg-blue-500 text-white rounded">Agregar</button>
+              </ng-template>
+
+              <div *ngIf="dynamicFields.at(i).get('path')?.value">
+
+              </div>
+              <div *ngIf="!dynamicFields.at(i).get('path')?.value">
+
+              </div>
             </div>
+
+            <!-- Modal edición imagen -->
+            <app-modal [isModalOpen]="isEditModalOpen[i]">
+              <button (click)="closeEditModal(i)" class="text-gray-600 hover:text-gray-900">
+                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                  viewBox="0 0 14 14">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                </svg>
+                <span class="sr-only">Cerrar modal</span>
+              </button>
+              <label class="block text-gray-700 font-bold">Editar imagen:</label>
+              <button (click)="updateImageField(i)" class="p-2 bg-blue-500 text-white rounded mt-4">Guardar Cambios</button>
+            </app-modal>
+
+
+            <!-- Modal añadir imagen -->
+            <app-modal [isModalOpen]="isAddModalOpen[i]">
+              <button (click)="closeAddModal(i)" class="text-gray-600 hover:text-gray-900">
+                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                  viewBox="0 0 14 14">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                </svg>
+                <span class="sr-only">Cerrar modal</span>
+              </button>
+              <label class="block text-gray-700 font-bold">Agregar nueva imagen:</label>
+              <input type="file" (change)="onFileChange($event, i)"
+                class="w-full p-3 border border-gray-300 focus:outline-none focus:border-blue-500 transition duration-200" />
+              <button (click)="addNewImage(i)" class="p-2 bg-blue-500 text-white rounded mt-4">Guardar Cambios</button>
+            </app-modal>
           </div>
-          
-          <app-modal [isModalOpen]="isModalOpen" (closeEvent)="closeModal()">
-            <label class="block text-gray-700 font-bold">Subir nueva imagen:</label>
-            <input
-              type="file"
-              (change)="onFileChange($event, i)"
-              class="w-full p-3 border border-gray-300 focus:outline-none focus:border-blue-500 transition duration-200"
-            />
-          </app-modal>
 
           <!-- Editor de texto -->
           <div *ngSwitchCase="'editor'" class="w-full">
-            <label class="block text-gray-700 font-bold">Título:</label>
-            <input id="editorTitle" type="text" [formControlName]="'title'"
-              class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition duration-200 mb-4"
-              placeholder="Ingrese el título" />
-            <label class="block text-gray-700 font-bold">Contenido:</label>
-            <quill-editor [formControlName]="'content'" [modules]="editorModules" (mouseenter)="isEditingText = true"
-              (mouseleave)="isEditingText = false" class="w-full border border-gray-300 rounded-lg"></quill-editor>
+            <div class="flex items-center space-x-4">
+              <ng-container *ngIf="dynamicFields.at(i).get('title')?.value; else editText">
+                <button (click)="openEditModal(i)" class="p-2 bg-blue-500 text-white rounded">Editar</button>
+                <button (click)="removeField(i)" class="p-2 bg-red-500 text-white rounded">Eliminar</button>
+              </ng-container>
+              <ng-template #editText>
+                <button (click)="openAddModal(i)" class="p-2 bg-blue-500 text-white rounded">Agregar</button>
+              </ng-template>
+            </div>
+
+            <!-- Modal para modificar editor de texto -->
+            <app-modal [isModalOpen]="isEditModalOpen[i]" (closeEvent)="closeEditModal(i)">
+
+              <button (click)="closeEditModal(i)" class="text-gray-600 hover:text-gray-900">
+                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                  viewBox="0 0 14 14">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                </svg>
+                <span class="sr-only">Cerrar modal</span>
+              </button>
+
+              <label class="block text-gray-700 font-bold">Título:</label>
+              <input id="editorTitle" type="text" [formControlName]="'title'"
+                class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition duration-200 mb-4"
+                placeholder="Ingrese el título" />
+              <label class="block text-gray-700 font-bold">Contenido:</label>
+              <quill-editor [formControlName]="'content'" [modules]="editorModules" (mouseenter)="isEditingText = true"
+                (mouseleave)="isEditingText = false" class="w-full border border-gray-300 rounded-lg"></quill-editor>
+              <button (click)="updateTextField(i)" class="p-2 bg-blue-500 text-white rounded mt-4">Guardar Cambios</button>
+            </app-modal>
+
+
+            <!-- Modal añadir editor texto -->
+            <app-modal [isModalOpen]="isAddModalOpen[i]" (closeEvent)="closeAddModal(i)">
+              <label class="block text-gray-700 font-bold">Agregar nuevo texto:</label>
+              
+              <button (click)="addNewText(i)" class="p-2 bg-blue-500 text-white rounded mt-4">Guardar Cambios</button>
+            </app-modal>
           </div>
 
           <!-- Campo de texto e imagen -->
           <div *ngSwitchCase="'text-image'" class="w-full md:w-1/2">
+            <div class="flex items-center space-x-4">
+              <ng-container *ngIf="dynamicFields.at(i).get('text')?.value; else editTextImage">
+                <button (click)="openEditModal(i)" class="p-2 bg-blue-500 text-white rounded">Editar</button>
+                <button (click)="removeField(i)" class="p-2 bg-red-500 text-white rounded">Eliminar</button>
+              </ng-container>
+              <ng-template #editTextImage>
+                <button (click)="openAddModal(i)" class="p-2 bg-blue-500 text-white rounded">Agregar</button>
+              </ng-template>
+            </div>
             <div class="flex flex-col space-y-4">
               <label class="block text-gray-700 font-bold">Texto:</label>
               <input [formControlName]="'text'" placeholder="Ingrese texto"
                 class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition duration-200" />
-
               <label class="block text-gray-700 font-bold">Imagen:</label>
               <input [formControlName]="'image'" type="file" (change)="onFileChange($event, i)"
                 class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition duration-200" />
+              
+              
+                <!-- Modal para campo de texto e imagen -->
+              <app-modal [isModalOpen]="isEditModalOpen[i]" (closeEvent)="closeEditModal(i)">
+                <label class="block text-gray-700 font-bold">Editar texto e imagen:</label>
+                <button (click)="updateTextImageField(i)" class="p-2 bg-blue-500 text-white rounded mt-4">Guardar Cambios</button>
+              </app-modal>
+
+
+              <app-modal [isModalOpen]="isAddModalOpen[i]" (closeEvent)="closeAddModal(i)">
+                <label class="block text-gray-700 font-bold">Agregar texto e imagen:</label>
+                <button (click)="addNewTextImage(i)" class="p-2 bg-blue-500 text-white rounded mt-4">Guardar Cambios</button>
+              </app-modal>
             </div>
           </div>
-        </ng-container>
 
-        <!-- Botón para eliminar el campo -->
-        <div class="w-full md:w-auto mt-4 md:mt-0">
-          <button type="button" (click)="removeField(i)"
-            class="text-white bg-red-500 hover:bg-red-600 px-3 py-2 rounded-md transition duration-200">
-            Eliminar
-          </button>
-        </div>
+        </ng-container>
       </div>
     </div>
   </div>
 </form>
-
-
-
