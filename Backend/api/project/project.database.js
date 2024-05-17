@@ -98,10 +98,7 @@ class Project {
       result = false;
     }
 
-    return {
-      success: result,
-      createdImages,
-    };
+    return createdImages
   };
 
   static getProjectTexts = async (projectId) => {

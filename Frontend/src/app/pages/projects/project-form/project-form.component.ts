@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, NgModule } from '@angular/core';
+import { Component} from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { NavbarComponent } from '../../../shared/navbar/navbar.component';
 import { QuillModule } from 'ngx-quill';
@@ -86,7 +86,6 @@ export class ProjectFormComponent {
   }
 
 
-
   openEditModal(index: number) {
     this.isEditModalOpen[index] = true;
   }
@@ -126,7 +125,7 @@ export class ProjectFormComponent {
   }
 
   getImagesObservable(projectId: number) {
-    return this.projectService.getProjectImages(projectId).pipe(
+    return this.projectService.getProjectFormImages(projectId).pipe(
       map((response) => {
         if (response.success) {
           return response.data.images;
@@ -235,7 +234,6 @@ export class ProjectFormComponent {
   removeField(index: number): void {
     const field = this.dynamicFields.at(index);
     const fieldType = field.get('type')?.value;
-    const projTextId = field.get('proj_text_id')?.value;
     const projImgId = field.get('proj_img_id')?.value;
 
     this.dynamicFields.removeAt(index);
@@ -352,38 +350,7 @@ export class ProjectFormComponent {
     }
   }
 
-  /*
-  
-  processEditorFields(): void {
-    for (let i = 0; i < this.dynamicFields.length; i++) {
-      const control = this.dynamicFields.at(i);
-      if (control.get('type')?.value === 'editor') {
-        const title = control.get('title')?.value || '';
-        const content = control.get('content')?.value || '';
-        const projTextId = control.get('proj_text_id')?.value || '';
-  
-        const formData = new FormData();
-        formData.append('title', title);
-        formData.append('content', content);
-        formData.append('projTextId', projTextId);
-  
-        console.log(`Datos del editor ${i + 1} a enviar:`);
-        formData.forEach((value, key) => {
-          console.log(key + ':', value);
-        });
-  
-        this.projectService.addEditor(this.projectId, formData).subscribe(
-          (response) => {
-            console.log(`Editor ${i + 1} enviado con éxito:`, response);
-          },
-          (error) => {
-            console.error(`Error al enviar el editor ${i + 1}:`, error);
-          }
-        );
-      }
-    }
-  } */
-
+ 
   uploadImage(formData: FormData): void {
     this.projectService.addImageToProject(this.projectId, formData).subscribe(
       (response) => {
@@ -403,9 +370,6 @@ export class ProjectFormComponent {
         } else {
           console.warn('Failed to update order:', response);
         }
-      },
-      (error: any) => {
-        console.error('Error while updating image order:', error);
       }
     );
   }
@@ -420,9 +384,6 @@ export class ProjectFormComponent {
           } else {
             console.warn('Failed to update editor order:', response);
           }
-        },
-        (error: any) => {
-          console.error('Error while updating editor order:', error);
         }
       );
   }
@@ -430,7 +391,7 @@ export class ProjectFormComponent {
 
   addNewImage(index: number): void {
     const field = this.dynamicFields.at(index);
-
+  
     if (field.get('type')?.value === 'image') {
       const imageFile = field.get('path')?.value;
   
@@ -440,7 +401,20 @@ export class ProjectFormComponent {
         formData.append('f_type_id', '1');
         formData.append('index', index.toString());
   
-        this.uploadImage(formData);
+        this.projectService.addImageToProject(this.projectId, formData).subscribe(
+          (response) => {
+            console.log('Imagen subida con éxito:', response);
+  
+            if (response.success) {
+              field.get('proj_img_id')?.setValue(response.data.result[0][0]);
+            } else {
+              console.warn('La respuesta del servidor indica que hubo un problema al subir la imagen.');
+            }
+          },
+          (error) => {
+            console.error('Error al subir la imagen:', error);
+          }
+        );
       } else {
         console.warn(`Campo de imagen vacío: image_${index}`);
       }
@@ -451,7 +425,26 @@ export class ProjectFormComponent {
   
 
   addNewText(index: number): void {
-  
+    const field = this.dynamicFields.at(index);
+    if (field.get('type')?.value === 'editor') {
+      const title = field?.get('title')?.value;
+      const content = field?.get('content')?.value;
+
+      const formData = new FormData();
+      formData.append('title', title);
+      formData.append('content', content);
+      
+      this.projectService.addEditor(this.projectId, formData).subscribe(
+        (response) => {
+          console.log(`Editor enviado con éxito:`, response);
+        },
+        (error) => {
+          console.error(`Error al enviar el editor :`, error);
+        }
+      );
+      
+
+    }
   }
 
   addNewTextImage(index: number): void {
@@ -466,6 +459,8 @@ export class ProjectFormComponent {
     const field = (this.form.get('dynamicFields') as FormArray).at(index) as FormGroup;
     const title = field?.get('title')?.value;
     const content = field?.get('content')?.value;
+
+
     
     console.log('Título:', title);
     console.log('Contenido:', content);

@@ -152,33 +152,29 @@ class ProjectController {
 
   static addTextEditor
 
-  static addImageToProject = async(req,res) =>{
+  static addImageToProject = async (req, res) => {
     try {
       const projectId = req.params.id;
       const imageOriginalNames = await ProjectController.uploadImageToDropbox(req);
       const result = await project.addImageToProject(projectId, imageOriginalNames, req.body);
-
-      if (!result) {
-          return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-              success: false,
-              data: {},
-          });
-      }
-
+  
       res.status(StatusCodes.OK).json({
-          success: true,
-          message: 'Images uploaded successfully.',
+        success: true,
+        data:{
+          result:result
+        },
+        message: 'Images uploaded successfully.',
+        
       });
-  } catch (error) {
+    } catch (error) {
       console.error("Error adding images to project:", error);
       res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-          success: false,
-          error: "Error adding images to project",
-          detail: error
+        success: false,
+        error: "Error adding images to project",
+        detail: error
       });
-  }
-
-  }
+    }
+  };
 
   static deleteImage = async (req,res) =>{
     try {
