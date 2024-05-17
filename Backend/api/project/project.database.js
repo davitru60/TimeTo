@@ -1,5 +1,5 @@
 const models = require("../../models");
-const { Sequelize,QueryTypes } = require("sequelize");
+const { Sequelize,QueryTypes, where } = require("sequelize");
 const queries = require('./project.queries');
 
 class Project {
@@ -45,33 +45,44 @@ class Project {
     return project[0]
   }
 
-  static addImageToProjectCreate = async(body) =>{
-    const result = true;
-    try{
-      const image = await models.sequelize.query(queries.addImageToProjectCreate,{
-        replacements: {
-          project_id:body.project_id,
-          path: body.path
-        }
-      })
+  static getProjectTexts = async (projectId) => {
+    try {
+      const texts = await models.ProjectText.findAll({
+        where: {
+          project_id: projectId,
+        },
+        attributes: { exclude: ["id"] },
+      });
 
-      if(image){
-        result=true
-      }else{
-        result = false
-      }
-
-    }catch(error){
-
+      return texts;
+    } catch (error) {
+      console.error("Error getting project texts", error);
+      throw error;
     }
-    return result
-  }
+  };
+
+  static updateProjectTexts = async (body) => {
+    let result = false;
+
+    try {
+      const text = await models.ProjectText.findByPk(body.proj_text_id);
+
+      console.log(body)
+
+      if (text) {
+       await text.update(body)
+  
+        result = true;
+      }
+    } catch (error) {
+      console.error("Error al actualizar el texto:", error);
+    }
+  
+    return result;
+  };
 
   static addImageToProject = async (projectId, imageOriginalName,body) => {
-    let result = true;
     const createdImages = [];
-
-    console.log(body)
 
     try {
       for (const item of imageOriginalName) {
@@ -101,21 +112,29 @@ class Project {
     return createdImages
   };
 
-  static getProjectTexts = async (projectId) => {
-    try {
-      const texts = await models.ProjectText.findAll({
-        where: {
-          project_id: projectId,
-        },
-        attributes: { exclude: ["id"] },
-      });
+  static addImageToProjectCreate = async(body) =>{
+    const result = true;
+    try{
+      const image = await models.sequelize.query(queries.addImageToProjectCreate,{
+        replacements: {
+          project_id:body.project_id,
+          path: body.path
+        }
+      })
 
-      return texts;
-    } catch (error) {
-      console.error("Error getting project texts", error);
-      throw error;
+      if(image){
+        result=true
+      }else{
+        result = false
+      }
+
+    }catch(error){
+
     }
-  };
+    return result
+  }
+
+ 
 
   static updateImageOrder = async (projectId, body) => {
     let result = true;
@@ -154,8 +173,6 @@ class Project {
   static updateEditorOrder = async (projectId, body) => {
     let result = true;
 
-    console.log("Editor body",body)
-
     try {
       const text = await models.ProjectText.findOne({
         where: {
@@ -166,7 +183,7 @@ class Project {
         attributes: { exclude: ["id"] },
       });
 
-      console.log("Imagen",text)
+   
 
       if (text) {
         await models.ProjectText.update(

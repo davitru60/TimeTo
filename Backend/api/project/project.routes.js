@@ -18,6 +18,8 @@ router.post('/projects',[uploadImageMiddleware,handleUploadImage],project.create
 //Project texts
 router.get('/project-texts/:id',project.getProjectTexts)
 //router.post('/project-texts/:id',project.addTextEditor)
+router.put('/project-texts/:id',project.updateProjectTexts)
+
 
 
 //Project images

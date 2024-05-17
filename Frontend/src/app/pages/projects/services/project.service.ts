@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, Subject, interval, startWith, switchMap, tap } from 'rxjs';
 import { endpoints, environment, projectRoutes } from '../../../../environments/environment.development';
-import { ProjectGet, ProjectImagesResponse, ImageOrderPut, EditorOrderPut } from '../interfaces/project.interface';
+import { ProjectGet, ProjectImagesResponse, ImageOrderPut, EditorOrderPut, TextPut } from '../interfaces/project.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +10,7 @@ import { ProjectGet, ProjectImagesResponse, ImageOrderPut, EditorOrderPut } from
 export class ProjectService {
 
   private imageAddedSubject = new Subject<void>();
+  private textEditSubject = new Subject<void> ()
   private imageDeletedSubject = new Subject<void>();
 
   constructor(private http: HttpClient) { }
@@ -46,11 +47,24 @@ export class ProjectService {
   }
 
   getProjectTexts(projectId: number): Observable<any> {
+    return interval(3000).pipe(
+      startWith(0),
+      switchMap(() => this.http.get<any>(environment.baseUrl + endpoints.projectEndpoint + projectRoutes.getProjectTexts + projectId))
+    )
+
+  }
+
+  getProjectFormTexts(projectId: number): Observable<any> {
     return this.http.get<any>(environment.baseUrl + endpoints.projectEndpoint + projectRoutes.getProjectTexts + projectId);
   }
 
+
   addEditor(projectId: number, formData: FormData): Observable<any> {
     return this.http.post<any>(environment.baseUrl + endpoints.projectEndpoint + projectRoutes.addProjectEditor + projectId, formData);
+  }
+
+  updateTextField(projectId:number, text:TextPut){
+    return this.http.put<any>(environment.baseUrl + endpoints.projectEndpoint + projectRoutes.updateProjectTexts + projectId,text)
   }
 
   updateImageOrder(projectId: number, imageOrder: ImageOrderPut): Observable<any> {
@@ -58,7 +72,11 @@ export class ProjectService {
   }
 
   updateEditorOrder(projectId: number, editorOrder: EditorOrderPut): Observable<any> {
-    return this.http.put<any>(environment.baseUrl + endpoints.projectEndpoint + projectRoutes.updateEditorOrder + projectId, editorOrder);
+    return this.http.put<any>(environment.baseUrl + endpoints.projectEndpoint + projectRoutes.updateEditorOrder + projectId, editorOrder).pipe(
+      tap((response) => {
+        this.textEditSubject.next(response)
+      })
+    );
   }
 
   deleteImage(projImgId: number){

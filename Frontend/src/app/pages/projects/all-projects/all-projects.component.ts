@@ -30,7 +30,6 @@ export class AllProjectsComponent {
       .getAllProjects()
       .subscribe((response: ProjectGet) => {
         this.projects = response.data.projects;
-        console.log(this.projects)
       });
   }
 

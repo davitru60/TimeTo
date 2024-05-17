@@ -19,6 +19,7 @@ export const projectRoutes = {
     getProjectImages: '/project-images/',
     createProject: '/projects',
     getProjectTexts: '/project-texts/',
+    updateProjectTexts: '/project-texts/',
     addImageToProject: '/project-images/',
     deleteImage: '/project-images/',
     addProjectEditor: '/project-editor',

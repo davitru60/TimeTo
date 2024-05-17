@@ -25,6 +25,15 @@ export interface ProjectImagesResponse {
   };
 }
 
+export interface TextPut{
+  title:string;
+  text:string;
+  proj_text_id:string,
+  previousIndex: number;
+}
+
+
+
 export interface ImageOrderPut {
   proj_img_id: number;
   previousIndex: number;
@@ -48,13 +57,3 @@ export interface FormFields {
   index?: number;
 }
 
-export interface ImageAdd {
-  f_type_id: number;
-  index: number;
-  image: string;
-}
-
-export interface Modal {
-  type: string; // Tipo de modal ('image', 'editor', 'text-image', etc.)
-  isOpen: boolean; // Indica si el modal está abierto o cerrado
-}

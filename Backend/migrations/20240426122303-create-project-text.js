@@ -16,7 +16,7 @@ module.exports = {
             tableName: "projects"
           },
           key: "project_id",
-          primaryKey:true,
+          primaryKey:false,
           allowNull:false,
 
         }

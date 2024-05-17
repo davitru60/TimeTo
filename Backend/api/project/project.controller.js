@@ -150,7 +150,34 @@ class ProjectController {
     }
   }
 
-  static addTextEditor
+  
+  static updateProjectTexts = async(req,res) =>{
+    try{ 
+      const updatedText = project.updateProjectTexts(req.body)
+  
+      if(updatedText){
+        const response = {
+          success:true,
+          msg: 'Text has been successfully updated',
+        }
+  
+        res.status(StatusCodes.OK).json(response)
+      }else{
+        const response = {
+          success:false,
+          msg:'Failed to update text'
+        }
+        res.status(StatusCodes.BAD_REQUEST).json(response)
+      }
+    }catch(error){
+      console.error('Error updating', error);
+      const response = {
+        success:false,
+        msg:'Failed to update text'
+      }
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(response)
+    }
+  }
 
   static addImageToProject = async (req, res) => {
     try {
