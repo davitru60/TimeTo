@@ -8,6 +8,7 @@ import { combineLatest, filter, map } from 'rxjs';
 import { ProjectImagesResponse } from '../interfaces/project.interface';
 import { GoogleAuthComponent } from "../../auth/login/google-auth/google-auth.component";
 import { AngularSplitModule } from 'angular-split';
+import { AuthService } from '../../auth/services/auth.service';
 
 
 @Component({
@@ -25,6 +26,7 @@ export class SingleProjectComponent {
   
   constructor(
     private projectService: ProjectService,
+    public authService: AuthService,
     private route: ActivatedRoute,
     private router: Router
   ) {

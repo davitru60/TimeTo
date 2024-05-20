@@ -1,29 +1,37 @@
 export const environment = {
     baseUrl: 'http://localhost:9090/api',
     googleClientId: '659893836575-kkd9rsiavi6od7j6pv5ko84usog4gaas.apps.googleusercontent.com'
-}
-
-export const endpoints ={
+  };
+  
+  export const endpoints = {
     authEndpoint: '/auth',
     projectEndpoint: '/projects',
-}
+  };
+  
+  export const authRoutes = {
+    login: environment.baseUrl + endpoints.authEndpoint + '/login',
+    register: environment.baseUrl + endpoints.authEndpoint + '/register',
+    googleSignIn: environment.baseUrl + endpoints.authEndpoint + '/google-sign-in'
+  };
+  
+  export const projectRoutes = {
+    getAllProjects: environment.baseUrl + endpoints.projectEndpoint + '/projects',
+    createProject: environment.baseUrl + endpoints.projectEndpoint + '/projects',
 
-export const authRoutes = {
-    login:'/login',
-    register: '/register',
-    googleSignIn: '/google-sign-in'
-}
+    //Project texts
+    getProjectTexts: environment.baseUrl + endpoints.projectEndpoint + '/project-texts/',
+    addProjectTexts: (projectId: number) => environment.baseUrl + endpoints.projectEndpoint + '/project-texts/' + projectId,
+    updateProjectTexts: (projTextId: number) => environment.baseUrl + endpoints.projectEndpoint + '/project-texts/' + projTextId,
+    deleteProjectTexts: (projTextId: number) => environment.baseUrl + endpoints.projectEndpoint + '/project-texts/' + projTextId,
 
-export const projectRoutes = {
-    getAllProjects: '/projects',
-    getProjectImages: '/project-images/',
-    createProject: '/projects',
-    getProjectTexts: '/project-texts/',
-    updateProjectTexts: '/project-texts/',
-    addImageToProject: '/project-images/',
-    deleteImage: '/project-images/',
-    addProjectEditor: '/project-editor',
-    updateImageOrder: '/project-images-order/',
-    updateEditorOrder: '/project-editor-order/',
 
-}
+    //Project images
+    getProjectImages: environment.baseUrl + endpoints.projectEndpoint + '/project-images/',
+    addImageToProject: (projectId: number) => environment.baseUrl + endpoints.projectEndpoint + '/project-images/' + projectId,
+    deleteImage: (projImgId: number) => environment.baseUrl + endpoints.projectEndpoint + '/project-images/' + projImgId,
+
+    //Drag and drop operations
+    updateImageOrder: (projectId: number) => environment.baseUrl + endpoints.projectEndpoint + '/project-images-order/' + projectId,
+    updateEditorOrder: (projectId: number) => environment.baseUrl + endpoints.projectEndpoint + '/project-editor-order/' + projectId,
+  };
+  

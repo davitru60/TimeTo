@@ -5,6 +5,7 @@ import { animate, style, transition, trigger } from '@angular/animations';
 import { ModalComponent } from "../../modal/modal.component";
 import { AddProjectComponent } from "../../../pages/projects/add-project/add-project.component";
 import { LoaderComponent } from "../../loader/loader.component";
+import { AuthService } from '../../../pages/auth/services/auth.service';
 
 
 @Component({
@@ -33,7 +34,7 @@ export class UserProfileComponent {
   isLoading = false;
   isModalOpen = false;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, public authService:AuthService) {}
 
   openModal() {
     this.isModalOpen = true;
@@ -51,15 +52,20 @@ export class UserProfileComponent {
   logout() {
     this.isLoading = true;
   
-    setTimeout(() => {
-      this.isDropdownOpen = false;
-      this.isLoading = false;
-      this.router.navigate(['/login']); 
-    }, 2000); 
+  
+    if(this.authService.logout()){
+      setTimeout(() => {
+        this.isDropdownOpen = false;
+        this.isLoading = false;
+        this.router.navigate(['']); 
+        window.location.reload()
+      }, 2000); 
+    }
+
+    
   }
   
 
-  
   //Closes profile dropdown clicking on any part of the page
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {

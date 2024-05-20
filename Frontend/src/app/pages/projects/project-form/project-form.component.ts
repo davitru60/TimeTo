@@ -32,6 +32,8 @@ import { editorModules } from '../../../shared/conf/editor-config';
     ModalComponent,
     ButtonGroupComponent,
   ],
+
+  
 })
 export class ProjectFormComponent {
   form: FormGroup;
@@ -179,13 +181,13 @@ export class ProjectFormComponent {
   }
 
   //Project operations
-  
   addNewImage(index: number): void {
-    this.projectOperationsService.addNewImage(this.projectId, index, this.dynamicFields);
+    this.projectOperationsService.addImageToProject(this.projectId, index, this.dynamicFields);
   }
 
   addNewText(index:number):void{
-    this.projectOperationsService.addNewText(this.projectId,index,this.dynamicFields)
+    this.projectOperationsService.addProjectTexts(this.projectId,index,this.dynamicFields)
+    this.closeAddModal(index)
   }
 
   addNewTextImage(index: number): void {
@@ -197,7 +199,7 @@ export class ProjectFormComponent {
   }
 
   updateTextField(index: number): void {
-    this.projectOperationsService.updateTextField(this.projectId, index, this.dynamicFields);
+    this.projectOperationsService.updateProjectTexts(this.projectId, index, this.dynamicFields);
   }
 
   updateTextImageField(index: number): void {

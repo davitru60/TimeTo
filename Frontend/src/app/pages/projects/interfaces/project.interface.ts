@@ -32,6 +32,14 @@ export interface TextPut{
   previousIndex: number;
 }
 
+export interface TextPost{
+  project_id:number,
+  f_type_id:number;
+  title:string;
+  text:string;
+  index:number;
+
+}
 
 
 export interface ImageOrderPut {

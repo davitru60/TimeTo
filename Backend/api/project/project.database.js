@@ -1,5 +1,5 @@
 const models = require("../../models");
-const { Sequelize,QueryTypes, where } = require("sequelize");
+const { Sequelize,QueryTypes} = require("sequelize");
 const queries = require('./project.queries');
 
 class Project {
@@ -61,6 +61,25 @@ class Project {
     }
   };
 
+  static addProjectTexts = async(projectId,body) =>{
+    let result = false;
+
+
+    try{
+      const texts = await models.ProjectText.create({
+        ...body,
+        project_id: projectId,
+      })
+
+      texts ?  result = true : result = false
+
+    }catch(error){
+      console.error("Error al añadir el texto:", error);
+    }
+
+    return result
+  }
+
   static updateProjectTexts = async (body) => {
     let result = false;
 
@@ -79,6 +98,36 @@ class Project {
     }
   
     return result;
+  };
+
+  static deleteProjectTexts = async(projTextId) =>{
+    let result = true;
+  
+    try {
+      const text = await models.ProjectText.findOne({
+        where: {
+          proj_text_id: projTextId,
+        },
+        attributes: { exclude: ["id"] },
+      });
+  
+      if (text) {
+        await models.ProjectText.destroy({
+          where: {
+            proj_text_id: projTextId,
+          },
+        });
+        console.log("Texto eliminado con éxito:", text);
+      } else {
+        console.warn("El texto no se encontró con el ID:", projTextId);
+        result = false;
+      }
+    } catch (error) {
+      console.error("Error al eliminar la imagen:", error);
+      result = false; 
+    }
+  
+    return result; 
   };
 
   static addImageToProject = async (projectId, imageOriginalName,body) => {

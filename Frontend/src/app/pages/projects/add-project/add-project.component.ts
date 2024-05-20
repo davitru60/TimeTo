@@ -11,6 +11,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm} from '@angular/forms';
 import { ProjectService } from '../services/project.service';
 import { LoaderComponent } from "../../../shared/loader/loader.component";
+import { AuthService } from '../../auth/services/auth.service';
 
 @Component({
     selector: 'app-add-project',
@@ -30,16 +31,18 @@ export class AddProjectComponent {
     path: '',
   };
 
-  touch: boolean = false;
   isLoading = false;
 
   @ViewChild('f', { static: false }) projectForm!: NgForm;
 
   constructor(private projectService: ProjectService) {}
 
-  closeModal() {
+  closeModal() {   
+    this.projectForm.resetForm();
+    this.isModalOpen = false;
     this.closeEvent.emit();
   }
+
 
   onFileChange(event: any) {
     const file = event.target.files[0];
@@ -49,7 +52,7 @@ export class AddProjectComponent {
   }
 
   createProject() {
-    this.isLoading = true; // Activar pantalla de carga
+    this.isLoading = true;
     
     const formData = new FormData();
   
@@ -68,7 +71,5 @@ export class AddProjectComponent {
     );
   }
 
-  onReset(form: NgForm) {
-    form.reset();
-  }
+
 }

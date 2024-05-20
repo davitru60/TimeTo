@@ -62,6 +62,8 @@ export class DynamicFieldService {
     const field = dynamicFields.at(index);
     const fieldType = field.get('type')?.value;
     const projImgId = field.get('proj_img_id')?.value;
+    const projTextId = field.get('proj_text_id')?.value;
+
 
     dynamicFields.removeAt(index);
 
@@ -81,6 +83,23 @@ export class DynamicFieldService {
           }
         );
         break;
+
+      case 'editor':
+        this.projectService.deleteProjectTexts(projTextId).subscribe(
+          (response) => {
+            if (response.success) {
+              console.log('Texto eliminado exitosamente.');
+              this.updateFieldIndices(dynamicFields);
+            } else {
+              console.warn('No se pudo eliminar el texto.');
+            }
+          },
+          (error) => {
+            console.error('Error al eliminar la imagen:', error);
+          }
+        );
+
+      break
 
       default:
         console.warn(`Tipo de campo desconocido o no soportado: ${fieldType}`);

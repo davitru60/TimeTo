@@ -30,39 +30,7 @@ class ProjectController {
     }
   };
 
-  static getProjectImages = async (req, res) => {
-    try {
-      
-      const projectId = req.params.id;
 
-      const images = await project.getProjectImages(projectId);  
-      console.log(images)
-  
-      // Mapear las rutas de las imágenes a URL de visualización en Dropbox
-      images.forEach((entry) => {
-        const imagePath = entry.dataValues.path;
-        const imageUrl = `${process.env.REQUEST_URL}${process.env.PORT}${process.env.IMAGE_REQUEST}/show-image?path=${encodeURIComponent(
-          process.env.FOLDER_PATH + "/" + imagePath
-        )}`;
-
-        entry.dataValues.path = imageUrl;
-      });
-  
- 
-      const response = {
-        success: true,
-        data: {
-          images: images,
-        },
-      };
-  
-      res.status(StatusCodes.OK).json(response);
-    } catch (error) {
-      res
-        .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .json({ error: "Error getting Dropbox images" });
-    }
-  };
 
   static showImage = async (req, res) => {
     try {
@@ -150,6 +118,22 @@ class ProjectController {
     }
   }
 
+  static addProjectTexts = async (req,res) =>{
+    try{
+      const projectId = req.params.id;
+      const texts = await project.addProjectTexts(projectId,req.body)
+
+      if(texts){
+        res.status(StatusCodes.OK).json({ success: true, message: 'Project texts added successfully.' });
+      }else{
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false, message: 'Failed to add project texts' });
+      }
+
+
+    }catch(error){
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: "Error adding project texts", detail: error });
+    }
+  }
   
   static updateProjectTexts = async(req,res) =>{
     try{ 
@@ -178,6 +162,73 @@ class ProjectController {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(response)
     }
   }
+
+  static deleteProjectTexts = async(req,res) =>{
+    try{
+      const projTextId = req.params.id;
+
+      const isDeleted = await project.deleteProjectTexts(projTextId);
+
+      if (isDeleted) {
+        const response = {
+          success: true,
+          msg: 'Text has been successfully deleted',
+        };
+        res.status(StatusCodes.OK).json(response); 
+      } else {
+
+        const response = {
+          success: false,
+          msg: 'Failed to delete text',
+        };
+        res.status(StatusCodes.BAD_REQUEST).json(response); 
+      }
+
+
+    }catch(error){
+      console.error('Error deleting', error);
+      const response = {
+        success:false,
+        msg:'Failed to delete text'
+      }
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(response)
+    }
+  }
+
+
+  static getProjectImages = async (req, res) => {
+    try {
+      
+      const projectId = req.params.id;
+
+      const images = await project.getProjectImages(projectId);  
+      console.log(images)
+  
+      // Mapear las rutas de las imágenes a URL de visualización en Dropbox
+      images.forEach((entry) => {
+        const imagePath = entry.dataValues.path;
+        const imageUrl = `${process.env.REQUEST_URL}${process.env.PORT}${process.env.IMAGE_REQUEST}/show-image?path=${encodeURIComponent(
+          process.env.FOLDER_PATH + "/" + imagePath
+        )}`;
+
+        entry.dataValues.path = imageUrl;
+      });
+  
+ 
+      const response = {
+        success: true,
+        data: {
+          images: images,
+        },
+      };
+  
+      res.status(StatusCodes.OK).json(response);
+    } catch (error) {
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .json({ error: "Error getting Dropbox images" });
+    }
+  };
 
   static addImageToProject = async (req, res) => {
     try {
@@ -300,6 +351,8 @@ class ProjectController {
     }
  
   }
+
+ 
 
   static updateEditorOrder = async(req,res) => {
 

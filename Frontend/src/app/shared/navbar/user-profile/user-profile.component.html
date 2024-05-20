@@ -27,10 +27,14 @@
             <div class="text-xs text-slate-400">prueba&#64;gmail.com</div>
         </div>
 
+       
         <div class="flex flex-col">
-            <a (click)="openModal()" class="flex items-center gap-3 rounded-md py-2 px-3 hover:bg-gray-100">
-                <span> &#9679; Añadir proyecto</span>
-            </a>
+            @if(authService.isAdmin()){
+                <a (click)="openModal()" class="flex items-center gap-3 rounded-md py-2 px-3 hover:bg-gray-100">
+                    <span> &#9679; Añadir proyecto</span>
+                </a>
+            }
+          
 
             <a [routerLink]="['/my-account']" class="flex items-center gap-3 rounded-md py-2 px-3 hover:bg-gray-100">
                 <span> &#9679; Mi cuenta</span>

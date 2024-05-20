@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ProjectService } from './project.service';
 import { FormArray } from '@angular/forms';
-import { TextPut } from '../interfaces/project.interface';
+import { TextPost, TextPut } from '../interfaces/project.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +10,7 @@ export class ProjectOperationsService {
 
   constructor(private projectService: ProjectService) { }
 
-  addNewImage(projectId: number, index: number, dynamicFields: FormArray): void {
+  addImageToProject(projectId: number, index: number, dynamicFields: FormArray): void {
     const field = dynamicFields.at(index);
     if (field.get('type')?.value === 'image') {
       const imageFile = field.get('path')?.value;
@@ -43,17 +43,25 @@ export class ProjectOperationsService {
     }
   }
 
-  addNewText(projectId: number, index: number, dynamicFields: FormArray): void {
+  addProjectTexts(projectId: number, index: number, dynamicFields: FormArray): void {
     const field = dynamicFields.at(index);
     if (field.get('type')?.value === 'editor') {
       const title = field?.get('title')?.value;
-      const content = field?.get('content')?.value;
+      const text = field?.get('content')?.value;
+      const proj_text_id = field?.get('proj_text_id')?.value;
 
-      const formData = new FormData();
-      formData.append('title', title);
-      formData.append('content', content);
+
+     
+      const textAdd : TextPost = {
+        project_id: proj_text_id,
+        f_type_id: 2,
+        title: title,
+        text: text,
+        index:index
+        
+      }
       
-      this.projectService.addEditor(projectId, formData).subscribe(
+      this.projectService.addProjectTexts(projectId, textAdd).subscribe(
         (response) => {
           console.log(`Editor enviado con éxito:`, response);
         },
@@ -66,7 +74,7 @@ export class ProjectOperationsService {
     }
   }
 
-  updateTextField(projectId: number, index: number, dynamicFields: FormArray): void {
+  updateProjectTexts(projectId: number, index: number, dynamicFields: FormArray): void {
     const field = dynamicFields.at(index);
     const title = field?.get('title')?.value;
     const text = field?.get('content')?.value;
@@ -79,7 +87,7 @@ export class ProjectOperationsService {
       previousIndex: index
     };
 
-    this.projectService.updateTextField(projectId, textAdd).subscribe(
+    this.projectService.updateProjectTexts(projectId, textAdd).subscribe(
       (response) => {
         console.log('Campo de texto actualizado con éxito:', response);
       },
@@ -89,6 +97,6 @@ export class ProjectOperationsService {
     );
   }
 
-  
+
   
 }

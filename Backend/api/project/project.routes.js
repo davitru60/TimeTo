@@ -11,18 +11,19 @@ router.use(ensureDropboxToken);
 
 //General
 router.get('/projects',project.getAllProjects)
-router.get('/project-images/:id',project.getProjectImages)
 router.get('/show-image',project.showImage)
 router.post('/projects',[uploadImageMiddleware,handleUploadImage],project.createProject)
 
 //Project texts
 router.get('/project-texts/:id',project.getProjectTexts)
-//router.post('/project-texts/:id',project.addTextEditor)
+router.post('/project-texts/:id',project.addProjectTexts)
 router.put('/project-texts/:id',project.updateProjectTexts)
+router.delete('/project-texts/:id',project.deleteProjectTexts)
 
 
 
 //Project images
+router.get('/project-images/:id',project.getProjectImages)
 router.post('/project-images/:id',[uploadImageMiddleware,handleUploadImage],project.addImageToProject)
 router.delete('/project-images/:id',project.deleteImage)
 
@@ -30,9 +31,5 @@ router.delete('/project-images/:id',project.deleteImage)
 //Content order
 router.put('/project-images-order/:id',project.updateImageOrder)
 router.put('/project-editor-order/:id',project.updateEditorOrder)
-
-
-
-
 
 module.exports = router;

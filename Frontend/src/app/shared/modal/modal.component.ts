@@ -1,3 +1,4 @@
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter,Input, Output } from '@angular/core';
 
@@ -6,7 +7,22 @@ import { Component, EventEmitter,Input, Output } from '@angular/core';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './modal.component.html',
-  styleUrl: './modal.component.scss'
+  styleUrl: './modal.component.scss',
+  animations: [
+    trigger('fadeInOut', [
+        transition(':enter', [
+            style({ opacity: 0 }),
+            animate('150ms', style({ opacity: 1 }))
+        ]),
+        transition('* => void', [
+          animate('500ms', 
+            style({ opacity: 0 })         
+          ) 
+        ])
+    ])
+]
+
+
 })
 export class ModalComponent {
   @Input() isModalOpen = false;
@@ -15,6 +31,8 @@ export class ModalComponent {
   close() {
     this.closeEvent.emit();
   }
+
+  
 
 
   
