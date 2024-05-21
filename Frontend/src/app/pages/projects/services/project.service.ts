@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, Subject, interval, startWith, switchMap, tap } from 'rxjs';
 import { endpoints, environment, projectRoutes } from '../../../../environments/environment.development';
-import { ProjectGet, ProjectImagesResponse, ImageOrderPut, EditorOrderPut, TextPut, TextPost } from '../interfaces/project.interface';
+import { ProjectGet, ProjectImagesResponse, ImageOrderPut, EditorOrderPut, TextPut, TextPost, ProjectPut } from '../interfaces/project.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +18,7 @@ export class ProjectService {
 
   
   getAllProjects(): Observable<ProjectGet> {
-    return interval(5000).pipe(
+    return interval(50000).pipe(
       startWith(0),
       switchMap(() => this.http.get<ProjectGet>(projectRoutes.getAllProjects))
     );
@@ -26,6 +26,10 @@ export class ProjectService {
 
   createProject(formData: FormData): Observable<any> {
     return this.http.post<any>(projectRoutes.createProject, formData);
+  }
+
+  updateProject(projectId: number,project:ProjectPut): Observable<any>{
+    return this.http.put<any>(projectRoutes.updateProject(projectId),project)
   }
 
   getProjectTexts(projectId: number): Observable<any> {

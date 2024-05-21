@@ -45,6 +45,24 @@ class Project {
     return project[0]
   }
 
+  static updateProject = async(projectId,body) =>{
+    let result = false;
+
+    try {
+      const project = await models.Project.findByPk(projectId);
+
+      if (project) {
+       await project.update(body)
+  
+       result = true;
+      }
+    } catch (error) {
+      console.error("Error al actualizar el texto:", error);
+    }
+  
+    return result;
+  }
+
   static getProjectTexts = async (projectId) => {
     try {
       const texts = await models.ProjectText.findAll({
@@ -61,9 +79,10 @@ class Project {
     }
   };
 
+  
+
   static addProjectTexts = async(projectId,body) =>{
     let result = false;
-
 
     try{
       const texts = await models.ProjectText.create({

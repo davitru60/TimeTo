@@ -14,10 +14,15 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Project.init({
+    project_id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true 
+    },
     name: DataTypes.STRING,
     description: DataTypes.STRING,
   }, {
     sequelize,
+    timestamps:false,
     tableName: 'projects',
     modelName: 'Project',
   });

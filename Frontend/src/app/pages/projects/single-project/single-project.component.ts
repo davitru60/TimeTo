@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavbarComponent } from '../../../shared/navbar/navbar.component';
+import { NavbarComponent } from '../../../shared/components/layout/navbar/navbar.component';
 import { ProjectFormComponent } from '../project-form/project-form.component';
 import { CommonModule } from '@angular/common';
 import { ProjectService } from '../services/project.service';

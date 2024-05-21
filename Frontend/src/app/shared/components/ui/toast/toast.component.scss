@@ -1,0 +1,92 @@
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+  }
+  
+  .toast {
+    display: flex;
+    align-items: center;
+    background-color: #333;
+    color: #fff;
+    padding: 10px 20px;
+    margin: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+  
+    .progress-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 5px;
+      background-color: rgba(255, 255, 255, 0.5);
+      animation: load 1.5s linear forwards;
+      -webkit-animation: load 1.5s linear forwards;
+}
+  }
+  
+  .toast.success {
+    --tw-bg-opacity: 1;
+    background-color: rgb(14 159 110 / var(--tw-bg-opacity));
+  }
+  
+  .toast.error {
+    --tw-bg-opacity: 1;
+    background-color: rgb(240 82 82 / var(--tw-bg-opacity));
+  }
+  
+  .toast.info {
+    --tw-bg-opacity: 1;
+    background-color: rgb(63 131 248 / var(--tw-bg-opacity));
+  }
+  
+  .toast.warning {
+    --tw-bg-opacity: 1;
+    background-color: rgb(194 120 3 / var(--tw-bg-opacity));
+  }
+  
+  .toast i {
+    margin-right: 10px;
+  }
+  
+  button {
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    margin-left: auto;
+    padding: 10px;
+  }
+  
+  @keyframes fadein {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  @keyframes fadeout {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+  
+  @keyframes load {
+    from {
+      width: 100%;
+    }
+    to {
+      width: 0;
+    }
+  }
+  

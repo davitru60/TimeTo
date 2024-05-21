@@ -1,13 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component} from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { NavbarComponent } from '../../../shared/navbar/navbar.component';
+import { NavbarComponent } from '../../../shared/components/layout/navbar/navbar.component';
 import { QuillModule } from 'ngx-quill';
 import { CdkDragDrop, moveItemInArray, DragDropModule } from '@angular/cdk/drag-drop';
 import { ProjectService } from '../services/project.service';
 import { ActivatedRoute } from '@angular/router';
 import { EditorOrderPut, FormFields, ImageOrderPut, TextPut } from '../interfaces/project.interface';
-import { ModalComponent } from '../../../shared/modal/modal.component';
+import { ModalComponent } from '../../../shared/components/ui/modal/modal.component';
 import { ButtonGroupComponent } from './button-group/button-group.component';
 import { combineLatest, map } from 'rxjs';
 import { ProjectLoaderService } from '../services/project-loader.service';
@@ -111,6 +111,16 @@ export class ProjectFormComponent {
       this.content = event.html;
     }
   }
+
+  disableDrag() {
+    this.isEditingText = true;
+  
+  }
+
+  enableDrag() {
+    this.isEditingText = false;
+  }
+  
 
   loadProjectData(projectId: number): void {
     const imagesObservable = this.projectLoaderService.getImagesObservable(projectId)

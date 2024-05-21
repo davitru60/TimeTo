@@ -13,6 +13,7 @@ router.use(ensureDropboxToken);
 router.get('/projects',project.getAllProjects)
 router.get('/show-image',project.showImage)
 router.post('/projects',[uploadImageMiddleware,handleUploadImage],project.createProject)
+router.put('/projects/:id',project.updateProject)
 
 //Project texts
 router.get('/project-texts/:id',project.getProjectTexts)

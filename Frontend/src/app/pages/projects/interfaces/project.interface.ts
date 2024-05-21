@@ -12,6 +12,12 @@ export interface ProjectGet {
   };
 }
 
+export interface ProjectPost{
+  name: string;
+  description: string;
+  path: string;
+}
+
 export interface ProjectPut{
   name: string;
   description: string;

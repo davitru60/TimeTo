@@ -3,8 +3,8 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { AuthService } from '../../pages/auth/services/auth.service';
-import { UserProfileComponent } from "./user-profile/user-profile.component";
+import { AuthService } from '../../../../pages/auth/services/auth.service';
+import { UserProfileComponent } from './user-profile/user-profile.component';
 
 
 @Component({

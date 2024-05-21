@@ -5,13 +5,13 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { ModalComponent } from '../../../shared/modal/modal.component';
-import { ProjectPut } from '../interfaces/project.interface';
+import { ModalComponent } from '../../../shared/components/ui/modal/modal.component';
+import { ProjectPost} from '../interfaces/project.interface';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm} from '@angular/forms';
 import { ProjectService } from '../services/project.service';
-import { LoaderComponent } from "../../../shared/loader/loader.component";
-import { AuthService } from '../../auth/services/auth.service';
+import { LoaderComponent } from '../../../shared/components/ui/loader/loader.component';
+
 
 @Component({
     selector: 'app-add-project',
@@ -23,9 +23,8 @@ import { AuthService } from '../../auth/services/auth.service';
 export class AddProjectComponent {
   @Input() isModalOpen = false;
   @Output() closeEvent = new EventEmitter<void>();
-  @Output() enviarProyectoEvent = new EventEmitter<void>();
 
-  project: ProjectPut = {
+  project: ProjectPost = {
     name: '',
     description: '',
     path: '',
@@ -62,11 +61,11 @@ export class AddProjectComponent {
   
     this.projectService.createProject(formData).subscribe(
       (response) => {
-        this.isLoading = false; // Desactivar pantalla de carga
+        this.isLoading = false;
         this.closeModal();
       },
       (error) => {
-       
+        this.isLoading = false;
       }
     );
   }

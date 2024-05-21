@@ -1,0 +1,9 @@
+<div class="toast-container" *ngIf="display">
+    <div class="toast" *ngFor="let toast of toasts" [ngClass]="toast.type">
+      <i [ngClass]="getIconClass(toast.type)"></i>
+      <span [innerHTML]="toast.text"></span>
+      <button (click)="closeToast(toast)">✖</button>
+      <div class="progress-bar"></div>
+    </div>
+  </div>
+

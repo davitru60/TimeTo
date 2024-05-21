@@ -84,7 +84,6 @@ class ProjectController {
         path: imageOriginalNames
       }
 
-      console.log(projectImg.path)
       const result = await project.addImageToProjectCreate(projectImg)
 
       if(result){
@@ -96,6 +95,35 @@ class ProjectController {
 
     }catch(error){
 
+    }
+  }
+
+  static updateProject = async(req,res)=>{
+    try{
+      const projectId = req.params.id
+      console.log("body",req.body)
+      const projectUpdate = await project.updateProject(projectId,req.body)
+
+     
+
+    if(projectUpdate){
+        const response = {
+          success:true,
+          msg: 'Project has been successfully updated',
+        }
+
+        res.status(StatusCodes.OK).json(response)
+      } else{
+        const response = {
+          success:false,
+          msg:'Failed to update project'
+        }
+        res.status(StatusCodes.BAD_REQUEST).json(response)
+      } 
+
+
+    }catch(error){
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: "Error editing project", detail: error });
     }
   }
 
