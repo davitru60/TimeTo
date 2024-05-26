@@ -9,6 +9,7 @@ import { ProjectImagesResponse } from '../interfaces/project.interface';
 import { GoogleAuthComponent } from "../../auth/login/google-auth/google-auth.component";
 import { AngularSplitModule } from 'angular-split';
 import { AuthService } from '../../auth/services/auth.service';
+import { ProjectLoaderService } from '../services/project-loader.service';
 
 
 @Component({
@@ -28,6 +29,7 @@ export class SingleProjectComponent {
     private projectService: ProjectService,
     public authService: AuthService,
     private route: ActivatedRoute,
+    private projectLoaderService: ProjectLoaderService,
     private router: Router
   ) {
     this.router.events
@@ -44,13 +46,13 @@ export class SingleProjectComponent {
   }
 
   loadProjectData(projectId: number): void {
-    const imagesObservable = this.getImagesObservable(projectId);
-    const textsObservable = this.getTextsObservable(projectId);
+    const imagesObservable = this.projectLoaderService.getImagesObservable(projectId)
+    const textsObservable = this.projectLoaderService.getTextsObservable(projectId)
 
     // Usa `combineLatest` para esperar ambos resultados
     combineLatest([imagesObservable, textsObservable]).subscribe(
       ([images, texts]) => {
-        this.fields = this.combineAndSortFields(images, texts);
+        this.fields = this.projectLoaderService.combineAndSortFields(images,texts)
       
 
       },
@@ -58,41 +60,5 @@ export class SingleProjectComponent {
         console.error("Error al combinar datos:", error);
       }
     );
-  }
-
-  getImagesObservable(projectId: number) {
-    return this.projectService.getProjectImages(projectId).pipe(
-      map((response:ProjectImagesResponse) => {
-        if (response.success) {
-          return response.data.images;
-          
-        } else {
-          throw new Error("Error al obtener imágenes");
-        }
-      })
-    );
-  }
-
-  getTextsObservable(projectId: number) {
-    return this.projectService.getProjectTexts(projectId).pipe(
-      map((response) => {
-        if (response.success) {
-          return response.data.texts;
-        } else {
-          throw new Error("Error al obtener textos");
-        }
-      })
-    );
-  }
-
-  combineAndSortFields(images: any[], texts: any[]) {
-    if (!Array.isArray(images) || !Array.isArray(texts)) {
-      console.error("Error: Los datos no son arrays.");
-      return [];
-    }
-
-    // Combina y ordena por `index`
-    const combinedFields = [...images, ...texts].sort((a, b) => a.index - b.index);
-    return combinedFields;
   }
 }

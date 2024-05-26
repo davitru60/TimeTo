@@ -1,15 +1,45 @@
 <div class="px-[5vw] py-[3.5vh] mx-auto w-auto">
     <!--Fullscreen menu-->
     <div class="relative flex items-center justify-between lg:justify-between lg:space-x-16">
-        <ul class="items-center hidden space-x-8 lg:flex">
-            <li>
-                <a href="/" aria-label="Our product" title="Our product"
-                    class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400">Contenidos</a>
-            </li>
-            <li>
-                <a routerLink="/projects" aria-label="Product pricing" title="Product pricing"
-                    class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400">Proyectos</a>
-            </li>
+        <ul class="items-center hidden lg:flex">
+
+            <div class="group relative cursor-pointer py-2">
+                <div class="bg-white mr-8">
+                    <a  routerLink="" aria-label="Home" title="Home"
+                        class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400">
+                        Inicio
+                    </a>
+                </div>
+
+            </div>
+            
+
+            <div class="group relative cursor-pointer py-2">
+                <div class="bg-white">
+                    <a aria-label="Our product" title="Our product"
+                        class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400">
+                        Proyectos
+                    </a>
+                </div>
+
+                <div
+                    class="invisible absolute z-50 flex w-28 flex-col bg-black py-1 px-4 text-gray-800 shadow-xl group-hover:visible">
+
+                    <a routerLink="/projects" aria-label="Product pricing" title="Product pricing"
+                        class="my-2  border-gray-100 py-1 font-normal text-white hover:text-gray-500 md:mx-2">
+                        Todos
+                    </a>
+
+                    <a routerLink="/projects-preferences" aria-label="Product pricing" title="Product pricing"
+                        class="my-2 border-gray-100 py-1 font-normal text-white hover:text-gray-500 md:mx-2">
+                        Para tí
+                    </a>
+                </div>
+            </div>
+
+           
+
+           
         </ul>
         <div class="flex items-center justify-between w-full lg:w-auto">
             <a href="/" aria-label="Company" title="Company" class="inline-flex items-center">
@@ -35,11 +65,34 @@
                             d="M1 1h15M1 7h15M1 13h15" />
                     </svg>
                 </button>
-              
+
             </div>
         </div>
 
         <ul class="items-center lg:space-x-8 lg:flex sm:block">
+            <div class="group relative cursor-pointer py-2 sm:hidden lg:inline-block">
+                <div class="bg-white">
+                    <a aria-label="Our product" title="Our product"
+                        class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400">
+                        Aprende
+                    </a>
+                </div>
+
+                <div
+                    class="invisible absolute z-50 flex w-auto flex-col bg-black py-1 px-4 text-gray-800 group-hover:visible">
+                    <a routerLink="" aria-label="Product pricing" title="Product pricing"
+                        class="my-2 border-gray-100 py-1 font-normal text-white hover:text-gray-500 md:mx-2">
+                        Recursos
+                    </a>
+
+                    <a routerLink="" aria-label="Product pricing" title="Product pricing"
+                        class="my-2 border-gray-100 py-1 font-normal text-white hover:text-gray-500 md:mx-2">
+                        Asesorías
+                    </a>
+                </div>
+            </div>
+            
+
             <li>
                 <a href="/" aria-label="About us" title="About us"
                     class="hidden font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400 sm:hidden lg:inline-block">Sobre
@@ -53,7 +106,7 @@
             </li>
 
             }@else {
-                <app-user-profile></app-user-profile>
+            <app-user-profile></app-user-profile>
             }
         </ul>
     </div>
@@ -104,4 +157,3 @@
         </div>
     </div>
 </div>
-

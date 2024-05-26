@@ -71,3 +71,15 @@ export interface FormFields {
   index?: number;
 }
 
+
+export interface Category{
+  category_id:number,
+  name:string
+}
+
+export interface CategoryGet {
+  success: boolean;
+  data: {
+    categories: Category[];
+  };
+}

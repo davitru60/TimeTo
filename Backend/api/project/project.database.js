@@ -1,14 +1,13 @@
 const models = require("../../models");
-const { Sequelize,QueryTypes} = require("sequelize");
-const queries = require('./project.queries');
+const { Sequelize, QueryTypes } = require("sequelize");
+const queries = require("./project.queries");
 
 class Project {
   static getAllProjects = async () => {
     try {
-      const projects = await models.sequelize.query(
-        queries.getAllProjects,
-        { type: Sequelize.QueryTypes.SELECT }
-      );
+      const projects = await models.sequelize.query(queries.getAllProjects, {
+        type: Sequelize.QueryTypes.SELECT,
+      });
       return projects;
     } catch (error) {
       console.error(error);
@@ -32,35 +31,136 @@ class Project {
     }
   };
 
-
-  static createProject = async(body) =>{
-    const project = await models.sequelize.query(queries.createProject,{
+  static createProject = async (body) => {
+    const project = await models.sequelize.query(queries.createProject, {
       replacements: {
         name: body.name,
-        description: body.description
+        description: body.description,
       },
-      type:QueryTypes.INSERT
-    })
+      type: QueryTypes.INSERT,
+    });
 
-    return project[0]
-  }
+    return project[0];
+  };
 
-  static updateProject = async(projectId,body) =>{
+  static updateProject = async (projectId, body) => {
     let result = false;
 
     try {
       const project = await models.Project.findByPk(projectId);
 
       if (project) {
-       await project.update(body)
-  
-       result = true;
+        await project.update(body);
+
+        result = true;
       }
     } catch (error) {
       console.error("Error al actualizar el texto:", error);
     }
-  
+
     return result;
+  };
+
+  static deleteProject = async (projectId) => {
+    let result = false;
+    try {
+      const project = await models.Project.findByPk(projectId);
+      console.log("PROJECT", project);
+
+      const projectHomeImgs = await models.HomeProjectImage.findAll({
+        where: {
+          project_id: projectId,
+        },
+      });
+
+      console.log("Projimag", projectHomeImgs);
+
+      if (project && projectHomeImgs.length > 0) {
+        for (const projectHomeImg of projectHomeImgs) {
+          await projectHomeImg.destroy();
+        }
+        await project.destroy();
+
+        result = true;
+      } else if (project) {
+        await project.destroy();
+        result = true;
+      }
+    } catch (error) {
+      console.error("Error deleting project:", error);
+    }
+
+    return result;
+  };
+
+  static getProjectCategories = async() =>{
+    try {
+      const categories = await models.Category.findAll()
+      return categories;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  static createProjectCategory = async(body) =>{
+    let result = false
+    try{
+      console.log(body)
+      const newCategory = await models.Category.create({
+        name: body.name,
+      });
+
+      if (newCategory) {
+        result = true;
+      }
+
+
+    }catch(error){
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: "Error adding category", detail: error });
+    }
+
+    return result;
+  }
+
+  static updateProjectCategory = async(categoryId,body) =>{
+    let result = false
+    try{
+      const category = await models.Category.findByPk(categoryId)
+
+      if(category){
+        result=true
+        await category.update(body)
+      }else{
+        result=false
+      }
+
+    }catch(error){
+
+    }
+
+    return result
+  }
+
+  static deleteProjectCategory = async(categoryId) =>{
+    let result = false
+
+    try{
+      const category = await models.Category.findByPk(categoryId)
+
+      if(category){
+        result=true
+        await category.destroy()
+      }else{
+        result=false
+      }
+
+    }catch(error){
+
+    }
+
+    return result
+
   }
 
   static getProjectTexts = async (projectId) => {
@@ -79,25 +179,22 @@ class Project {
     }
   };
 
-  
-
-  static addProjectTexts = async(projectId,body) =>{
+  static addProjectTexts = async (projectId, body) => {
     let result = false;
 
-    try{
+    try {
       const texts = await models.ProjectText.create({
         ...body,
         project_id: projectId,
-      })
+      });
 
-      texts ?  result = true : result = false
-
-    }catch(error){
+      texts ? (result = true) : (result = false);
+    } catch (error) {
       console.error("Error al añadir el texto:", error);
     }
 
-    return result
-  }
+    return result;
+  };
 
   static updateProjectTexts = async (body) => {
     let result = false;
@@ -105,23 +202,21 @@ class Project {
     try {
       const text = await models.ProjectText.findByPk(body.proj_text_id);
 
-      console.log(body)
-
       if (text) {
-       await text.update(body)
-  
+        await text.update(body);
+
         result = true;
       }
     } catch (error) {
       console.error("Error al actualizar el texto:", error);
     }
-  
+
     return result;
   };
 
-  static deleteProjectTexts = async(projTextId) =>{
+  static deleteProjectTexts = async (projTextId) => {
     let result = true;
-  
+
     try {
       const text = await models.ProjectText.findOne({
         where: {
@@ -129,7 +224,7 @@ class Project {
         },
         attributes: { exclude: ["id"] },
       });
-  
+
       if (text) {
         await models.ProjectText.destroy({
           where: {
@@ -143,27 +238,26 @@ class Project {
       }
     } catch (error) {
       console.error("Error al eliminar la imagen:", error);
-      result = false; 
+      result = false;
     }
-  
-    return result; 
+
+    return result;
   };
 
-  static addImageToProject = async (projectId, imageOriginalName,body) => {
+  static addImageToProject = async (projectId, imageOriginalName, body) => {
     const createdImages = [];
 
     try {
       for (const item of imageOriginalName) {
-        const image = await models.sequelize.query(queries.addImageToProject,{
-          replacements:{
-            project_id:projectId,
+        const image = await models.sequelize.query(queries.addImageToProject, {
+          replacements: {
+            project_id: projectId,
             f_type_id: body.f_type_id,
             path: item,
-            index: body.index
-            
+            index: body.index,
           },
           type: QueryTypes.INSERT,
-        })
+        });
 
         if (!image) {
           result = false;
@@ -177,32 +271,30 @@ class Project {
       result = false;
     }
 
-    return createdImages
+    return createdImages;
   };
 
-  static addImageToProjectCreate = async(body) =>{
+  static addImageToProjectCreate = async (body) => {
     const result = true;
-    try{
-      const image = await models.sequelize.query(queries.addImageToProjectCreate,{
-        replacements: {
-          project_id:body.project_id,
-          path: body.path
+    try {
+      const image = await models.sequelize.query(
+        queries.addImageToProjectCreate,
+        {
+          replacements: {
+            project_id: body.project_id,
+            path: body.path,
+          },
         }
-      })
+      );
 
-      if(image){
-        result=true
-      }else{
-        result = false
+      if (image) {
+        result = true;
+      } else {
+        result = false;
       }
-
-    }catch(error){
-
-    }
-    return result
-  }
-
- 
+    } catch (error) {}
+    return result;
+  };
 
   static updateImageOrder = async (projectId, body) => {
     let result = true;
@@ -251,8 +343,6 @@ class Project {
         attributes: { exclude: ["id"] },
       });
 
-   
-
       if (text) {
         await models.ProjectText.update(
           { index: body.newIndex },
@@ -276,7 +366,7 @@ class Project {
 
   static deleteImage = async (projImgId) => {
     let result = true;
-  
+
     try {
       const image = await models.ProjectImage.findOne({
         where: {
@@ -284,7 +374,7 @@ class Project {
         },
         attributes: { exclude: ["id"] },
       });
-  
+
       if (image) {
         await models.ProjectImage.destroy({
           where: {
@@ -298,10 +388,10 @@ class Project {
       }
     } catch (error) {
       console.error("Error al eliminar la imagen:", error);
-      result = false; 
+      result = false;
     }
-  
-    return result; 
+
+    return result;
   };
 }
 

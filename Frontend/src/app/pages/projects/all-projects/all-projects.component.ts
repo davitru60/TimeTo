@@ -11,6 +11,7 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { ToastService } from '../../../shared/components/ui/toast/toast.service';
 import { ToastComponent } from '../../../shared/components/ui/toast/toast.component';
 import { LoaderComponent } from "../../../shared/components/ui/loader/loader.component";
+import { AuthService } from '../../auth/services/auth.service';
 
 
 
@@ -41,7 +42,12 @@ export class AllProjectsComponent {
 
   @ViewChild('f', { static: false }) projectForm!: NgForm;
 
-  constructor(private projectService: ProjectService, private toastService: ToastService) {
+  constructor(
+    private projectService: ProjectService, 
+    private toastService: ToastService,
+    public authService: AuthService
+  
+  ) {
     this.getAllProjects();
   }
 
@@ -114,6 +120,21 @@ export class AllProjectsComponent {
         }
       );
     }
+  }
+
+  deleteProject(projectId: number) {
+    this.projectService.deleteProject(projectId).subscribe(
+      (response: any) => {
+        this.showInfoToast('Eliminación del proyecto en progreso...');
+        setTimeout(() => {
+          this.showSuccessToast('Proyecto eliminado exitosamente');
+          this.getAllProjects(); // Refrescar la lista de proyectos después de la eliminación
+        }, 2000);
+      },
+      (error: any) => {
+        this.showErrorToast(`Error al eliminar el proyecto: ${error.message || error}`);
+      }
+    );
   }
 
   

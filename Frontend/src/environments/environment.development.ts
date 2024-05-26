@@ -18,6 +18,10 @@ export const environment = {
     getAllProjects: environment.baseUrl + endpoints.projectEndpoint + '/projects',
     createProject: environment.baseUrl + endpoints.projectEndpoint + '/projects',
     updateProject:(projectId:number) => environment.baseUrl + endpoints.projectEndpoint + '/projects/' + projectId,
+    deleteProject: (projectId:number) => environment.baseUrl + endpoints.projectEndpoint + '/projects/' + projectId,
+
+    //Project categories
+    getProjectCategories: environment.baseUrl + endpoints.projectEndpoint + '/project-category',
 
     //Project texts
     getProjectTexts: environment.baseUrl + endpoints.projectEndpoint + '/project-texts/',

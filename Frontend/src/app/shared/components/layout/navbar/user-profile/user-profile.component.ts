@@ -32,17 +32,8 @@ import { AuthService } from '../../../../../pages/auth/services/auth.service';
 export class UserProfileComponent {
   isDropdownOpen = false;
   isLoading = false;
-  isModalOpen = false;
 
   constructor(private router: Router, public authService:AuthService) {}
-
-  openModal() {
-    this.isModalOpen = true;
-  }
-
-  closeModal() {
-    this.isModalOpen = false;
-  }
 
 
   toggleDropdown() {

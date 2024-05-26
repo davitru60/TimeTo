@@ -15,25 +15,23 @@ import { DynamicFieldService } from '../services/dynamicfield.service';
 import { ProjectOperationsService } from '../services/project-operations.service';
 import { OnDropService } from '../services/on-drop.service';
 import { editorModules } from '../../../shared/conf/editor-config';
+import { ToastComponent } from "../../../shared/components/ui/toast/toast.component";
 
 @Component({
-  selector: 'app-project-form',
-  standalone: true,
-  templateUrl: './project-form.component.html',
-  styleUrl: './project-form.component.scss',
-  imports: [
-
-
-  CommonModule,
-    ReactiveFormsModule,
-    NavbarComponent,
-    QuillModule,
-    DragDropModule,
-    ModalComponent,
-    ButtonGroupComponent,
-  ],
-
-  
+    selector: 'app-project-form',
+    standalone: true,
+    templateUrl: './project-form.component.html',
+    styleUrl: './project-form.component.scss',
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        NavbarComponent,
+        QuillModule,
+        DragDropModule,
+        ModalComponent,
+        ButtonGroupComponent,
+        ToastComponent
+    ]
 })
 export class ProjectFormComponent {
   form: FormGroup;
@@ -71,7 +69,6 @@ export class ProjectFormComponent {
   constructor(
     private fb: FormBuilder,
     private onDropService : OnDropService,
-    private projectService: ProjectService,
     private projectLoaderService : ProjectLoaderService,
     private dynamicFieldService : DynamicFieldService,
     private projectOperationsService: ProjectOperationsService, 
@@ -210,6 +207,7 @@ export class ProjectFormComponent {
 
   updateTextField(index: number): void {
     this.projectOperationsService.updateProjectTexts(this.projectId, index, this.dynamicFields);
+    this.closeEditModal(index)
   }
 
   updateTextImageField(index: number): void {

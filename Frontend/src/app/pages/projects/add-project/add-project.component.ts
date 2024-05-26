@@ -11,6 +11,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm} from '@angular/forms';
 import { ProjectService } from '../services/project.service';
 import { LoaderComponent } from '../../../shared/components/ui/loader/loader.component';
+import { ToastService } from '../../../shared/components/ui/toast/toast.service';
 
 
 @Component({
@@ -34,7 +35,7 @@ export class AddProjectComponent {
 
   @ViewChild('f', { static: false }) projectForm!: NgForm;
 
-  constructor(private projectService: ProjectService) {}
+  constructor(private projectService: ProjectService,private toastService:ToastService) {}
 
   closeModal() {   
     this.projectForm.resetForm();
@@ -50,6 +51,10 @@ export class AddProjectComponent {
     }
   }
 
+  showSuccessToast(message: string) {
+    this.toastService.showToast({ text: message, type: 'success' });
+  }
+
   createProject() {
     this.isLoading = true;
     
@@ -61,11 +66,12 @@ export class AddProjectComponent {
   
     this.projectService.createProject(formData).subscribe(
       (response) => {
-        this.isLoading = false;
+        //this.isLoading = false;
+        this.showSuccessToast('Proyecto creado exitosamente');
         this.closeModal();
       },
       (error) => {
-        this.isLoading = false;
+        //this.isLoading = false;
       }
     );
   }

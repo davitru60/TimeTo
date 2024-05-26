@@ -1,9 +1,9 @@
 
 <app-modal [isModalOpen]="isModalOpen ">
   
-@if(isLoading){
+<!-- @if(isLoading){
   <app-loader></app-loader>
-}
+} -->
   
   <form
     name="form"
@@ -13,7 +13,7 @@
   >
     <div class="flex justify-between items-center mb-4">
       <h2 class="text-lg font-bold text-gray-700">Añadir proyecto</h2>
-      <button  (click)="closeModal()" class="text-gray-600 hover:text-gray-900">
+      <button type="reset" (click)="closeModal()" class="text-gray-600 hover:text-gray-900">
         <svg
           class="w-3 h-3"
           aria-hidden="true"

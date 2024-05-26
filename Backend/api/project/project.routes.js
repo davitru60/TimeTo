@@ -8,19 +8,24 @@ const { uploadImageMiddleware,handleUploadImage} = require('../../middlewares/up
 // Usar el middleware antes de las rutas que necesiten acceso a Dropbox
 router.use(ensureDropboxToken);
 
-
 //General
 router.get('/projects',project.getAllProjects)
 router.get('/show-image',project.showImage)
 router.post('/projects',[uploadImageMiddleware,handleUploadImage],project.createProject)
 router.put('/projects/:id',project.updateProject)
+router.delete('/projects/:id',project.deleteProject)
+
+//Project categories
+router.get('/project-category',project.getProjectCategories)
+router.post('/project-category',project.createProjectCategory)
+router.put('/project-category/:id',project.updateProjectCategory)
+router.delete('/project-category/:id',project.deleteProjectCategory)
 
 //Project texts
 router.get('/project-texts/:id',project.getProjectTexts)
 router.post('/project-texts/:id',project.addProjectTexts)
 router.put('/project-texts/:id',project.updateProjectTexts)
 router.delete('/project-texts/:id',project.deleteProjectTexts)
-
 
 
 //Project images

@@ -1,17 +1,16 @@
 const { StatusCodes } = require("http-status-codes");
 const project = require("./project.database");
 
-
 class ProjectController {
-  
   static getAllProjects = async (req, res) => {
     try {
-      
       const projects = await project.getAllProjects();
 
       for (let i = 0; i < projects.length; i++) {
         if (projects[i].path != null) {
-          projects[i].path = `${process.env.REQUEST_URL}${process.env.PORT}${process.env.IMAGE_REQUEST}/show-image?path=${encodeURIComponent(
+          projects[i].path = `${process.env.REQUEST_URL}${process.env.PORT}${
+            process.env.IMAGE_REQUEST
+          }/show-image?path=${encodeURIComponent(
             process.env.FOLDER_PATH + "/" + projects[i].path
           )}`;
         }
@@ -24,13 +23,10 @@ class ProjectController {
         },
       };
       res.status(StatusCodes.OK).json(response);
-      
     } catch (error) {
       throw new Error("Error getting projects");
     }
   };
-
-
 
   static showImage = async (req, res) => {
     try {
@@ -41,7 +37,7 @@ class ProjectController {
           message: "Dropbox client not found. Authentication required.",
         });
       }
-  
+
       const imagePath = req.query.path;
       if (!imagePath) {
         return res.status(StatusCodes.BAD_REQUEST).json({
@@ -49,19 +45,18 @@ class ProjectController {
           message: "No image path provided.",
         });
       }
-  
+
       const response = await dbx.filesDownload({ path: imagePath });
-  
+
       if (!response.result.fileBinary) {
         return res.status(StatusCodes.NOT_FOUND).json({
           success: false,
           message: "Image not found in Dropbox.",
         });
       }
-  
+
       res.set("Content-Type", response.result.fileBinary[".tag"]);
       res.send(response.result.fileBinary);
-
     } catch (error) {
       console.error("Error in showImage:", error);
       res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -72,68 +67,186 @@ class ProjectController {
     }
   };
 
-
-
-  static createProject = async(req,res)=>{
-    try{
-      const projectId = await project.createProject(req.body)
-      const imageOriginalNames = await ProjectController.uploadImageToDropbox(req);
+  static createProject = async (req, res) => {
+    try {
+      const projectId = await project.createProject(req.body);
+      const imageOriginalNames = await ProjectController.uploadImageToDropbox(
+        req
+      );
 
       const projectImg = {
-        project_id:projectId,
-        path: imageOriginalNames
+        project_id: projectId,
+        path: imageOriginalNames,
+      };
+
+      const result = await project.addImageToProjectCreate(projectImg);
+
+      if (result) {
+        res
+          .status(StatusCodes.OK)
+          .json({ success: true, message: "Project created successfully." });
+      } else {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+          success: false,
+          message: "Failed to add images to the project",
+        });
       }
+    } catch (error) {}
+  };
 
-      const result = await project.addImageToProjectCreate(projectImg)
+  static updateProject = async (req, res) => {
+    try {
+      const projectId = req.params.id;
+      const projectUpdate = await project.updateProject(projectId, req.body);
 
-      if(result){
-        res.status(StatusCodes.OK).json({ success: true, message: 'Project created successfully.' });
+      if (projectUpdate) {
+        const response = {
+          success: true,
+          msg: "Project has been successfully updated",
+        };
+
+        res.status(StatusCodes.OK).json(response);
+      } else {
+        const response = {
+          success: false,
+          msg: "Failed to update project",
+        };
+        res.status(StatusCodes.BAD_REQUEST).json(response);
+      }
+    } catch (error) {
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .json({ error: "Error editing project", detail: error });
+    }
+  };
+
+  static deleteProject = async (req, res) => {
+    try {
+      const projectId = req.params.id;
+      const projectDelete = await project.deleteProject(projectId);
+
+      if (projectDelete) {
+        const response = {
+          success: true,
+          msg: "Project has been successfully deleted",
+        };
+
+        res.status(StatusCodes.OK).json(response);
+      } else {
+        const response = {
+          success: false,
+          msg: "Failed to delete project",
+        };
+        res.status(StatusCodes.BAD_REQUEST).json(response);
+      }
+    } catch {
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .json({ error: "Error deleting project", detail: error });
+    }
+  };
+
+  static getProjectCategories = async (req, res) => {
+    try {
+      const categories = await project.getProjectCategories();
+
+      const response = {
+        success: true,
+        data: {
+          categories: categories,
+        },
+      };
+      res.status(StatusCodes.OK).json(response);
+    } catch (error) {
+      throw new Error("Error getting categories");
+    }
+  };
+
+  static createProjectCategory = async (req, res) => {
+    try {
+      const category = await project.createProjectCategory(req.body);
+
+      if (category) {
+        const response = {
+          success: true,
+          msg: "Project has been successfully created",
+        };
+
+        res.status(StatusCodes.OK).json(response);
+      } else {
+        const response = {
+          success: false,
+          msg: "Failed to create project",
+        };
+        res.status(StatusCodes.BAD_REQUEST).json(response);
+      }
+    } catch (error) {
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .json({ error: "Error adding category", detail: error });
+    }
+  };
+
+  static updateProjectCategory = async (req, res) => {
+    try {
+      const categoryId = req.params.id
+      const categoryUpdate = await project.updateProjectCategory(categoryId,req.body)
+
+      if (categoryUpdate) {
+        const response = {
+          success: true,
+          msg: "Category has been successfully updated",
+        };
+        res.status(StatusCodes.OK).json(response);
       }else{
-          res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false, message: 'Failed to add images to the project' });
+        const response = {
+          success: false,
+          msg: "Failed to update category",
+        };
+        res.status(StatusCodes.BAD_REQUEST).json(response);
+      }
+
+    } catch (error) {
+      res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: "Error upadting category", detail: error });
+    }
+  };
+
+  static deleteProjectCategory = async(req,res)=>{
+    try {
+      const categoryId = req.params.id
+      const categoryDelete = await project.deleteProjectCategory(categoryId)
+
+      if(categoryDelete){
+        const response = {
+          success: true,
+          msg: "Category has been successfully deleted",
+        };
+
+        res.status(StatusCodes.OK).json(response);
+      }else{
+        const response = {
+          success: false,
+          msg: "Failed to delete category",
+        };
+        res.status(StatusCodes.BAD_REQUEST).json(response);
       }
 
 
     }catch(error){
-
+      res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: "Error deleting category", detail: error });
     }
   }
 
-  static updateProject = async(req,res)=>{
-    try{
-      const projectId = req.params.id
-      console.log("body",req.body)
-      const projectUpdate = await project.updateProject(projectId,req.body)
-
-     
-
-    if(projectUpdate){
-        const response = {
-          success:true,
-          msg: 'Project has been successfully updated',
-        }
-
-        res.status(StatusCodes.OK).json(response)
-      } else{
-        const response = {
-          success:false,
-          msg:'Failed to update project'
-        }
-        res.status(StatusCodes.BAD_REQUEST).json(response)
-      } 
-
-
-    }catch(error){
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: "Error editing project", detail: error });
-    }
-  }
-
-  static getProjectTexts = async(req,res)=>{
-
-    try{
+  static getProjectTexts = async (req, res) => {
+    try {
       const projectId = req.params.id;
 
       const texts = await project.getProjectTexts(projectId);
-  
+
       const response = {
         success: true,
         data: {
@@ -141,58 +254,65 @@ class ProjectController {
         },
       };
       res.status(StatusCodes.OK).json(response);
-    }catch(error){
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: "Error getting project texts", detail: error });
+    } catch (error) {
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .json({ error: "Error getting project texts", detail: error });
     }
-  }
+  };
 
-  static addProjectTexts = async (req,res) =>{
-    try{
+  static addProjectTexts = async (req, res) => {
+    try {
       const projectId = req.params.id;
-      const texts = await project.addProjectTexts(projectId,req.body)
+      const texts = await project.addProjectTexts(projectId, req.body);
 
-      if(texts){
-        res.status(StatusCodes.OK).json({ success: true, message: 'Project texts added successfully.' });
-      }else{
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false, message: 'Failed to add project texts' });
+      if (texts) {
+        res.status(StatusCodes.OK).json({
+          success: true,
+          message: "Project texts added successfully.",
+        });
+      } else {
+        res
+          .status(StatusCodes.INTERNAL_SERVER_ERROR)
+          .json({ success: false, message: "Failed to add project texts" });
       }
-
-
-    }catch(error){
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: "Error adding project texts", detail: error });
+    } catch (error) {
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .json({ error: "Error adding project texts", detail: error });
     }
-  }
-  
-  static updateProjectTexts = async(req,res) =>{
-    try{ 
-      const updatedText = project.updateProjectTexts(req.body)
-  
-      if(updatedText){
+  };
+
+  static updateProjectTexts = async (req, res) => {
+    try {
+      const updatedText = project.updateProjectTexts(req.body);
+
+      if (updatedText) {
         const response = {
-          success:true,
-          msg: 'Text has been successfully updated',
-        }
-  
-        res.status(StatusCodes.OK).json(response)
-      }else{
+          success: true,
+          msg: "Text has been successfully updated",
+        };
+
+        res.status(StatusCodes.OK).json(response);
+      } else {
         const response = {
-          success:false,
-          msg:'Failed to update text'
-        }
-        res.status(StatusCodes.BAD_REQUEST).json(response)
+          success: false,
+          msg: "Failed to update text",
+        };
+        res.status(StatusCodes.BAD_REQUEST).json(response);
       }
-    }catch(error){
-      console.error('Error updating', error);
+    } catch (error) {
+      console.error("Error updating", error);
       const response = {
-        success:false,
-        msg:'Failed to update text'
-      }
-      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(response)
+        success: false,
+        msg: "Failed to update text",
+      };
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(response);
     }
-  }
+  };
 
-  static deleteProjectTexts = async(req,res) =>{
-    try{
+  static deleteProjectTexts = async (req, res) => {
+    try {
       const projTextId = req.params.id;
 
       const isDeleted = await project.deleteProjectTexts(projTextId);
@@ -200,56 +320,52 @@ class ProjectController {
       if (isDeleted) {
         const response = {
           success: true,
-          msg: 'Text has been successfully deleted',
+          msg: "Text has been successfully deleted",
         };
-        res.status(StatusCodes.OK).json(response); 
+        res.status(StatusCodes.OK).json(response);
       } else {
-
         const response = {
           success: false,
-          msg: 'Failed to delete text',
+          msg: "Failed to delete text",
         };
-        res.status(StatusCodes.BAD_REQUEST).json(response); 
+        res.status(StatusCodes.BAD_REQUEST).json(response);
       }
-
-
-    }catch(error){
-      console.error('Error deleting', error);
+    } catch (error) {
+      console.error("Error deleting", error);
       const response = {
-        success:false,
-        msg:'Failed to delete text'
-      }
-      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(response)
+        success: false,
+        msg: "Failed to delete text",
+      };
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(response);
     }
-  }
-
+  };
 
   static getProjectImages = async (req, res) => {
     try {
-      
       const projectId = req.params.id;
 
-      const images = await project.getProjectImages(projectId);  
-      console.log(images)
-  
+      const images = await project.getProjectImages(projectId);
+      console.log(images);
+
       // Mapear las rutas de las imágenes a URL de visualización en Dropbox
       images.forEach((entry) => {
         const imagePath = entry.dataValues.path;
-        const imageUrl = `${process.env.REQUEST_URL}${process.env.PORT}${process.env.IMAGE_REQUEST}/show-image?path=${encodeURIComponent(
+        const imageUrl = `${process.env.REQUEST_URL}${process.env.PORT}${
+          process.env.IMAGE_REQUEST
+        }/show-image?path=${encodeURIComponent(
           process.env.FOLDER_PATH + "/" + imagePath
         )}`;
 
         entry.dataValues.path = imageUrl;
       });
-  
- 
+
       const response = {
         success: true,
         data: {
           images: images,
         },
       };
-  
+
       res.status(StatusCodes.OK).json(response);
     } catch (error) {
       res
@@ -261,58 +377,60 @@ class ProjectController {
   static addImageToProject = async (req, res) => {
     try {
       const projectId = req.params.id;
-      const imageOriginalNames = await ProjectController.uploadImageToDropbox(req);
-      const result = await project.addImageToProject(projectId, imageOriginalNames, req.body);
-  
+      const imageOriginalNames = await ProjectController.uploadImageToDropbox(
+        req
+      );
+      const result = await project.addImageToProject(
+        projectId,
+        imageOriginalNames,
+        req.body
+      );
+
       res.status(StatusCodes.OK).json({
         success: true,
-        data:{
-          result:result
+        data: {
+          result: result,
         },
-        message: 'Images uploaded successfully.',
-        
+        message: "Images uploaded successfully.",
       });
     } catch (error) {
       console.error("Error adding images to project:", error);
       res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
         success: false,
         error: "Error adding images to project",
-        detail: error
+        detail: error,
       });
     }
   };
 
-  static deleteImage = async (req,res) =>{
+  static deleteImage = async (req, res) => {
     try {
-      const projImgId = req.params.id; 
-  
-  
+      const projImgId = req.params.id;
+
       const isDeleted = await project.deleteImage(projImgId);
-  
+
       if (isDeleted) {
         const response = {
           success: true,
-          msg: 'Image has been successfully deleted',
+          msg: "Image has been successfully deleted",
         };
-        res.status(StatusCodes.OK).json(response); 
+        res.status(StatusCodes.OK).json(response);
       } else {
-
         const response = {
           success: false,
-          msg: 'Failed to delete image',
+          msg: "Failed to delete image",
         };
-        res.status(StatusCodes.BAD_REQUEST).json(response); 
+        res.status(StatusCodes.BAD_REQUEST).json(response);
       }
     } catch (error) {
-      console.error('Error deleting image:', error); 
+      console.error("Error deleting image:", error);
       const response = {
         success: false,
-        msg: 'Failed to delete image due to server error',
+        msg: "Failed to delete image due to server error",
       };
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(response); 
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(response);
     }
-  }
- 
+  };
 
   static uploadImageToDropbox = async (req) => {
     try {
@@ -322,9 +440,8 @@ class ProjectController {
 
       const dbx = req.dbx;
 
-      const imageUrls = []; 
-      const imageOriginalNames = []
-
+      const imageUrls = [];
+      const imageOriginalNames = [];
 
       for (let i = 0; i < req.files.length; i++) {
         const file = req.files[i];
@@ -333,92 +450,75 @@ class ProjectController {
           contents: file.buffer,
         });
 
-        imageUrls.push(response.result.path_display); 
-        imageOriginalNames.push(file.originalname)
-
+        imageUrls.push(response.result.path_display);
+        imageOriginalNames.push(file.originalname);
       }
 
-    return imageOriginalNames;
-
-
+      return imageOriginalNames;
     } catch (error) {
       console.error("Error uploading images:", error);
     }
   };
 
-  
+  static updateImageOrder = async (req, res) => {
+    try {
+      const projectId = req.params.id;
 
-  static updateImageOrder = async(req,res) => {
+      const updatedOrder = project.updateImageOrder(projectId, req.body);
 
-    try{
-      const projectId = req.params.id
-    
-      const updatedOrder = project.updateImageOrder(projectId,req.body)
-  
-      if(updatedOrder){
+      if (updatedOrder) {
         const response = {
-          success:true,
-          msg: 'Images order has been successfully updated',
-        }
-  
-        res.status(StatusCodes.OK).json(response)
-      }else{
+          success: true,
+          msg: "Images order has been successfully updated",
+        };
+
+        res.status(StatusCodes.OK).json(response);
+      } else {
         const response = {
-          success:false,
-          msg:'Failed to update image order'
-        }
-        res.status(StatusCodes.BAD_REQUEST).json(response)
+          success: false,
+          msg: "Failed to update image order",
+        };
+        res.status(StatusCodes.BAD_REQUEST).json(response);
       }
-    }catch(error){
-      console.error('Error updating', error);
+    } catch (error) {
+      console.error("Error updating", error);
       const response = {
-        success:false,
-        msg:'Failed to update image order'
-      }
-      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(response)
+        success: false,
+        msg: "Failed to update image order",
+      };
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(response);
     }
- 
-  }
+  };
 
- 
+  static updateEditorOrder = async (req, res) => {
+    try {
+      const projectId = req.params.id;
 
-  static updateEditorOrder = async(req,res) => {
+      const updatedOrder = project.updateEditorOrder(projectId, req.body);
 
-    try{
-      const projectId = req.params.id
-      
-      const updatedOrder = project.updateEditorOrder(projectId,req.body)
-  
-      if(updatedOrder){
+      if (updatedOrder) {
         const response = {
-          success:true,
-          msg: 'Editor order has been successfully updated',
-        }
-  
-        res.status(StatusCodes.OK).json(response)
-      }else{
+          success: true,
+          msg: "Editor order has been successfully updated",
+        };
+
+        res.status(StatusCodes.OK).json(response);
+      } else {
         const response = {
-          success:false,
-          msg:'Failed to update editor order'
-        }
-        res.status(StatusCodes.BAD_REQUEST).json(response)
+          success: false,
+          msg: "Failed to update editor order",
+        };
+        res.status(StatusCodes.BAD_REQUEST).json(response);
       }
-    }catch(error){
-      console.error('Error updating', error);
+    } catch (error) {
+      console.error("Error updating", error);
       const response = {
-        success:false,
-        msg:'Failed to update editor order'
-      }
-      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(response)
+        success: false,
+        msg: "Failed to update editor order",
+      };
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(response);
     }
- 
-  }
-
-
-  
-
-
-
+  };
 }
 
 module.exports = ProjectController;

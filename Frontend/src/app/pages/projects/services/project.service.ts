@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, Subject, interval, startWith, switchMap, tap } from 'rxjs';
 import { endpoints, environment, projectRoutes } from '../../../../environments/environment.development';
-import { ProjectGet, ProjectImagesResponse, ImageOrderPut, EditorOrderPut, TextPut, TextPost, ProjectPut } from '../interfaces/project.interface';
+import { ProjectGet, ProjectImagesResponse, ImageOrderPut, EditorOrderPut, TextPut, TextPost, ProjectPut, CategoryGet } from '../interfaces/project.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -30,6 +30,14 @@ export class ProjectService {
 
   updateProject(projectId: number,project:ProjectPut): Observable<any>{
     return this.http.put<any>(projectRoutes.updateProject(projectId),project)
+  }
+
+  deleteProject(projectId:number): Observable<any>{
+    return this.http.delete<any>(projectRoutes.deleteProject(projectId))
+  }
+
+  getProjectCategories():Observable<CategoryGet>{
+    return this.http.get<CategoryGet>(projectRoutes.getProjectCategories)
   }
 
   getProjectTexts(projectId: number): Observable<any> {
