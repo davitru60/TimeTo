@@ -47,7 +47,6 @@ export interface TextPost{
 
 }
 
-
 export interface ImageOrderPut {
   proj_img_id: number;
   previousIndex: number;
@@ -71,7 +70,6 @@ export interface FormFields {
   index?: number;
 }
 
-
 export interface Category{
   category_id:number,
   name:string
@@ -82,4 +80,12 @@ export interface CategoryGet {
   data: {
     categories: Category[];
   };
+}
+
+export interface CategoryPost{
+  name:string;
+}
+
+export interface CategoryPut{
+  name:string;
 }

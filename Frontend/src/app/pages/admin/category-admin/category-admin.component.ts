@@ -2,26 +2,34 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ProjectService } from '../../projects/services/project.service';
-import { Category, CategoryGet } from '../../projects/interfaces/project.interface';
+import { Category, CategoryGet, CategoryPut } from '../../projects/interfaces/project.interface';
 import { PaginationComponent } from "../../../shared/components/ui/pagination/pagination.component";
+import { AddCategoryComponent } from "./add-category/add-category.component";
+import { ModalComponent } from "../../../shared/components/ui/modal/modal.component";
+import { ToastService } from '../../../shared/components/ui/toast/toast.service';
 
 @Component({
     selector: 'app-category-admin',
     standalone: true,
     templateUrl: './category-admin.component.html',
     styleUrl: './category-admin.component.scss',
-    imports: [CommonModule, FormsModule, PaginationComponent]
+    imports: [CommonModule, FormsModule, PaginationComponent, AddCategoryComponent, ModalComponent]
 })
 export class CategoryAdminComponent {
   categories: Category[] = []
-  isModalOpen: boolean[] = [];
+
+  isAddCategoryModalOpen=false
+  isEditCategoryModalOpen: boolean[] = [];
+
+
   selectedCategory: Category | null = null;
 
   currentPage: number = 1;
   itemsPerPage: number = 5;
   totalPages: number = 0;
   
-  constructor (private projectService:ProjectService){
+  constructor (private projectService:ProjectService,   
+    private toastService: ToastService){
     this.getProjectCategories()
   }
 
@@ -40,14 +48,28 @@ export class CategoryAdminComponent {
     this.currentPage = 1;
   }
 
-  openModal(index: number) {
-    this.selectedCategory =
-      this.categories.find((category) => category.category_id === index) || null;
-    this.isModalOpen[index] = true;
+  openAddCategoryModal(){
+    this.isAddCategoryModalOpen=true
   }
 
-  closeModal(index:number){
-    this.isModalOpen[index] = false
+  closeAddCategoryModal(){
+    this.isAddCategoryModalOpen=false
+  }
+
+  openEditCategoryModal(index: number) {
+    this.isEditCategoryModalOpen[index] = true;
+    this.selectedCategory = this.categories[index];
+  }
+
+  closeEditCategoryModal(index:number){
+
+
+    this.isEditCategoryModalOpen[index] = false;
+    this.selectedCategory = null;
+  }
+
+  showSuccessToast(message: string) {
+    this.toastService.showToast({ text: message, type: 'success' });
   }
 
   getProjectCategories(){
@@ -55,7 +77,26 @@ export class CategoryAdminComponent {
       (response:CategoryGet)=>{
         this.categories = response.data.categories
         this.totalPages = Math.ceil(this.categories.length / this.itemsPerPage);
+
+        this.isEditCategoryModalOpen = new Array(this.categories.length).fill(false);
       }
     )
+  }
+
+  updateProjectCategory(categoryId:number){
+    if(this.selectedCategory){
+      const categoryData:CategoryPut = {
+        name: this.selectedCategory.name
+      }
+      this.projectService.updateProjectCategory(categoryId,categoryData).subscribe(
+        (response:any)=>{
+          this.showSuccessToast('Proyecto actualizado exitosamente');
+          this.closeEditCategoryModal(this.categories.findIndex(category => category.category_id === categoryId));
+          this.closeEditCategoryModal(categoryId);
+      })
+    }
+
+    
+
   }
 }

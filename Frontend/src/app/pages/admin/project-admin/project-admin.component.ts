@@ -12,7 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { ModalComponent } from "../../../shared/components/ui/modal/modal.component";
 import { ToastComponent } from "../../../shared/components/ui/toast/toast.component";
 import { PaginationComponent } from "../../../shared/components/ui/pagination/pagination.component";
-import { AddProjectComponent } from "../../projects/add-project/add-project.component";
+import { AddProjectComponent } from "./add-project/add-project.component";
 
 @Component({
     selector: 'app-project-admin',
@@ -23,8 +23,10 @@ import { AddProjectComponent } from "../../projects/add-project/add-project.comp
 })
 export class ProjectAdminComponent {
   projects: Project[] = [];
-  isEditProjectModalOpen: boolean[] = [];
+
   isAddProjectModalOpen = false
+  isEditProjectModalOpen: boolean[] = [];
+
   selectedProject: Project | null = null;
 
   project: ProjectPut = {
@@ -60,6 +62,14 @@ export class ProjectAdminComponent {
     this.currentPage = 1;
   }
 
+  openAddProjectModal() {
+    this.isAddProjectModalOpen = true;
+  }
+
+  closeAddProjectModal() {
+    this.isAddProjectModalOpen = false;
+  }
+
   openEditProjectModal(index: number) {
     this.isEditProjectModalOpen[index] = true;
     this.selectedProject = this.projects[index];
@@ -68,14 +78,6 @@ export class ProjectAdminComponent {
   closeEditProjectModal(index: number) {
     this.isEditProjectModalOpen[index] = false;
     this.selectedProject = null;
-  }
-
-  openAddProjectModal() {
-    this.isAddProjectModalOpen = true;
-  }
-
-  closeAddProjectModal() {
-    this.isAddProjectModalOpen = false;
   }
 
   showSuccessToast(message: string) {

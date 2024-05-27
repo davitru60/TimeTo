@@ -22,6 +22,8 @@ export const environment = {
 
     //Project categories
     getProjectCategories: environment.baseUrl + endpoints.projectEndpoint + '/project-category',
+    createProjectCategory: environment.baseUrl + endpoints.projectEndpoint + '/project-category',
+    updateProjectCategory: (categoryId:number) => environment.baseUrl + endpoints.projectEndpoint + '/project-category/' + categoryId ,
 
     //Project texts
     getProjectTexts: environment.baseUrl + endpoints.projectEndpoint + '/project-texts/',

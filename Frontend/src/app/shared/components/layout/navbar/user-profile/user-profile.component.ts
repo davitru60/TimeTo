@@ -3,7 +3,7 @@ import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { ModalComponent } from '../../../ui/modal/modal.component';
-import { AddProjectComponent } from '../../../../../pages/projects/add-project/add-project.component';
+import { AddProjectComponent } from '../../../../../pages/admin/project-admin/add-project/add-project.component';
 import { LoaderComponent } from '../../../ui/loader/loader.component';
 import { AuthService } from '../../../../../pages/auth/services/auth.service';
 
