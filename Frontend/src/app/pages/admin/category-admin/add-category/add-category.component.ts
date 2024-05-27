@@ -34,8 +34,8 @@ export class AddCategoryComponent {
     this.closeEvent.emit();
   }
 
-  createProjectCategory(){
-    this.projectService.createProjectCategory(this.category).subscribe(
+  createCategory(){
+    this.projectService.createCategory(this.category).subscribe(
       (subscribe:any)=>{
         this.showSuccessToast('Categoría creada exitosamente');
         this.closeModal();

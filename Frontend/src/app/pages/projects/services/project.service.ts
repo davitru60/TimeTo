@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, Subject, interval, startWith, switchMap, tap } from 'rxjs';
 import { endpoints, environment, projectRoutes } from '../../../../environments/environment.development';
-import { ProjectGet, ProjectImagesResponse, ImageOrderPut, EditorOrderPut, TextPut, TextPost, ProjectPut, CategoryGet, CategoryPost, CategoryPut } from '../interfaces/project.interface';
+import { ProjectGet, ProjectImagesResponse, ImageOrderPut, EditorOrderPut, TextPut, TextPost, ProjectPut, CategoryGet, CategoryPost, CategoryPut, ProjectCategoryPost } from '../interfaces/project.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -36,16 +36,28 @@ export class ProjectService {
     return this.http.delete<any>(projectRoutes.deleteProject(projectId))
   }
 
-  getProjectCategories():Observable<CategoryGet>{
-    return this.http.get<CategoryGet>(projectRoutes.getProjectCategories)
+  getCategories():Observable<CategoryGet>{
+    return this.http.get<CategoryGet>(projectRoutes.getCategories)
   }
 
-  createProjectCategory(category:CategoryPost): Observable<any>{
-    return this.http.post<any>(projectRoutes.createProjectCategory, category)
+  createCategory(category:CategoryPost): Observable<any>{
+    return this.http.post<any>(projectRoutes.createCategory, category)
   }
 
-  updateProjectCategory(categoryId:number,category:CategoryPut): Observable<any>{
-    return this.http.put<any>(projectRoutes.updateProjectCategory(categoryId),category)
+  updateCategory(categoryId:number,category:CategoryPut): Observable<any>{
+    return this.http.put<any>(projectRoutes.updateCategory(categoryId),category)
+  }
+
+  getProjectCategories(projectId:number): Observable<any>{
+    return this.http.get<any>(projectRoutes.getProjectCategories(projectId))
+  }
+
+  addProjectCategory(projectCategory:ProjectCategoryPost):Observable<any>{
+    return this.http.post<any>(projectRoutes.addProjectCategory,projectCategory)
+  }
+
+  deleteProjectCategory(projCatId:number):Observable<any>{
+    return this.http.delete<any>(projectRoutes.deleteProjectCategory(projCatId))
   }
 
   getProjectTexts(projectId: number): Observable<any> {

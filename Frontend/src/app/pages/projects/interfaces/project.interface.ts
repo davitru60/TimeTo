@@ -89,3 +89,16 @@ export interface CategoryPost{
 export interface CategoryPut{
   name:string;
 }
+
+export interface ProjectCategory{
+  proj_cat_id: number,
+  project_id:number,
+  category_id:number
+}
+
+
+export interface ProjectCategoryPost{
+  project_id:number;
+  category_id:number;
+
+}

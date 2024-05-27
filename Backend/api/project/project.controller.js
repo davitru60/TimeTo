@@ -146,9 +146,9 @@ class ProjectController {
     }
   };
 
-  static getProjectCategories = async (req, res) => {
+  static getCategories = async (req, res) => {
     try {
-      const categories = await project.getProjectCategories();
+      const categories = await project.getCategories();
 
       const response = {
         success: true,
@@ -162,9 +162,9 @@ class ProjectController {
     }
   };
 
-  static createProjectCategory = async (req, res) => {
+  static createCategory = async (req, res) => {
     try {
-      const category = await project.createProjectCategory(req.body);
+      const category = await project.createCategory(req.body);
 
       if (category) {
         const response = {
@@ -187,10 +187,10 @@ class ProjectController {
     }
   };
 
-  static updateProjectCategory = async (req, res) => {
+  static updateCategory = async (req, res) => {
     try {
-      const categoryId = req.params.id
-      const categoryUpdate = await project.updateProjectCategory(categoryId,req.body)
+      const categoryId = req.params.id;
+      const categoryUpdate = await project.updateCategory(categoryId, req.body);
 
       if (categoryUpdate) {
         const response = {
@@ -198,46 +198,115 @@ class ProjectController {
           msg: "Category has been successfully updated",
         };
         res.status(StatusCodes.OK).json(response);
-      }else{
+      } else {
         const response = {
           success: false,
           msg: "Failed to update category",
         };
         res.status(StatusCodes.BAD_REQUEST).json(response);
       }
-
     } catch (error) {
       res
-      .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ error: "Error upadting category", detail: error });
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .json({ error: "Error upadting category", detail: error });
     }
   };
 
-  static deleteProjectCategory = async(req,res)=>{
+  static deleteCategory = async (req, res) => {
     try {
-      const categoryId = req.params.id
-      const categoryDelete = await project.deleteProjectCategory(categoryId)
+      const categoryId = req.params.id;
+      const categoryDelete = await project.deleteCategory(categoryId);
 
-      if(categoryDelete){
+      if (categoryDelete) {
         const response = {
           success: true,
           msg: "Category has been successfully deleted",
         };
 
         res.status(StatusCodes.OK).json(response);
-      }else{
+      } else {
         const response = {
           success: false,
           msg: "Failed to delete category",
         };
         res.status(StatusCodes.BAD_REQUEST).json(response);
       }
-
-
-    }catch(error){
+    } catch (error) {
       res
-      .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ error: "Error deleting category", detail: error });
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .json({ error: "Error deleting category", detail: error });
+    }
+  };
+
+  static getProjectCategories = async (req, res) => {
+    try {
+      const projectId = req.params.id;
+      const projectCategories = await project.getProjectCategories(projectId);
+
+      const response = {
+        success: true,
+        data: {
+          projectCategories: projectCategories,
+        },
+      };
+
+      res.status(StatusCodes.OK).json(response);
+    } catch (error) {
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .json({ error: "Error getting categories", detail: error });
+    }
+  };
+
+  static addProjectCategory = async (req, res) => {
+    try {
+      const projectCategory = await project.addProjectCategory(req.body)
+
+      if(projectCategory){
+        const response = {
+          success: true,
+          msg: "Project category has been successfully added",
+        };
+
+        res.status(StatusCodes.OK).json(response);
+      }else{
+        const response = {
+          success: false,
+          msg: "Failed to update project category",
+        };
+        res.status(StatusCodes.BAD_REQUEST).json(response);
+      }
+
+    } catch (error) {
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .json({ error: "Error creating project categories", detail: error });
+    }
+  };
+
+  static deleteProjectCategory = async(req,res) =>{
+    try {
+      const projCatId = req.params.id;
+      const categoryDelete = await project.deleteProjectCategory(projCatId);
+
+      if (categoryDelete) {
+        const response = {
+          success: true,
+          msg: "Category has been successfully deleted",
+        };
+
+        res.status(StatusCodes.OK).json(response);
+      } else {
+        const response = {
+          success: false,
+          msg: "Failed to delete category",
+        };
+        res.status(StatusCodes.BAD_REQUEST).json(response);
+      }
+    } catch (error) {
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .json({ error: "Error deleting category", detail: error });
     }
   }
 

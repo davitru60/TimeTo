@@ -5,8 +5,8 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { ModalComponent } from '../../../../shared/components/ui/modal/modal.component';
-import { ProjectPost} from '../../../projects/interfaces/project.interface';
+import { ModalComponent } from './../../../../shared/components/ui/modal/modal.component';
+import { ProjectPost } from '../../../projects/interfaces/project.interface';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm} from '@angular/forms';
 import { ProjectService } from '../../../projects/services/project.service';
@@ -21,6 +21,7 @@ import { ToastService } from '../../../../shared/components/ui/toast/toast.servi
     styleUrl: './add-project.component.scss',
     imports: [CommonModule, FormsModule, ModalComponent, LoaderComponent]
 })
+
 export class AddProjectComponent {
   @Input() isModalOpen = false;
   @Output() closeEvent = new EventEmitter<void>();

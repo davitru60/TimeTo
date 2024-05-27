@@ -30,7 +30,7 @@ export class CategoryAdminComponent {
   
   constructor (private projectService:ProjectService,   
     private toastService: ToastService){
-    this.getProjectCategories()
+    this.getCategories()
   }
 
   get paginatedCategories() {
@@ -72,8 +72,8 @@ export class CategoryAdminComponent {
     this.toastService.showToast({ text: message, type: 'success' });
   }
 
-  getProjectCategories(){
-    this.projectService.getProjectCategories().subscribe(
+  getCategories(){
+    this.projectService.getCategories().subscribe(
       (response:CategoryGet)=>{
         this.categories = response.data.categories
         this.totalPages = Math.ceil(this.categories.length / this.itemsPerPage);
@@ -83,12 +83,12 @@ export class CategoryAdminComponent {
     )
   }
 
-  updateProjectCategory(categoryId:number){
+  updateCategory(categoryId:number){
     if(this.selectedCategory){
       const categoryData:CategoryPut = {
         name: this.selectedCategory.name
       }
-      this.projectService.updateProjectCategory(categoryId,categoryData).subscribe(
+      this.projectService.updateCategory(categoryId,categoryData).subscribe(
         (response:any)=>{
           this.showSuccessToast('Proyecto actualizado exitosamente');
           this.closeEditCategoryModal(this.categories.findIndex(category => category.category_id === categoryId));

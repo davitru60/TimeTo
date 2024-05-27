@@ -20,10 +20,15 @@ export const environment = {
     updateProject:(projectId:number) => environment.baseUrl + endpoints.projectEndpoint + '/projects/' + projectId,
     deleteProject: (projectId:number) => environment.baseUrl + endpoints.projectEndpoint + '/projects/' + projectId,
 
+    //Categories
+    getCategories: environment.baseUrl + endpoints.projectEndpoint + '/category',
+    createCategory: environment.baseUrl + endpoints.projectEndpoint + '/category',
+    updateCategory: (categoryId:number) => environment.baseUrl + endpoints.projectEndpoint + '/category/' + categoryId ,
+
     //Project categories
-    getProjectCategories: environment.baseUrl + endpoints.projectEndpoint + '/project-category',
-    createProjectCategory: environment.baseUrl + endpoints.projectEndpoint + '/project-category',
-    updateProjectCategory: (categoryId:number) => environment.baseUrl + endpoints.projectEndpoint + '/project-category/' + categoryId ,
+    getProjectCategories: (projectId:number) => environment.baseUrl + endpoints.projectEndpoint + '/project-category/'+ projectId,
+    addProjectCategory: environment.baseUrl + endpoints.projectEndpoint + '/project-category/',
+    deleteProjectCategory: (projCatId:number) => environment.baseUrl + endpoints.projectEndpoint + '/project-category/' + projCatId,
 
     //Project texts
     getProjectTexts: environment.baseUrl + endpoints.projectEndpoint + '/project-texts/',

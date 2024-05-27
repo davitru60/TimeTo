@@ -2,7 +2,11 @@ import { Component } from '@angular/core';
 import { NavbarComponent } from '../../../shared/components/layout/navbar/navbar.component';
 import { ProjectService } from '../../projects/services/project.service';
 import {
+  Category,
+  CategoryGet,
   Project,
+  ProjectCategory,
+  ProjectCategoryPost,
   ProjectGet,
   ProjectPut,
 } from '../../projects/interfaces/project.interface';
@@ -19,20 +23,31 @@ import { AddProjectComponent } from "./add-project/add-project.component";
     standalone: true,
     templateUrl: './project-admin.component.html',
     styleUrl: './project-admin.component.scss',
-    imports: [CommonModule, NavbarComponent, FormsModule, ModalComponent, ToastComponent, PaginationComponent, AddProjectComponent]
+    imports: [CommonModule, NavbarComponent, FormsModule, ModalComponent, ToastComponent, PaginationComponent,AddProjectComponent]
 })
 export class ProjectAdminComponent {
   projects: Project[] = [];
+  categories: Category[] = []
+  projectCategories: ProjectCategory[] = [];
+
+  isEditProjectModalOpen: boolean[] = [];
+  isCategoryModalOpen: boolean[] = []
 
   isAddProjectModalOpen = false
-  isEditProjectModalOpen: boolean[] = [];
+  isAddCategoryModalOpen = false
 
+  
   selectedProject: Project | null = null;
 
   project: ProjectPut = {
     name: '',
     description: '',
     path: ''
+  }
+
+  projectCategory:ProjectCategoryPost = {
+    project_id: 0,
+    category_id: 0
   }
 
 
@@ -45,6 +60,8 @@ export class ProjectAdminComponent {
     private toastService: ToastService
   ) {
     this.getAllProjects();
+    this.getCategories()
+    
   }
 
   get paginatedProjects() {
@@ -80,6 +97,20 @@ export class ProjectAdminComponent {
     this.selectedProject = null;
   }
 
+  openCategoryModal(index:number,project:Project){
+    this.projectService.getProjectCategories(project.project_id).subscribe(
+      (response:any)=>{
+        console.log(response)
+        this.projectCategories=response.data.projectCategories
+        this.isCategoryModalOpen[index]=true
+    })
+  }
+
+ 
+  closeCategoryModal(index:number){
+    this.isCategoryModalOpen[index]=false
+  }
+
   showSuccessToast(message: string) {
     this.toastService.showToast({ text: message, type: 'success' });
   }
@@ -96,10 +127,70 @@ export class ProjectAdminComponent {
     this.toastService.showToast({ text: message, type: 'warning' });
   }
 
+  hasCategory(category: Category, projectCategories: ProjectCategory[]): boolean {
+    for (let i = 0; i < projectCategories.length; i++) {
+      if (projectCategories[i].category_id === category.category_id) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  toggleCategory(category: Category, project: Project): void {
+    const index = this.projectCategories.findIndex(pc => pc.category_id === category.category_id);
+    if (index !== -1) {
+      this.deleteProjectCategory(category);
+    } else {
+      this.addProjectCategory(category,project);
+    }
+  }
+
+  addProjectCategory(category: Category, project: Project): void {
+    const index = this.projectCategories.findIndex(pc => pc.category_id === category.category_id);
+    if (index === -1) {
+      const newProjectCategory: ProjectCategory = {
+        proj_cat_id: 0,
+        project_id: project.project_id,
+        category_id: category.category_id
+      };
+      this.projectCategories.push(newProjectCategory);
+  
+      this.projectService.addProjectCategory(newProjectCategory).subscribe(
+        (response: any) => {
+          this.showSuccessToast('Categoría añadida correctamente');
+        }
+      );
+  
+      console.log(`Categoría "${category.name}" añadida al proyecto.`);
+    } else {
+      console.log(`La categoría "${category.name}" ya existe en el proyecto.`);
+    }
+  }
+
+  deleteProjectCategory(category: Category): void {
+    const index = this.projectCategories.findIndex(pc => pc.category_id === category.category_id);
+    if (index !== -1) {
+      const projectCategory = this.projectCategories[index];
+      this.projectCategories.splice(index, 1);
+
+    
+      this.projectService.deleteProjectCategory(projectCategory.proj_cat_id).subscribe(
+        (response: any) => {
+          this.showSuccessToast('Categoría eliminada correctamente');
+        }
+      );
+  
+      console.log(`Categoría "${category.name}" eliminada del proyecto.`);
+    } else {
+      console.log(`La categoría "${category.name}" no está presente en el proyecto.`);
+    }
+  }
+
   getAllProjects() {
     this.projectService.getAllProjects().subscribe((response: ProjectGet) => {
       this.projects = response.data.projects;
       this.totalPages = Math.ceil(this.projects.length / this.itemsPerPage);
+
       // Inicializamos isModalOpen con valores false para cada proyecto
       this.isEditProjectModalOpen = new Array(this.projects.length).fill(false);
     });
@@ -117,7 +208,7 @@ export class ProjectAdminComponent {
         (response: any) => {
           this.showSuccessToast('Proyecto actualizado exitosamente');
           this.closeEditProjectModal(projectId);
-          this.getAllProjects(); // Refrescar la lista de proyectos después de la actualización
+          this.getAllProjects();
         },
         (error: any) => {
           this.showErrorToast('Error al actualizar el proyecto');
@@ -132,7 +223,7 @@ export class ProjectAdminComponent {
         this.showInfoToast('Eliminación del proyecto en progreso...');
         setTimeout(() => {
           this.showSuccessToast('Proyecto eliminado exitosamente');
-          this.getAllProjects(); // Refrescar la lista de proyectos después de la eliminación
+          this.getAllProjects(); 
         }, 2000);
       },
       (error: any) => {
@@ -140,4 +231,19 @@ export class ProjectAdminComponent {
       }
     );
   }
+
+  getCategories(){
+    this.projectService.getCategories().subscribe(
+      (response:CategoryGet)=>{
+        this.categories = response.data.categories
+        console.log(this.categories)
+        this.totalPages = Math.ceil(this.categories.length / this.itemsPerPage);
+
+      }
+    )
+  }
+
+  
+  
+  
 }

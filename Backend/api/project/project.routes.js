@@ -15,11 +15,17 @@ router.post('/projects',[uploadImageMiddleware,handleUploadImage],project.create
 router.put('/projects/:id',project.updateProject)
 router.delete('/projects/:id',project.deleteProject)
 
+//Categories
+router.get('/category',project.getCategories)
+router.post('/category',project.createCategory)
+router.put('/category/:id',project.updateCategory)
+router.delete('/category/:id',project.deleteCategory)
+
 //Project categories
-router.get('/project-category',project.getProjectCategories)
-router.post('/project-category',project.createProjectCategory)
-router.put('/project-category/:id',project.updateProjectCategory)
+router.get('/project-category/:id',project.getProjectCategories)
+router.post('/project-category',project.addProjectCategory)
 router.delete('/project-category/:id',project.deleteProjectCategory)
+
 
 //Project texts
 router.get('/project-texts/:id',project.getProjectTexts)

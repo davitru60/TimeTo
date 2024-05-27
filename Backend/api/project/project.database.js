@@ -73,8 +73,6 @@ class Project {
         },
       });
 
-      console.log("Projimag", projectHomeImgs);
-
       if (project && projectHomeImgs.length > 0) {
         for (const projectHomeImg of projectHomeImgs) {
           await projectHomeImg.destroy();
@@ -93,20 +91,20 @@ class Project {
     return result;
   };
 
-  static getProjectCategories = async() =>{
+  static getCategories = async () => {
     try {
-      const categories = await models.Category.findAll()
+      const categories = await models.Category.findAll();
       return categories;
     } catch (error) {
       console.error(error);
       throw error;
     }
-  }
+  };
 
-  static createProjectCategory = async(body) =>{
-    let result = false
-    try{
-      console.log(body)
+  static createCategory = async (body) => {
+    let result = false;
+    try {
+  
       const newCategory = await models.Category.create({
         name: body.name,
       });
@@ -114,27 +112,78 @@ class Project {
       if (newCategory) {
         result = true;
       }
-
-
-    }catch(error){
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: "Error adding category", detail: error });
+    } catch (error) {
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .json({ error: "Error adding category", detail: error });
     }
 
     return result;
-  }
+  };
 
-  static updateProjectCategory = async(categoryId,body) =>{
-    let result = false
-    try{
-      const category = await models.Category.findByPk(categoryId)
+  static updateCategory = async (categoryId, body) => {
+    let result = false;
+    try {
+      const category = await models.Category.findByPk(categoryId);
 
-      if(category){
-        result=true
-        await category.update(body)
-      }else{
-        result=false
+      if (category) {
+        result = true;
+        await category.update(body);
+      } else {
+        result = false;
       }
+    } catch (error) {}
 
+    return result;
+  };
+
+  static deleteCategory = async (categoryId) => {
+    let result = false;
+
+    try {
+      const category = await models.Category.findByPk(categoryId);
+
+      if (category) {
+        result = true;
+        await category.destroy();
+      } else {
+        result = false;
+      }
+    } catch (error) {}
+
+    return result;
+  };
+
+  static getProjectCategories = async (projectId) => {
+    try {
+      const projectCategories = await models.ProjectCategory.findAll({
+        where:{
+          project_id: projectId,
+        }
+      })
+
+      return projectCategories
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
+
+  static addProjectCategory = async (body) =>{
+    let result = false;
+
+    console.log(body)
+
+    try {
+      const newProjectCategory = await models.ProjectCategory.create({
+         project_id:body.project_id,
+         category_id:body.category_id 
+      });
+
+      if (newProjectCategory) {
+        result = true;
+      }
+     
     }catch(error){
 
     }
@@ -142,25 +191,25 @@ class Project {
     return result
   }
 
-  static deleteProjectCategory = async(categoryId) =>{
-    let result = false
-
+  static deleteProjectCategory = async(projCatId) =>{
     try{
-      const category = await models.Category.findByPk(categoryId)
+      let result = false;
 
-      if(category){
-        result=true
-        await category.destroy()
-      }else{
-        result=false
-      }
-
+      try {
+        const category = await models.ProjectCategory.findByPk(projCatId);
+  
+        if (category) {
+          result = true;
+          await category.destroy();
+        } else {
+          result = false;
+        }
+      } catch (error) {}
+  
+      return result;
     }catch(error){
 
     }
-
-    return result
-
   }
 
   static getProjectTexts = async (projectId) => {

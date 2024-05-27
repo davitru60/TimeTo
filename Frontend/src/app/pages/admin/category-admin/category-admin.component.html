@@ -54,7 +54,7 @@
 
 @for(category of paginatedCategories; track category.category_id; let i=$index){
   <app-modal [isModalOpen]="isEditCategoryModalOpen[i]">
-    <form #f="ngForm" (ngSubmit)="f.form.valid && updateProjectCategory(category.category_id)" novalidate>
+    <form #f="ngForm" (ngSubmit)="f.form.valid && updateCategory(category.category_id)" novalidate>
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-lg font-bold text-gray-700">Editar categoría</h2>
         <button type="button" (click)="closeEditCategoryModal(i)" class="text-gray-600 hover:text-gray-900">
