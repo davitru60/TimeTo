@@ -35,11 +35,6 @@ module.exports = {
         }
       },
 
-
-      category: {
-        type: Sequelize.STRING
-      },
-
       title: {
         type: Sequelize.STRING
       },

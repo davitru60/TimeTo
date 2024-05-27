@@ -41,11 +41,17 @@ export class CategoryAdminComponent {
 
   onPageChange(newPage: number) {
     this.currentPage = newPage;
+    this.updatePaginatedCategories();
   }
 
   onItemsPerPageChange(newItemsPerPage: number) {
     this.itemsPerPage = newItemsPerPage;
     this.currentPage = 1;
+    this.updatePaginatedCategories();
+  }
+
+  updatePaginatedCategories() {
+    this.totalPages = Math.ceil(this.categories.length / this.itemsPerPage);
   }
 
   openAddCategoryModal(){
