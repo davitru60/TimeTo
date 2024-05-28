@@ -1,47 +1,53 @@
 const { Router } = require("express");
 const router = Router();
-const project = require("./project.controller")
 const { ensureDropboxToken } = require("../../middlewares/dropboxToken");
 const { uploadImageMiddleware,handleUploadImage} = require('../../middlewares/uploadImage')
+
+const projectGeneral = require("./project-general/project-general.controller")
+const category = require("./categories/category.controller")
+const projectCategory = require("./project-categories/project-category.controller")
+const projectText = require("./project-text/project-text.controller")
+const projectImage = require("./project-image/project-image.controller")
+const contentOrder = require("./content-order/content-order.controller")
 
 
 // Usar el middleware antes de las rutas que necesiten acceso a Dropbox
 router.use(ensureDropboxToken);
 
 //General
-router.get('/projects',project.getAllProjects)
-router.get('/show-image',project.showImage)
-router.post('/projects',[uploadImageMiddleware,handleUploadImage],project.createProject)
-router.put('/projects/:id',project.updateProject)
-router.delete('/projects/:id',project.deleteProject)
+router.get('/projects',projectGeneral.getAllProjects)
+router.get('/show-image',projectGeneral.showImage)
+router.post('/projects',[uploadImageMiddleware,handleUploadImage],projectGeneral.createProject)
+router.put('/projects/:id',projectGeneral.updateProject)
+router.delete('/projects/:id',projectGeneral.deleteProject)
 
 //Categories
-router.get('/category',project.getCategories)
-router.post('/category',project.createCategory)
-router.put('/category/:id',project.updateCategory)
-router.delete('/category/:id',project.deleteCategory)
+router.get('/category',category.getCategories)
+router.post('/category',category.createCategory)
+router.put('/category/:id',category.updateCategory)
+router.delete('/category/:id',category.deleteCategory)
 
 //Project categories
-router.get('/project-category/:id',project.getProjectCategories)
-router.post('/project-category',project.addProjectCategory)
-router.delete('/project-category/:id',project.deleteProjectCategory)
+router.get('/project-category/:id',projectCategory.getProjectCategories)
+router.post('/project-category',projectCategory.addProjectCategory)
+router.delete('/project-category/:id',projectCategory.deleteProjectCategory)
 
 
 //Project texts
-router.get('/project-texts/:id',project.getProjectTexts)
-router.post('/project-texts/:id',project.addProjectTexts)
-router.put('/project-texts/:id',project.updateProjectTexts)
-router.delete('/project-texts/:id',project.deleteProjectTexts)
+router.get('/project-texts/:id',projectText.getProjectTexts)
+router.post('/project-texts/:id',projectText.addProjectTexts)
+router.put('/project-texts/:id',projectText.updateProjectTexts)
+router.delete('/project-texts/:id',projectText.deleteProjectTexts)
 
 
 //Project images
-router.get('/project-images/:id',project.getProjectImages)
-router.post('/project-images/:id',[uploadImageMiddleware,handleUploadImage],project.addImageToProject)
-router.delete('/project-images/:id',project.deleteImage)
+router.get('/project-images/:id',projectImage.getProjectImages)
+router.post('/project-images/:id',[uploadImageMiddleware,handleUploadImage],projectImage.addImageToProject)
+router.delete('/project-images/:id',projectImage.deleteImage)
 
 
 //Content order
-router.put('/project-images-order/:id',project.updateImageOrder)
-router.put('/project-editor-order/:id',project.updateEditorOrder)
+router.put('/project-images-order/:id',contentOrder.updateImageOrder)
+router.put('/project-editor-order/:id',contentOrder.updateEditorOrder)
 
 module.exports = router;
