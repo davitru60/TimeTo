@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { SocialAuthService, GoogleSigninButtonModule,SocialUser } from '@abacritt/angularx-social-login';
 import { AuthService } from '../../services/auth.service';
-import { GoogleSignInToken } from '../../interfaces/auth.interface';
+import { GoogleSignInToken } from '../../../../core/interfaces/auth.interface';
 import { Router } from '@angular/router';
 
 @Component({

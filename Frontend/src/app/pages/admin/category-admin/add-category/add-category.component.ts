@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ModalComponent } from "../../../../shared/components/ui/modal/modal.component";
 import { FormsModule } from '@angular/forms';
-import { CategoryPost } from '../../../projects/interfaces/project.interface';
+import { CategoryPostData, CategoryPostResponse } from '../../../../core/interfaces/category.interface';
 import { ProjectService } from '../../../projects/services/project.service';
 import { ToastService } from '../../../../shared/components/ui/toast/toast.service';
 
@@ -17,7 +17,7 @@ export class AddCategoryComponent {
   @Input() isModalOpen = false;
   @Output() closeEvent = new EventEmitter<void>();
 
-  category: CategoryPost ={
+  category: CategoryPostData ={
     name: '',
   }
 
@@ -36,9 +36,11 @@ export class AddCategoryComponent {
 
   createCategory(){
     this.projectService.createCategory(this.category).subscribe(
-      (subscribe:any)=>{
-        this.showSuccessToast('Categoría creada exitosamente');
-        this.closeModal();
+      (response:CategoryPostResponse)=>{
+        if(response.success){
+          this.showSuccessToast('Categoría creada exitosamente');
+          this.closeModal();
+        }
       })
   }
 

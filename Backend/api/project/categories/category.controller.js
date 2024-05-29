@@ -26,6 +26,7 @@ class CategoryController {
         const response = {
           success: true,
           msg: "Project has been successfully created",
+          data: categoryCreate
         };
 
         res.status(StatusCodes.OK).json(response);
@@ -52,6 +53,7 @@ class CategoryController {
         const response = {
           success: true,
           msg: "Category has been successfully updated",
+          data: categoryUpdate
         };
         res.status(StatusCodes.OK).json(response);
       } else {

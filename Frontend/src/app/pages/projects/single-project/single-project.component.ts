@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { ProjectService } from '../services/project.service';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { combineLatest, filter, map } from 'rxjs';
-import { ProjectImagesResponse } from '../interfaces/project.interface';
+import { ProjectImagesResponse } from '../../../core/interfaces/project.interface';
 import { GoogleAuthComponent } from "../../auth/login/google-auth/google-auth.component";
 import { AngularSplitModule } from 'angular-split';
 import { AuthService } from '../../auth/services/auth.service';

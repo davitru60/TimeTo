@@ -9,7 +9,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { AuthService } from '../services/auth.service';
-import { UserRegister } from '../interfaces/auth.interface';
+import { UserRegister } from '../../../core/interfaces/auth.interface';
 
 @Component({
   selector: 'app-register',

@@ -30,6 +30,7 @@ class ProjectCategoryController {
         const response = {
           success: true,
           msg: "Project category has been successfully added",
+          data: projectCategoryAdd
         };
 
         res.status(StatusCodes.OK).json(response);

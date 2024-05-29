@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ProjectService } from './project.service';
 import { FormArray } from '@angular/forms';
-import { TextPost, TextPut } from '../interfaces/project.interface';
+import { TextPutData, TextPostData } from '../../../core/interfaces/project-text.interface';
 import { ToastService } from '../../../shared/components/ui/toast/toast.service';
 
 @Injectable({
@@ -18,7 +18,6 @@ export class ProjectOperationsService {
   showErrorToast(message: string) {
     this.toastService.showToast({ text: message, type: 'error' });
   }
-
 
   addImageToProject(projectId: number, index: number, dynamicFields: FormArray): void {
     const field = dynamicFields.at(index);
@@ -62,7 +61,7 @@ export class ProjectOperationsService {
 
 
      
-      const textAdd : TextPost = {
+      const textAdd : TextPostData = {
         project_id: proj_text_id,
         f_type_id: 2,
         title: title,
@@ -90,7 +89,7 @@ export class ProjectOperationsService {
     const text = field?.get('content')?.value;
     const proj_text_id = field?.get('proj_text_id')?.value;
 
-    const textAdd: TextPut = {
+    const textAdd: TextPutData = {
       title: title,
       text: text,
       proj_text_id: proj_text_id,

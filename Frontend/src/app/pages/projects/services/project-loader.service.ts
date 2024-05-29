@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ProjectService } from './project.service';
 import { map } from 'rxjs';
-import { FormFields } from '../interfaces/project.interface';
+import { FormFields } from '../../../core/interfaces/project.interface';
 
 @Injectable({
   providedIn: 'root',

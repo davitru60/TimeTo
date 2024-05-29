@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FormArray, FormBuilder } from '@angular/forms';
-import { FormFields } from '../interfaces/project.interface';
+import { FormFields } from '../../../core/interfaces/project.interface';
 import { ProjectService } from './project.service';
 
 @Injectable({

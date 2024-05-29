@@ -1,6 +1,10 @@
 const { StatusCodes } = require("http-status-codes");
-const {uploadImageToDropbox} = require("../../../helpers/dropboxImageUploader")
+const {
+  uploadImageToDropbox,
+} = require("../../../helpers/dropboxImageUploader");
 const projectGeneral = require("./project-general.database");
+const category = require("../categories/category.database");
+const projectCategory = require("../project-categories/project-category.database");
 
 class ProjectGeneralController {
   static getAllProjects = async (req, res) => {
@@ -28,6 +32,72 @@ class ProjectGeneralController {
       throw new Error("Error getting projects");
     }
   };
+
+  static getRecommendedProjects = async (req, res) => {
+    try {
+      const categoriesDatavalues = await category.getCategories();
+      const projectCategoriesDatavalues = await projectCategory.getProjectsCategories();
+      const userInterestsDatavalues = await projectGeneral.getUserInterests();
+
+      const projects = await projectGeneral.getAllProjects();
+
+      let categories = [];
+      for (let i = 0; i < categoriesDatavalues.length; i++) {
+        categories.push(categoriesDatavalues[i].dataValues);
+      }
+
+      let projectCategories = [];
+      for (let i = 0; i < projectCategoriesDatavalues.length; i++) {
+        projectCategories.push(projectCategoriesDatavalues[i].dataValues);
+      }
+
+      let userInterests = [];
+      for (let i = 0; i < userInterestsDatavalues.length; i++) {
+        userInterests.push(userInterestsDatavalues[i].dataValues);
+      }
+
+      const userId = 1;
+
+      // Filtrar intereses del usuario específico
+      const userCategoryInterests = userInterests
+        .filter(interest => interest.user_id === userId)
+        .map(interest => interest.category_id);
+
+      // Encontrar proyectos que coincidan con los intereses del usuario
+      const recommendedProjects = projects.filter(project => {
+        const projectCategoryIds = projectCategories
+          .filter(pc => pc.project_id === project.project_id)
+          .map(pc => pc.category_id);
+
+        return projectCategoryIds.some(categoryId => userCategoryInterests.includes(categoryId));
+      });
+
+      for (let i = 0; i < recommendedProjects.length; i++) {
+        if (recommendedProjects[i].path != null) {
+          recommendedProjects[i].path = `${process.env.REQUEST_URL}${process.env.PORT}${
+            process.env.IMAGE_REQUEST
+          }/show-image?path=${encodeURIComponent(
+            process.env.FOLDER_PATH + "/" + recommendedProjects[i].path
+          )}`;
+        }
+      }
+
+      const response = {
+        success: true,
+        data: {
+          recommendedProjects: recommendedProjects,
+        },
+      };
+      
+      res.status(StatusCodes.OK).json(response);
+
+    
+    } catch (error) {
+      console.error("Error getting recommended projects:", error);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: "Internal server error" });
+    }
+  };
+
 
   static showImage = async (req, res) => {
     try {
@@ -96,12 +166,16 @@ class ProjectGeneralController {
   static updateProject = async (req, res) => {
     try {
       const projectId = req.params.id;
-      const projectUpdate = await projectGeneral.updateProject(projectId, req.body);
+      const projectUpdate = await projectGeneral.updateProject(
+        projectId,
+        req.body
+      );
 
       if (projectUpdate) {
         const response = {
           success: true,
           msg: "Project has been successfully updated",
+          data: projectUpdate
         };
 
         res.status(StatusCodes.OK).json(response);
@@ -144,10 +218,6 @@ class ProjectGeneralController {
         .json({ error: "Error deleting project", detail: error });
     }
   };
-
-
-  
-
 }
 
 module.exports = ProjectGeneralController;

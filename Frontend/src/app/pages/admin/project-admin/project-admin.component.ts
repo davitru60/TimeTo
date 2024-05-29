@@ -2,14 +2,16 @@ import { Component } from '@angular/core';
 import { NavbarComponent } from '../../../shared/components/layout/navbar/navbar.component';
 import { ProjectService } from '../../projects/services/project.service';
 import {
-  Category,
-  CategoryGet,
   Project,
-  ProjectCategory,
-  ProjectCategoryPost,
-  ProjectGet,
-  ProjectPut,
-} from '../../projects/interfaces/project.interface';
+  ProjectDeleteResponse,
+  ProjectGetResponse,
+  ProjectPutData,
+  ProjectPutResponse,
+} from '../../../core/interfaces/project.interface';
+
+import { ProjectCategory,ProjectCategoryDeleteResponse,ProjectCategoryPostData, ProjectCategoryPostResponse } from '../../../core/interfaces/project-category.interface';
+
+import { Category,CategoryGetResponse } from '../../../core/interfaces/category.interface';
 import { CommonModule } from '@angular/common';
 import { ToastService } from '../../../shared/components/ui/toast/toast.service';
 import { FormsModule } from '@angular/forms';
@@ -18,6 +20,7 @@ import { ToastComponent } from '../../../shared/components/ui/toast/toast.compon
 import { PaginationComponent } from '../../../shared/components/ui/pagination/pagination.component';
 import { AddProjectComponent } from './add-project/add-project.component';
 import { TableModule } from 'primeng/table';
+import { ProjectCategoryGetResponse } from '../../../core/interfaces/project-category.interface';
 
 @Component({
   selector: 'app-project-admin',
@@ -27,7 +30,7 @@ import { TableModule } from 'primeng/table';
   imports: [
     CommonModule,
     NavbarComponent,
-    FormsModule,  // Import FormsModule here
+    FormsModule,  
     ModalComponent,
     ToastComponent,
     PaginationComponent,
@@ -49,13 +52,13 @@ export class ProjectAdminComponent {
 
   selectedProject: Project | null = null;
 
-  project: ProjectPut = {
+  project: ProjectPutData = {
     name: '',
     description: '',
     path: '',
   };
 
-  projectCategory: ProjectCategoryPost = {
+  projectCategory: ProjectCategoryPostData = {
     project_id: 0,
     category_id: 0,
   };
@@ -116,10 +119,12 @@ export class ProjectAdminComponent {
   openCategoryModal(index: number, project: Project) {
     this.projectService
       .getProjectCategories(project.project_id)
-      .subscribe((response: any) => {
-        console.log(response);
-        this.projectCategories = response.data.projectCategories;
-        this.isCategoryModalOpen[index] = true;
+      .subscribe((response: ProjectCategoryGetResponse) => {
+        if(response.success){
+          this.projectCategories = response.data.projectCategories;
+          this.isCategoryModalOpen[index] = true;
+        }
+       
       });
   }
 
@@ -176,8 +181,11 @@ export class ProjectAdminComponent {
 
       this.projectService
         .addProjectCategory(newProjectCategory)
-        .subscribe((response: any) => {
-          this.showSuccessToast('Categoría añadida correctamente');
+        .subscribe((response: ProjectCategoryPostResponse) => {
+          if(response.success){
+            console.log(response)
+            this.showSuccessToast('Categoría añadida correctamente');
+          }
         });
 
       console.log(`Categoría "${category.name}" añadida al proyecto.`);
@@ -196,8 +204,10 @@ export class ProjectAdminComponent {
 
       this.projectService
         .deleteProjectCategory(projectCategory.proj_cat_id)
-        .subscribe((response: any) => {
-          this.showSuccessToast('Categoría eliminada correctamente');
+        .subscribe((response: ProjectCategoryDeleteResponse) => {
+          if(response.success){
+            this.showSuccessToast('Categoría eliminada correctamente');
+          }
         });
 
       console.log(`Categoría "${category.name}" eliminada del proyecto.`);
@@ -209,7 +219,7 @@ export class ProjectAdminComponent {
   }
 
   getAllProjects() {
-    this.projectService.getAllProjects().subscribe((response: ProjectGet) => {
+    this.projectService.getAllProjects().subscribe((response: ProjectGetResponse) => {
       this.projects = response.data.projects;
       this.filteredProjects = [...this.projects]; // Initialize filteredProjects with all projects
       this.totalPages = Math.ceil(this.filteredProjects.length / this.itemsPerPage);
@@ -221,17 +231,20 @@ export class ProjectAdminComponent {
 
   updateProject(projectId: number) {
     if (this.selectedProject) {
-      const projectData: ProjectPut = {
+      const projectData: ProjectPutData = {
         name: this.selectedProject.name,
         description: this.selectedProject.description,
         path: this.selectedProject.path,
       };
 
       this.projectService.updateProject(projectId, projectData).subscribe(
-        (response: any) => {
-          this.showSuccessToast('Proyecto actualizado exitosamente');
-          this.closeEditProjectModal(projectId);
-          this.getAllProjects();
+        (response: ProjectPutResponse) => {
+          if(response.success){
+            this.showSuccessToast('Proyecto actualizado exitosamente');
+            this.closeEditProjectModal(projectId);
+            this.getAllProjects();
+          }
+         
         },
         (error: any) => {
           this.showErrorToast('Error al actualizar el proyecto');
@@ -242,25 +255,27 @@ export class ProjectAdminComponent {
 
   deleteProject(projectId: number) {
     this.projectService.deleteProject(projectId).subscribe(
-      (response: any) => {
-        this.showInfoToast('Eliminación del proyecto en progreso...');
-        setTimeout(() => {
-          this.showSuccessToast('Proyecto eliminado exitosamente');
-          this.getAllProjects();
-        }, 2000);
+      (response: ProjectDeleteResponse) => {
+
+        if(response.success){
+          this.showInfoToast('Eliminación del proyecto en progreso...');
+          setTimeout(() => {
+            this.showSuccessToast('Proyecto eliminado exitosamente');
+            this.getAllProjects();
+          }, 2000);
+        }
       },
-      (error: any) => {
+      (error: ProjectDeleteResponse) => {
         this.showErrorToast(
-          `Error al eliminar el proyecto: ${error.message || error}`
+          `Error al eliminar el proyecto: ${error.msg || error}`
         );
       }
     );
   }
 
   getCategories() {
-    this.projectService.getCategories().subscribe((response: CategoryGet) => {
+    this.projectService.getCategories().subscribe((response: CategoryGetResponse) => {
       this.categories = response.data.categories;
-      console.log(this.categories);
       this.totalPages = Math.ceil(this.categories.length / this.itemsPerPage);
     });
   }

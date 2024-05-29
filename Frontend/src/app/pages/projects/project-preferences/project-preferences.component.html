@@ -1,1 +1,40 @@
 <app-navbar></app-navbar>
+
+
+@for(project of projects; track project.project_id){
+    <div>
+        <div class="w-full px-25 py-12 mx-auto sm:max-w-xl md:max-w-full lg:w-auto md:px-24">
+    
+    
+          <a [routerLink]="['/projects', project.project_id]" class="block">
+      
+            <div class="px-5 mt-[-30px] grid gap-5 row-gap-8 lg:grid-cols-[1fr,1.5fr]"> 
+              <div>
+                <h5 class="flex items-center font-3vh mt-5 mb-3 font-sans text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+                  &#9679; {{ project.name }}
+                </h5>
+                <h1 class="mt-2 text-[3.1em] font-bold w-96 leading-tight"> 
+                  {{ project.description }}
+                </h1>
+              </div>
+              <div class="h-custom">
+                <img
+                  class="object-cover h-custom w-full sm:h-128" 
+                  [src]="project.path"
+                  alt=""
+                />
+              </div>
+            </div>
+          </a>
+    
+        </div>
+      </div>
+    
+    
+    
+     
+    
+    
+    
+
+}

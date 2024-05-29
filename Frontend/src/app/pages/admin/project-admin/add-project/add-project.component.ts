@@ -6,27 +6,26 @@ import {
   ViewChild,
 } from '@angular/core';
 import { ModalComponent } from './../../../../shared/components/ui/modal/modal.component';
-import { ProjectPost } from '../../../projects/interfaces/project.interface';
+import { ProjectPostData } from '../../../../core/interfaces/project.interface';
 import { CommonModule } from '@angular/common';
-import { FormsModule, NgForm} from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { ProjectService } from '../../../projects/services/project.service';
 import { LoaderComponent } from '../../../../shared/components/ui/loader/loader.component';
 import { ToastService } from '../../../../shared/components/ui/toast/toast.service';
-
+import { CategoryPostResponse } from '../../../../core/interfaces/category.interface';
 
 @Component({
-    selector: 'app-add-project',
-    standalone: true,
-    templateUrl: './add-project.component.html',
-    styleUrl: './add-project.component.scss',
-    imports: [CommonModule, FormsModule, ModalComponent, LoaderComponent]
+  selector: 'app-add-project',
+  standalone: true,
+  templateUrl: './add-project.component.html',
+  styleUrl: './add-project.component.scss',
+  imports: [CommonModule, FormsModule, ModalComponent, LoaderComponent],
 })
-
 export class AddProjectComponent {
   @Input() isModalOpen = false;
   @Output() closeEvent = new EventEmitter<void>();
 
-  project: ProjectPost = {
+  project: ProjectPostData = {
     name: '',
     description: '',
     path: '',
@@ -36,14 +35,16 @@ export class AddProjectComponent {
 
   @ViewChild('f', { static: false }) projectForm!: NgForm;
 
-  constructor(private projectService: ProjectService,private toastService:ToastService) {}
+  constructor(
+    private projectService: ProjectService,
+    private toastService: ToastService
+  ) {}
 
-  closeModal() {   
+  closeModal() {
     this.projectForm.resetForm();
     this.isModalOpen = false;
     this.closeEvent.emit();
   }
-
 
   onFileChange(event: any) {
     const file = event.target.files[0];
@@ -58,24 +59,24 @@ export class AddProjectComponent {
 
   createProject() {
     this.isLoading = true;
-    
+
     const formData = new FormData();
-  
+
     formData.append('name', this.project.name);
     formData.append('description', this.project.description);
     formData.append('path', this.project.path);
-  
+
     this.projectService.createProject(formData).subscribe(
-      (response) => {
-        //this.isLoading = false;
-        this.showSuccessToast('Proyecto creado exitosamente');
-        this.closeModal();
+      (response: CategoryPostResponse) => {
+        if (response.success) {
+          //this.isLoading = false;
+          this.showSuccessToast('Proyecto creado exitosamente');
+          this.closeModal();
+        }
       },
       (error) => {
         //this.isLoading = false;
       }
     );
   }
-
-
 }

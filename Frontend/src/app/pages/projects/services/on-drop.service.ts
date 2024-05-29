@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { EditorOrderPut, ImageOrderPut } from '../interfaces/project.interface';
+import { EditorOrderPut, ImageOrderPut } from '../../../core/interfaces/project.interface';
 import { ProjectService } from './project.service';
 import { FormArray } from '@angular/forms';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';

@@ -11,11 +11,13 @@ const projectImage = require("./project-image/project-image.controller")
 const contentOrder = require("./content-order/content-order.controller")
 
 
+
 // Usar el middleware antes de las rutas que necesiten acceso a Dropbox
 router.use(ensureDropboxToken);
 
 //General
 router.get('/projects',projectGeneral.getAllProjects)
+router.get('/recommended-projects',projectGeneral.getRecommendedProjects)
 router.get('/show-image',projectGeneral.showImage)
 router.post('/projects',[uploadImageMiddleware,handleUploadImage],projectGeneral.createProject)
 router.put('/projects/:id',projectGeneral.updateProject)

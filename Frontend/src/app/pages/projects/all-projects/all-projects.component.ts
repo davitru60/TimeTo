@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { NavbarComponent } from '../../../shared/components/layout/navbar/navbar.component';
 import { ProjectService } from '../services/project.service';
-import { Project, ProjectGet, ProjectPut} from '../interfaces/project.interface';
+import { Project, ProjectGetResponse, ProjectPutData} from '../../../core/interfaces/project.interface';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { NgxPaginationModule } from 'ngx-pagination';
@@ -33,7 +33,7 @@ export class AllProjectsComponent {
   isModalOpen: boolean [] = []
   isLoading = false;
 
-  project: ProjectPut = {
+  project: ProjectPutData = {
     name: '',
     description: '',
     path: ''
@@ -99,8 +99,10 @@ export class AllProjectsComponent {
   getAllProjects() {
     this.projectService
       .getAllProjects()
-      .subscribe((response: ProjectGet) => {
-        this.projects = response.data.projects;
+      .subscribe((response: ProjectGetResponse) => {
+        if(response.success){
+          this.projects = response.data.projects;
+        }
       });
   }
 

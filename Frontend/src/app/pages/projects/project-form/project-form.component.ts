@@ -3,10 +3,10 @@ import { Component} from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { NavbarComponent } from '../../../shared/components/layout/navbar/navbar.component';
 import { QuillModule } from 'ngx-quill';
-import { CdkDragDrop, moveItemInArray, DragDropModule } from '@angular/cdk/drag-drop';
-import { ProjectService } from '../services/project.service';
+import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop';
 import { ActivatedRoute } from '@angular/router';
-import { EditorOrderPut, FormFields, ImageOrderPut, TextPut } from '../interfaces/project.interface';
+import { EditorOrderPut, FormFields, ImageOrderPut} from '../../../core/interfaces/project.interface';
+import { TextPutData } from '../../../core/interfaces/project-text.interface';
 import { ModalComponent } from '../../../shared/components/ui/modal/modal.component';
 import { ButtonGroupComponent } from './button-group/button-group.component';
 import { combineLatest, map } from 'rxjs';
@@ -14,7 +14,7 @@ import { ProjectLoaderService } from '../services/project-loader.service';
 import { DynamicFieldService } from '../services/dynamicfield.service';
 import { ProjectOperationsService } from '../services/project-operations.service';
 import { OnDropService } from '../services/on-drop.service';
-import { editorModules } from '../../../shared/conf/editor-config';
+import { editorModules } from '../../../core/conf/editor-config';
 import { ToastComponent } from "../../../shared/components/ui/toast/toast.component";
 
 @Component({
@@ -56,7 +56,7 @@ export class ProjectFormComponent {
     newIndex: 0,
   };
 
-  textAdd: TextPut = {
+  textAdd: TextPutData = {
     title: '',
     text: '',
     proj_text_id: '',
@@ -165,7 +165,6 @@ export class ProjectFormComponent {
   }
 
   //Form building
-
   addImageField() {
     this.dynamicFieldService.addImageField(this.dynamicFields);
   }

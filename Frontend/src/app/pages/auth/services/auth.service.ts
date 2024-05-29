@@ -7,14 +7,13 @@ import {
   RegisterResponse,
   UserLogin,
   UserRegister,
-} from './../interfaces/auth.interface';
+} from '../../../core/interfaces/auth.interface';
 import {
   authRoutes,
-  endpoints,
-  environment,
 } from '../../../../environments/environment.development';
 import { catchError, map, throwError } from 'rxjs';
 import { JwtHelperService } from '@auth0/angular-jwt';
+
 
 @Injectable({
   providedIn: 'root',

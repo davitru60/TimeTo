@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { environment } from '../../../../environments/environment.development';
-import { UserLogin } from '../interfaces/auth.interface';
+import { UserLogin } from '../../../core/interfaces/auth.interface';
 import { GoogleAuthComponent } from './google-auth/google-auth.component';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../services/auth.service';

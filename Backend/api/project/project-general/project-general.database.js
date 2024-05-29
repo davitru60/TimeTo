@@ -15,6 +15,16 @@ class ProjectGeneral {
     }
   };
 
+  static getUserInterests = async () =>{
+    try {
+      const userInterests = await models.UserInterest.findAll();
+      return userInterests;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
   static createProject = async (body) => {
     const project = await models.sequelize.query(queries.createProject, {
       replacements: {
@@ -28,28 +38,23 @@ class ProjectGeneral {
   };
 
   static updateProject = async (projectId, body) => {
-    let result = false;
-
     try {
       const project = await models.Project.findByPk(projectId);
 
-      if (project) {
-        await project.update(body);
+      await project.update(body);
 
-        result = true;
-      }
+      return project;
     } catch (error) {
-      console.error("Error al actualizar el texto:", error);
+      console.error("Error updating project:", error);
+      throw new Error(`Failed to update project: ${error.message}`);
     }
-
-    return result;
   };
 
   static deleteProject = async (projectId) => {
     let result = false;
     try {
       const project = await models.Project.findByPk(projectId);
-      console.log("PROJECT", project);
+  
 
       const projectHomeImgs = await models.HomeProjectImage.findAll({
         where: {

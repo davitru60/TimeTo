@@ -1,63 +1,68 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, Subject, interval, startWith, switchMap, tap } from 'rxjs';
-import { endpoints, environment, projectRoutes } from '../../../../environments/environment.development';
-import { ProjectGet, ProjectImagesResponse, ImageOrderPut, EditorOrderPut, TextPut, TextPost, ProjectPut, CategoryGet, CategoryPost, CategoryPut, ProjectCategoryPost } from '../interfaces/project.interface';
+import { projectRoutes } from '../../../../environments/environment.development';
+import { ProjectGetResponse, ProjectImagesResponse, ImageOrderPut, EditorOrderPut, ProjectPutData, ProjectPutResponse, ProjectDeleteResponse } from '../../../core/interfaces/project.interface';
+import { TextPutData, TextPostData } from '../../../core/interfaces/project-text.interface';
+import { ProjectCategoryDeleteResponse, ProjectCategoryPostData, ProjectCategoryPostResponse } from '../../../core/interfaces/project-category.interface';
+import { CategoryGetResponse, CategoryPostData ,CategoryPutResponse,CategoryPutData, CategoryPostResponse } from '../../../core/interfaces/category.interface';
+import { ProjectCategoryGetResponse } from '../../../core/interfaces/project-category.interface';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProjectService {
-
   private imageAddedSubject = new Subject<void>();
   private textEditSubject = new Subject<void> ()
   private imageDeletedSubject = new Subject<void>();
 
   constructor(private http: HttpClient) { }
-
-
   
-  getAllProjects(): Observable<ProjectGet> {
+  getAllProjects(): Observable<ProjectGetResponse> {
     return interval(50000).pipe(
       startWith(0),
-      switchMap(() => this.http.get<ProjectGet>(projectRoutes.getAllProjects))
+      switchMap(() => this.http.get<ProjectGetResponse>(projectRoutes.getAllProjects))
     );
   }
 
-  createProject(formData: FormData): Observable<any> {
-    return this.http.post<any>(projectRoutes.createProject, formData);
+  getRecommendedProjects(): Observable<any>{
+    return this.http.get<any>(projectRoutes.getRecommendedProjects,{params:{auth:'true'}});
   }
 
-  updateProject(projectId: number,project:ProjectPut): Observable<any>{
-    return this.http.put<any>(projectRoutes.updateProject(projectId),project)
+  createProject(formData: FormData): Observable<CategoryPostResponse> {
+    return this.http.post<CategoryPostResponse>(projectRoutes.createProject, formData);
   }
 
-  deleteProject(projectId:number): Observable<any>{
-    return this.http.delete<any>(projectRoutes.deleteProject(projectId))
+  updateProject(projectId: number,project:ProjectPutData): Observable<ProjectPutResponse>{
+    return this.http.put<ProjectPutResponse>(projectRoutes.updateProject(projectId),project)
   }
 
-  getCategories():Observable<CategoryGet>{
-    return this.http.get<CategoryGet>(projectRoutes.getCategories)
+  deleteProject(projectId:number): Observable<ProjectDeleteResponse>{
+    return this.http.delete<ProjectDeleteResponse>(projectRoutes.deleteProject(projectId))
   }
 
-  createCategory(category:CategoryPost): Observable<any>{
-    return this.http.post<any>(projectRoutes.createCategory, category)
+  getCategories():Observable<CategoryGetResponse>{
+    return this.http.get<CategoryGetResponse>(projectRoutes.getCategories)
   }
 
-  updateCategory(categoryId:number,category:CategoryPut): Observable<any>{
-    return this.http.put<any>(projectRoutes.updateCategory(categoryId),category)
+  createCategory(category:CategoryPostData): Observable<CategoryPostResponse>{
+    return this.http.post<CategoryPostResponse>(projectRoutes.createCategory, category)
   }
 
-  getProjectCategories(projectId:number): Observable<any>{
-    return this.http.get<any>(projectRoutes.getProjectCategories(projectId))
+  updateCategory(categoryId:number,category:CategoryPutData): Observable<CategoryPutResponse>{
+    return this.http.put<CategoryPutResponse>(projectRoutes.updateCategory(categoryId),category)
   }
 
-  addProjectCategory(projectCategory:ProjectCategoryPost):Observable<any>{
-    return this.http.post<any>(projectRoutes.addProjectCategory,projectCategory)
+  getProjectCategories(projectId:number): Observable<ProjectCategoryGetResponse>{
+    return this.http.get<ProjectCategoryGetResponse>(projectRoutes.getProjectCategories(projectId))
   }
 
-  deleteProjectCategory(projCatId:number):Observable<any>{
-    return this.http.delete<any>(projectRoutes.deleteProjectCategory(projCatId))
+  addProjectCategory(projectCategory:ProjectCategoryPostData):Observable<ProjectCategoryPostResponse>{
+    return this.http.post<ProjectCategoryPostResponse>(projectRoutes.addProjectCategory,projectCategory)
+  }
+
+  deleteProjectCategory(projCatId:number):Observable<ProjectCategoryDeleteResponse>{
+    return this.http.delete<ProjectCategoryDeleteResponse>(projectRoutes.deleteProjectCategory(projCatId))
   }
 
   getProjectTexts(projectId: number): Observable<any> {
@@ -71,11 +76,11 @@ export class ProjectService {
     return this.http.get<any>(projectRoutes.getProjectTexts + projectId);
   }
 
-  addProjectTexts(projectId: number, text: TextPost): Observable<any> {
+  addProjectTexts(projectId: number, text: TextPostData): Observable<any> {
     return this.http.post<any>(projectRoutes.addProjectTexts(projectId), text);
   }
 
-  updateProjectTexts(projTextId: number, text: TextPut): Observable<any> {
+  updateProjectTexts(projTextId: number, text: TextPutData): Observable<any> {
     return this.http.put<any>(projectRoutes.updateProjectTexts(projTextId), text);
   }
 

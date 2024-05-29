@@ -13,40 +13,32 @@ class Category {
   };
 
   static createCategory = async (body) => {
-    let result = false;
     try {
-  
       const newCategory = await models.Category.create({
         name: body.name,
       });
-
-      if (newCategory) {
-        result = true;
-      }
+  
+      return newCategory; 
     } catch (error) {
-      res
-        .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .json({ error: "Error adding category", detail: error });
+      throw new Error(`Failed to create category: ${error.message}`);
     }
-
-    return result;
   };
 
   
   static updateCategory = async (categoryId, body) => {
-    let result = false;
     try {
       const category = await models.Category.findByPk(categoryId);
-
-      if (category) {
-        result = true;
-        await category.update(body);
-      } else {
-        result = false;
+  
+      if (!category) {
+        throw new Error('Category not found');
       }
-    } catch (error) {}
-
-    return result;
+  
+      await category.update(body);
+  
+      return category;
+    } catch (error) {
+      throw new Error(`Failed to update category: ${error.message}`);
+    }
   };
 
   static deleteCategory = async (categoryId) => {

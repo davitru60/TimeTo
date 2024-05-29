@@ -4,7 +4,7 @@ import { LoginComponent } from './pages/auth/login/login.component';
 import { RegisterComponent } from './pages/auth/register/register.component';
 import { AllProjectsComponent } from './pages/projects/all-projects/all-projects.component';
 import { SingleProjectComponent } from './pages/projects/single-project/single-project.component';
-import { authGuard } from './shared/guards/auth.guard';
+import { authGuard } from './core/guards/auth.guard';
 import { ProjectPreferencesComponent } from './pages/projects/project-preferences/project-preferences.component';
 import { AdministrationComponent } from './pages/admin/administration/administration.component';
 

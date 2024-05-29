@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ProjectService } from '../../projects/services/project.service';
-import { Category, CategoryGet, CategoryPut } from '../../projects/interfaces/project.interface';
+import { Category, CategoryGetResponse, CategoryPutResponse, CategoryPutData } from '../../../core/interfaces/category.interface';
 import { PaginationComponent } from "../../../shared/components/ui/pagination/pagination.component";
 import { AddCategoryComponent } from "./add-category/add-category.component";
 import { ModalComponent } from "../../../shared/components/ui/modal/modal.component";
@@ -80,7 +80,7 @@ export class CategoryAdminComponent {
 
   getCategories(){
     this.projectService.getCategories().subscribe(
-      (response:CategoryGet)=>{
+      (response:CategoryGetResponse)=>{
         this.categories = response.data.categories
         this.totalPages = Math.ceil(this.categories.length / this.itemsPerPage);
 
@@ -91,18 +91,18 @@ export class CategoryAdminComponent {
 
   updateCategory(categoryId:number){
     if(this.selectedCategory){
-      const categoryData:CategoryPut = {
+      const categoryData:CategoryPutData = {
         name: this.selectedCategory.name
       }
       this.projectService.updateCategory(categoryId,categoryData).subscribe(
-        (response:any)=>{
-          this.showSuccessToast('Proyecto actualizado exitosamente');
-          this.closeEditCategoryModal(this.categories.findIndex(category => category.category_id === categoryId));
-          this.closeEditCategoryModal(categoryId);
+        (response:CategoryPutResponse)=>{
+          console.log(response)
+          if(response.success){
+            this.showSuccessToast('Proyecto actualizado exitosamente');
+            this.closeEditCategoryModal(this.categories.findIndex(category => category.category_id === categoryId));
+            this.closeEditCategoryModal(categoryId);
+          }
       })
     }
-
-    
-
   }
 }
