@@ -35,6 +35,11 @@ class ProjectGeneralController {
 
   static getRecommendedProjects = async (req, res) => {
     try {
+
+      const userId = req.tokenId
+
+      console.log(req)
+
       const categoriesDatavalues = await category.getCategories();
       const projectCategoriesDatavalues = await projectCategory.getProjectsCategories();
       const userInterestsDatavalues = await projectGeneral.getUserInterests();
@@ -56,7 +61,6 @@ class ProjectGeneralController {
         userInterests.push(userInterestsDatavalues[i].dataValues);
       }
 
-      const userId = 1;
 
       // Filtrar intereses del usuario específico
       const userCategoryInterests = userInterests

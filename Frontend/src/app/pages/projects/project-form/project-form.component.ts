@@ -12,7 +12,7 @@ import { ButtonGroupComponent } from './button-group/button-group.component';
 import { combineLatest, map } from 'rxjs';
 import { ProjectLoaderService } from '../services/project-loader.service';
 import { DynamicFieldService } from '../services/dynamicfield.service';
-import { ProjectOperationsService } from '../services/project-operations.service';
+import { ProjectInteractionsService } from '../services/project-interactions.service';
 import { OnDropService } from '../services/on-drop.service';
 import { editorModules } from '../../../core/conf/editor-config';
 import { ToastComponent } from "../../../shared/components/ui/toast/toast.component";
@@ -71,7 +71,7 @@ export class ProjectFormComponent {
     private onDropService : OnDropService,
     private projectLoaderService : ProjectLoaderService,
     private dynamicFieldService : DynamicFieldService,
-    private projectOperationsService: ProjectOperationsService, 
+    private projectInteractionsService: ProjectInteractionsService, 
     private route: ActivatedRoute
   ) {
     this.form = this.fb.group({
@@ -188,11 +188,11 @@ export class ProjectFormComponent {
 
   //Project operations
   addNewImage(index: number): void {
-    this.projectOperationsService.addImageToProject(this.projectId, index, this.dynamicFields);
+    this.projectInteractionsService.addImageToProject(this.projectId, index, this.dynamicFields);
   }
 
   addNewText(index:number):void{
-    this.projectOperationsService.addProjectTexts(this.projectId,index,this.dynamicFields)
+    this.projectInteractionsService.addProjectTexts(this.projectId,index,this.dynamicFields)
     this.closeAddModal(index)
   }
 
@@ -205,7 +205,7 @@ export class ProjectFormComponent {
   }
 
   updateTextField(index: number): void {
-    this.projectOperationsService.updateProjectTexts(this.projectId, index, this.dynamicFields);
+    this.projectInteractionsService.updateProjectTexts(this.projectId, index, this.dynamicFields);
     this.closeEditModal(index)
   }
 

@@ -26,7 +26,6 @@ export class SingleProjectComponent {
   fields: any[] = [];
   
   constructor(
-    private projectService: ProjectService,
     public authService: AuthService,
     private route: ActivatedRoute,
     private projectLoaderService: ProjectLoaderService,

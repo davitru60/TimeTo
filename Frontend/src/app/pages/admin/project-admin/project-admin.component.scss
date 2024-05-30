@@ -1,0 +1,10 @@
+.custom-field {
+    border: none !important;
+    border-bottom: 1px solid black !important;
+
+    &:focus {
+        outline: none; 
+        border-bottom: 2px solid rgb(0, 0, 0) !important;
+        box-shadow: none !important;
+    }
+}

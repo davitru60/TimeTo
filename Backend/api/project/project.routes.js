@@ -2,6 +2,7 @@ const { Router } = require("express");
 const router = Router();
 const { ensureDropboxToken } = require("../../middlewares/dropboxToken");
 const { uploadImageMiddleware,handleUploadImage} = require('../../middlewares/uploadImage')
+const midsJWT = require("../../middlewares/validateJWT")
 
 const projectGeneral = require("./project-general/project-general.controller")
 const category = require("./categories/category.controller")
@@ -9,6 +10,7 @@ const projectCategory = require("./project-categories/project-category.controlle
 const projectText = require("./project-text/project-text.controller")
 const projectImage = require("./project-image/project-image.controller")
 const contentOrder = require("./content-order/content-order.controller")
+const userPreference = require("./user-preferences/user-preference.controller")
 
 
 
@@ -17,9 +19,9 @@ router.use(ensureDropboxToken);
 
 //General
 router.get('/projects',projectGeneral.getAllProjects)
-router.get('/recommended-projects',projectGeneral.getRecommendedProjects)
+router.get('/recommended-projects', [midsJWT.validateJWT], projectGeneral.getRecommendedProjects)
 router.get('/show-image',projectGeneral.showImage)
-router.post('/projects',[uploadImageMiddleware,handleUploadImage],projectGeneral.createProject)
+router.post('/projects', [uploadImageMiddleware,handleUploadImage],projectGeneral.createProject)
 router.put('/projects/:id',projectGeneral.updateProject)
 router.delete('/projects/:id',projectGeneral.deleteProject)
 
@@ -34,6 +36,8 @@ router.get('/project-category/:id',projectCategory.getProjectCategories)
 router.post('/project-category',projectCategory.addProjectCategory)
 router.delete('/project-category/:id',projectCategory.deleteProjectCategory)
 
+//User preferences
+router.get('/user-interests',[midsJWT.validateJWT],userPreference.getUserInterests)
 
 //Project texts
 router.get('/project-texts/:id',projectText.getProjectTexts)

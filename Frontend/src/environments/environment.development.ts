@@ -16,7 +16,7 @@ export const environment = {
   
   export const projectRoutes = {
     getAllProjects: environment.baseUrl + endpoints.projectEndpoint + '/projects',
-    getRecommendedProjects: environment.baseUrl + endpoints.projectEndpoint + '/recommended-projects',
+    getRecommendedProjects: environment.baseUrl + endpoints.projectEndpoint + '/recommended-projects/',
     createProject: environment.baseUrl + endpoints.projectEndpoint + '/projects',
     updateProject:(projectId:number) => environment.baseUrl + endpoints.projectEndpoint + '/projects/' + projectId,
     deleteProject: (projectId:number) => environment.baseUrl + endpoints.projectEndpoint + '/projects/' + projectId,
@@ -30,6 +30,10 @@ export const environment = {
     getProjectCategories: (projectId:number) => environment.baseUrl + endpoints.projectEndpoint + '/project-category/'+ projectId,
     addProjectCategory: environment.baseUrl + endpoints.projectEndpoint + '/project-category/',
     deleteProjectCategory: (projCatId:number) => environment.baseUrl + endpoints.projectEndpoint + '/project-category/' + projCatId,
+
+    //User preferences
+    getUserInterests: environment.baseUrl + endpoints.projectEndpoint + '/user-interests/',
+
 
     //Project texts
     getProjectTexts: environment.baseUrl + endpoints.projectEndpoint + '/project-texts/',

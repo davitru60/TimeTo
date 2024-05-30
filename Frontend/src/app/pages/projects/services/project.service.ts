@@ -7,6 +7,7 @@ import { TextPutData, TextPostData } from '../../../core/interfaces/project-text
 import { ProjectCategoryDeleteResponse, ProjectCategoryPostData, ProjectCategoryPostResponse } from '../../../core/interfaces/project-category.interface';
 import { CategoryGetResponse, CategoryPostData ,CategoryPutResponse,CategoryPutData, CategoryPostResponse } from '../../../core/interfaces/category.interface';
 import { ProjectCategoryGetResponse } from '../../../core/interfaces/project-category.interface';
+import { UserInterestGetResponse } from '../../../core/interfaces/user-preferences';
 
 @Injectable({
   providedIn: 'root'
@@ -65,6 +66,10 @@ export class ProjectService {
     return this.http.delete<ProjectCategoryDeleteResponse>(projectRoutes.deleteProjectCategory(projCatId))
   }
 
+  getUserPreferences(): Observable<UserInterestGetResponse>{
+    return this.http.get<UserInterestGetResponse>(projectRoutes.getUserInterests,{params:{auth:'true'}})
+  }
+
   getProjectTexts(projectId: number): Observable<any> {
     return interval(3000).pipe(
       startWith(0),
@@ -95,7 +100,6 @@ export class ProjectService {
     );
   }
 
-
   addImageToProject(projectId: number, formData: FormData): Observable<any> {
     return this.http.post<any>(projectRoutes.addImageToProject(projectId), formData).pipe(
       tap((response) => {
@@ -103,7 +107,6 @@ export class ProjectService {
       })
     );
   }
-
 
   getProjectFormImages(projectId: number): Observable<ProjectImagesResponse> {
     return this.http.get<ProjectImagesResponse>(projectRoutes.getProjectImages + projectId);

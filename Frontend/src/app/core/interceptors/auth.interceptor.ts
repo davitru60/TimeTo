@@ -10,8 +10,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     cloneRequest = req.clone({
       headers: req.headers.set('x-token',token)
     })
+    
   }
 
 
-  return next(req);
+  return next(cloneRequest);
 };

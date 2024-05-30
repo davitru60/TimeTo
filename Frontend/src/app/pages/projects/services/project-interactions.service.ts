@@ -7,7 +7,7 @@ import { ToastService } from '../../../shared/components/ui/toast/toast.service'
 @Injectable({
   providedIn: 'root'
 })
-export class ProjectOperationsService {
+export class ProjectInteractionsService {
 
   constructor(private projectService: ProjectService, private toastService: ToastService) { }
 
@@ -58,8 +58,6 @@ export class ProjectOperationsService {
       const title = field?.get('title')?.value;
       const text = field?.get('content')?.value;
       const proj_text_id = field?.get('proj_text_id')?.value;
-
-
      
       const textAdd : TextPostData = {
         project_id: proj_text_id,
@@ -78,8 +76,7 @@ export class ProjectOperationsService {
           console.error(`Error al enviar el editor :`, error);
         }
       );
-      
-
+    
     }
   }
 

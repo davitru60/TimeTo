@@ -102,6 +102,7 @@ export class AllProjectsComponent {
       .subscribe((response: ProjectGetResponse) => {
         if(response.success){
           this.projects = response.data.projects;
+
         }
       });
   }
