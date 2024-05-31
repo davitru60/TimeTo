@@ -8,6 +8,8 @@ import { authGuard } from './core/guards/auth.guard';
 import { ProjectPreferencesComponent } from './pages/projects/project-preferences/project-preferences.component';
 import { AdministrationComponent } from './pages/admin/administration/administration.component';
 import { MyAccountComponent } from './pages/user/my-account/my-account.component';
+import { authRedirectGuard } from './core/guards/authRedirect.guard';
+import { adminGuard } from './core/guards/admin.guard';
 
 
 export const routes: Routes = [
@@ -17,8 +19,8 @@ export const routes: Routes = [
   { path: 'projects', component: AllProjectsComponent },
   { path: 'projects/:id', component: SingleProjectComponent },
   { path: 'projects-preferences', component: ProjectPreferencesComponent},
-  { path: 'administration', component:AdministrationComponent},
-  { path: 'my-account', component:MyAccountComponent}
+  { path: 'administration', component:AdministrationComponent, canActivate:[adminGuard]},
+  { path: 'my-account', component:MyAccountComponent, canActivate: [authRedirectGuard]}
  
 
 ];

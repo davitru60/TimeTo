@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { NavbarComponent } from '../../../shared/components/layout/navbar/navbar.component';
 import { ProjectService } from '../../projects/services/project.service';
 import {
@@ -13,7 +13,7 @@ import { ProjectCategory,ProjectCategoryDeleteResponse,ProjectCategoryPostData, 
 import { Category,CategoryGetResponse } from '../../../core/interfaces/category.interface';
 import { CommonModule } from '@angular/common';
 import { ToastService } from '../../../shared/components/ui/toast/toast.service';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { ModalComponent } from '../../../shared/components/ui/modal/modal.component';
 import { ToastComponent } from '../../../shared/components/ui/toast/toast.component';
 import { PaginationComponent } from '../../../shared/components/ui/pagination/pagination.component';
@@ -45,9 +45,12 @@ export class ProjectAdminComponent {
 
   isEditProjectModalOpen: boolean[] = [];
   isCategoryModalOpen: boolean[] = [];
+  isDeleteProjectModalOpen: boolean[] = [];
+
 
   isAddProjectModalOpen = false;
   isAddCategoryModalOpen = false;
+  isDeleteCategoryModalOpen = false;
 
   selectedProject: Project | null = null;
 
@@ -67,6 +70,8 @@ export class ProjectAdminComponent {
   totalPages: number = 0;
 
   searchTerm: string = ''; // Variable to hold search term
+  deleteModalStyle = 'lg:w-1/3'
+  
 
   constructor(
     private projectService: ProjectService,
@@ -114,6 +119,16 @@ export class ProjectAdminComponent {
     this.isEditProjectModalOpen[index] = false;
     this.selectedProject = null;
   }
+
+  openDeleteProjectModal(index:number){
+    this.isDeleteProjectModalOpen[index] = true;
+  }
+
+  closeDeleteProjectModal(index:number){
+    this.isDeleteProjectModalOpen[index] = false;
+  }
+
+  
 
   openCategoryModal(index: number, project: Project) {
     this.projectService
@@ -237,7 +252,7 @@ export class ProjectAdminComponent {
 
   updateProject(projectId: number) {
     if (this.selectedProject) {
-     
+  
 
       const formData = new FormData();
       formData.append('name', this.selectedProject.name);
