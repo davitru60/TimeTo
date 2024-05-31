@@ -7,7 +7,6 @@ export interface UserInterest {
 }
 
 export interface UserInterestPostData{
-    user_id:number;
     category_id:number;
 }
 
@@ -18,7 +17,7 @@ export interface UserInterestGetResponse{
     }
 }
 
-export interface UserPreferencePostResponse extends ApiResponse{
+export interface UserInterestPostResponse extends ApiResponse{
     data: UserInterest
 }
 

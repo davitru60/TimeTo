@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { NavbarComponent } from '../../../shared/components/layout/navbar/navbar.component';
 import { ProjectService } from '../services/project.service';
-import { Project, ProjectGetResponse, ProjectPutData} from '../../../core/interfaces/project.interface';
+import { Project, ProjectGetResponse, ProjectPutData, ProjectPutResponse} from '../../../core/interfaces/project.interface';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { NgxPaginationModule } from 'ngx-pagination';
@@ -96,6 +96,13 @@ export class AllProjectsComponent {
     this.isModalOpen[index] = false
   }
 
+  onFileChange(event: any) {
+    const file = event.target.files[0];
+    if (file && this.selectedProject != null) {
+      this.selectedProject.path = file;
+    }
+  }
+
   getAllProjects() {
     this.projectService
       .getAllProjects()
@@ -110,13 +117,22 @@ export class AllProjectsComponent {
 
   updateProject(projectId: number) {
     if (this.selectedProject) {
-      this.project.name = this.selectedProject.name;
-      this.project.description = this.selectedProject.description;
+     
 
-      this.projectService.updateProject(this.selectedProject.project_id, this.project).subscribe(
-        (response: any) => {
-          this.showSuccessToast('Proyecto actualizado exitosamente');
-          this.closeModal(projectId);
+      const formData = new FormData();
+      formData.append('name', this.selectedProject.name);
+      formData.append('description', this.selectedProject.description);
+      formData.append('path', this.selectedProject.path);
+     
+
+      this.projectService.updateProject(projectId, formData).subscribe(
+        (response: ProjectPutResponse) => {
+          if(response.success){
+            this.showSuccessToast('Proyecto actualizado exitosamente');
+            this.closeModal(projectId);
+            this.getAllProjects();
+          }
+         
         },
         (error: any) => {
           this.showErrorToast('Error al actualizar el proyecto');
@@ -124,6 +140,9 @@ export class AllProjectsComponent {
       );
     }
   }
+
+
+ 
 
   deleteProject(projectId: number) {
     this.projectService.deleteProject(projectId).subscribe(

@@ -101,6 +101,24 @@ class ProjectGeneral {
     } catch (error) {}
     return result;
   };
+
+  static updateProjectHomeImage = async (body) =>{
+    try{
+      console.log(body)
+      const projectHomeImage = await models.HomeProjectImage.findByPk(body.project_id)
+
+      if(projectHomeImage){
+        await projectHomeImage.update({
+          path: body.path[0]
+        })
+      }
+
+      return projectHomeImage
+
+    }catch(error){
+      throw new Error(`Failed to update image: ${error.message}`);
+    }
+  }
 }
 
 

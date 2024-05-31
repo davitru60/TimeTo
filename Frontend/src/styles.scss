@@ -6,3 +6,61 @@
 body {
   font-family: "Inter", sans-serif;
 }
+
+.w-custom {
+  width: 38rem;
+}
+
+.custom-field {
+  border: none !important;
+  border-bottom: 1px solid black !important;
+
+  &:focus {
+    box-shadow: none;
+  }
+}
+
+.red-border {
+  border-color: rgb(240 82 82) !important;
+}
+
+//Buttons
+.add-btn {
+  @apply bg-black text-white hover:bg-gray-800 transition-transform transform hover:scale-105;
+}
+
+.edit-btn {
+  @apply bg-gray-700 text-white hover:bg-gray-600 transition-transform transform hover:scale-105;
+}
+
+.delete-btn {
+  @apply bg-black text-white hover:bg-gray-800 transition-transform transform hover:scale-105;
+}
+
+//Checkbox styles
+.custom-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  background-color: #fff;
+  border: 2px solid #d1d5db;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  outline: none;
+}
+
+.custom-checkbox:checked {
+  background-color: #000000;
+  border-color: #000000;
+}
+
+.custom-checkbox:hover {
+  outline: none;
+}
+
+.custom-checkbox:focus {
+  outline: none;
+  box-shadow: none;
+}

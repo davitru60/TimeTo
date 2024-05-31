@@ -34,8 +34,8 @@ export class ProjectService {
     return this.http.post<CategoryPostResponse>(projectRoutes.createProject, formData);
   }
 
-  updateProject(projectId: number,project:ProjectPutData): Observable<ProjectPutResponse>{
-    return this.http.put<ProjectPutResponse>(projectRoutes.updateProject(projectId),project)
+  updateProject(projectId: number,formData:FormData): Observable<ProjectPutResponse>{
+    return this.http.put<ProjectPutResponse>(projectRoutes.updateProject(projectId),formData)
   }
 
   deleteProject(projectId:number): Observable<ProjectDeleteResponse>{
@@ -64,10 +64,6 @@ export class ProjectService {
 
   deleteProjectCategory(projCatId:number):Observable<ProjectCategoryDeleteResponse>{
     return this.http.delete<ProjectCategoryDeleteResponse>(projectRoutes.deleteProjectCategory(projCatId))
-  }
-
-  getUserPreferences(): Observable<UserInterestGetResponse>{
-    return this.http.get<UserInterestGetResponse>(projectRoutes.getUserInterests,{params:{auth:'true'}})
   }
 
   getProjectTexts(projectId: number): Observable<any> {

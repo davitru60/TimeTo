@@ -10,7 +10,6 @@ import {
 } from '../../../core/interfaces/project.interface';
 
 import { ProjectCategory,ProjectCategoryDeleteResponse,ProjectCategoryPostData, ProjectCategoryPostResponse } from '../../../core/interfaces/project-category.interface';
-
 import { Category,CategoryGetResponse } from '../../../core/interfaces/category.interface';
 import { CommonModule } from '@angular/common';
 import { ToastService } from '../../../shared/components/ui/toast/toast.service';
@@ -159,7 +158,7 @@ export class ProjectAdminComponent {
 
   toggleCategory(category: Category, project: Project): void {
     const index = this.projectCategories.findIndex(
-      (pc) => pc.category_id === category.category_id);
+      (projectCategory) => projectCategory.category_id === category.category_id);
     if (index !== -1) {
       this.deleteProjectCategory(category);
     } else {
@@ -169,7 +168,7 @@ export class ProjectAdminComponent {
 
   addProjectCategory(category: Category, project: Project): void {
     const index = this.projectCategories.findIndex(
-      (pc) => pc.category_id === category.category_id
+      (projectCategory) => projectCategory.category_id === category.category_id
     );
     if (index === -1) {
       const newProjectCategory: ProjectCategory = {
@@ -196,7 +195,7 @@ export class ProjectAdminComponent {
 
   deleteProjectCategory(category: Category): void {
     const index = this.projectCategories.findIndex(
-      (pc) => pc.category_id === category.category_id
+      (projectCategory) => projectCategory.category_id === category.category_id
     );
     if (index !== -1) {
       const projectCategory = this.projectCategories[index];
@@ -229,15 +228,24 @@ export class ProjectAdminComponent {
     });
   }
 
+  onFileChange(event: any) {
+    const file = event.target.files[0];
+    if (file && this.selectedProject != null) {
+      this.selectedProject.path = file;
+    }
+  }
+
   updateProject(projectId: number) {
     if (this.selectedProject) {
-      const projectData: ProjectPutData = {
-        name: this.selectedProject.name,
-        description: this.selectedProject.description,
-        path: this.selectedProject.path,
-      };
+     
 
-      this.projectService.updateProject(projectId, projectData).subscribe(
+      const formData = new FormData();
+      formData.append('name', this.selectedProject.name);
+      formData.append('description', this.selectedProject.description);
+      formData.append('path', this.selectedProject.path);
+     
+
+      this.projectService.updateProject(projectId, formData).subscribe(
         (response: ProjectPutResponse) => {
           if(response.success){
             this.showSuccessToast('Proyecto actualizado exitosamente');

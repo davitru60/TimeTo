@@ -6,7 +6,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../../auth/services/auth.service';
 import { UserRegister } from '../../../core/interfaces/auth.interface';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -15,15 +15,18 @@ import {
   CategoryGetResponse,
 } from '../../../core/interfaces/category.interface';
 import { ProjectService } from '../../projects/services/project.service';
-import { UserInterest, UserInterestGetResponse } from '../../../core/interfaces/user-preferences';
+import { UserInterest, UserInterestDeleteResponse, UserInterestGetResponse, UserInterestPostResponse } from '../../../core/interfaces/user-preferences';
+import { UserService } from '../service/user.service';
+import { ToastService } from '../../../shared/components/ui/toast/toast.service';
+import { ToastComponent } from "../../../shared/components/ui/toast/toast.component";
 
 
 @Component({
-  selector: 'app-my-account',
-  standalone: true,
-  templateUrl: './my-account.component.html',
-  styleUrl: './my-account.component.scss',
-  imports: [CommonModule, NavbarComponent, ReactiveFormsModule],
+    selector: 'app-my-account',
+    standalone: true,
+    templateUrl: './my-account.component.html',
+    styleUrl: './my-account.component.scss',
+    imports: [CommonModule, NavbarComponent, ReactiveFormsModule, ToastComponent]
 })
 export class MyAccountComponent {
   showPassword = false;
@@ -47,6 +50,8 @@ export class MyAccountComponent {
     private formBuilder: FormBuilder,
     private authService: AuthService,
     private projectService: ProjectService,
+    private userService: UserService,
+    private toastService: ToastService,
     public router: Router
   ) {
     this.registerForm = this.formBuilder.group({
@@ -86,7 +91,7 @@ export class MyAccountComponent {
     });
 
     this.getCategories();
-    this.getUserPreferences();
+    this.getUserInterests();
   }
 
   register() {
@@ -119,9 +124,9 @@ export class MyAccountComponent {
       });
   }
 
-  getUserPreferences() {
-    this.projectService
-      .getUserPreferences()
+  getUserInterests() {
+    this.userService
+      .getUserInterests()
       .subscribe((response: UserInterestGetResponse) => {
         if (response.success) {
           this.userInterests = response.data.userInterests;
@@ -129,9 +134,17 @@ export class MyAccountComponent {
       });
   }
 
-  hasCategory(category: Category, userPreferences: UserInterest[]) {
-    for (let i = 0; i < userPreferences.length; i++) {
-      if (userPreferences[i].category_id == category.category_id) {
+  showSuccessToast(message: string) {
+    this.toastService.showToast({ text: message, type: 'success' });
+  }
+
+  showErrorToast(message: string) {
+    this.toastService.showToast({ text: message, type: 'error' });
+  }
+
+  hasCategory(category: Category, userInterests: UserInterest[]) {
+    for (let i = 0; i < userInterests.length; i++) {
+      if (userInterests[i].category_id == category.category_id) {
         return true;
       }
     }
@@ -139,5 +152,59 @@ export class MyAccountComponent {
     return false;
   }
 
-  toggleCategory() {}
+  toggleCategory(category:Category) {
+    const index = this.userInterests.findIndex(
+      (userInterest) => userInterest.category_id == category.category_id
+    )
+
+    if (index !== -1) {
+      this.deleteUserInterest(category)
+    }else{
+      this.addUserInterest(category)
+    }
+  }
+
+  addUserInterest(category:Category){
+    const index = this.userInterests.findIndex(
+      (userInterest) => userInterest.category_id == category.category_id
+    )
+
+    if(index === -1){
+      const newUserInterest:UserInterest = {
+        user_int_id: 0,
+        user_id: 0,
+        category_id: category.category_id
+      }
+
+      this.userInterests.push(newUserInterest)
+
+      this.userService.addUserInterest(newUserInterest).subscribe((response:UserInterestPostResponse)=>{
+        if(response.success){
+          this.showSuccessToast('Interés añadido correctamente');
+        }else{
+          this.showErrorToast('Error al añadir el interés');
+        }
+      })
+    }
+
+  }
+
+  
+  deleteUserInterest(category:Category){
+    const index = this.userInterests.findIndex(
+      (userInterest) => userInterest.category_id == category.category_id
+    )
+
+    if (index !== -1) {
+      const userInterest = this.userInterests[index]
+      this.userInterests.splice(index,1)
+      this.userService.deleteUserInterest(userInterest.user_int_id).subscribe((response:UserInterestDeleteResponse)=>{
+        if(response.success){
+          this.showSuccessToast('Interés eliminado correctamente');
+        }
+      })
+
+  }
+
+}
 }

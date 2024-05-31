@@ -45,16 +45,14 @@ class ProjectCategory {
     try {
       let result = false;
 
-      try {
-        const category = await models.ProjectCategory.findByPk(projCatId);
+      const category = await models.ProjectCategory.findByPk(projCatId);
 
-        if (category) {
-          result = true;
-          await category.destroy();
-        } else {
-          result = false;
-        }
-      } catch (error) {}
+      if (category) {
+        await category.destroy();
+        result = true;
+      } else {
+        result = false;
+      }
 
       return result;
     } catch (error) {}

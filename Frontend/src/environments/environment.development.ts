@@ -6,6 +6,7 @@ export const environment = {
   export const endpoints = {
     authEndpoint: '/auth',
     projectEndpoint: '/projects',
+    userEndpoint: '/user'
   };
   
   export const authRoutes = {
@@ -31,10 +32,6 @@ export const environment = {
     addProjectCategory: environment.baseUrl + endpoints.projectEndpoint + '/project-category/',
     deleteProjectCategory: (projCatId:number) => environment.baseUrl + endpoints.projectEndpoint + '/project-category/' + projCatId,
 
-    //User preferences
-    getUserInterests: environment.baseUrl + endpoints.projectEndpoint + '/user-interests/',
-
-
     //Project texts
     getProjectTexts: environment.baseUrl + endpoints.projectEndpoint + '/project-texts/',
     addProjectTexts: (projectId: number) => environment.baseUrl + endpoints.projectEndpoint + '/project-texts/' + projectId,
@@ -51,4 +48,10 @@ export const environment = {
     updateImageOrder: (projectId: number) => environment.baseUrl + endpoints.projectEndpoint + '/project-images-order/' + projectId,
     updateEditorOrder: (projectId: number) => environment.baseUrl + endpoints.projectEndpoint + '/project-editor-order/' + projectId,
   };
+
+  export const userRoutes ={
+    getUserInterests: environment.baseUrl + endpoints.userEndpoint + '/user-interests',
+    addUserInterest:  environment.baseUrl + endpoints.userEndpoint + '/user-interests/',
+    deleteUserInterest: (userIntId:number) => environment.baseUrl + endpoints.userEndpoint + '/user-interests/' + userIntId,
+  }
   

@@ -170,30 +170,44 @@ class ProjectGeneralController {
   static updateProject = async (req, res) => {
     try {
       const projectId = req.params.id;
-      const projectUpdate = await projectGeneral.updateProject(
-        projectId,
-        req.body
-      );
+      let updatedImage = null;
+  
+      if (req.files) {
+        const imageOriginalName = await uploadImageToDropbox(req);
+  
+        const projectImg = {
+          project_id: projectId,
+          path: imageOriginalName,
+        };
+  
+        updatedImage = await projectGeneral.updateProjectHomeImage(projectImg);
+        console.log(updatedImage)
+      }
+  
+      const projectUpdate = await projectGeneral.updateProject(projectId, req.body);
 
-      if (projectUpdate) {
+  
+      if (projectUpdate !== null) {
         const response = {
           success: true,
           msg: "Project has been successfully updated",
-          data: projectUpdate
+          data: {
+            updatedImage,
+            project: projectUpdate
+          }
         };
-
+  
         res.status(StatusCodes.OK).json(response);
       } else {
-        const response = {
-          success: false,
-          msg: "Failed to update project",
-        };
-        res.status(StatusCodes.BAD_REQUEST).json(response);
+        throw new Error("Failed to update project");
       }
+  
     } catch (error) {
-      res
-        .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .json({ error: "Error editing project", detail: error });
+      res.status(StatusCodes.BAD_REQUEST).json({
+        success: false,
+        error: "Error editing project",
+        detail: error.message
+      });
     }
   };
 

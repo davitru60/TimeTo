@@ -44,50 +44,49 @@ class AuthController {
     }
   };
 
-  static googleSignIn = async(req,res) =>{
+  static googleSignIn = async (req, res) => {
     const idToken = req.body.id_token;
 
     try {
       const googleUser = await googleVerify(idToken);
       const user = await auth.emailExists(googleUser.email);
+      console.log(user);
 
-      const userId = user.dataValues.user_id
-      
-      const roles = await this.getRoles(userId)
-      const token = generateJWT(userId, roles);
-
-     if(!user){
+      if (!user) {
         const newUser = {
           name: googleUser.given_name,
           first_surname: googleUser.family_name,
-          second_surname: '', 
+          second_surname: "",
           email: googleUser.email,
-          password: '', 
+          password: "",
         };
         const userId = await auth.register(newUser);
         await auth.createRoleUser(userId, 2);
-      }
+      } else {
+        const userId = user.dataValues.user_id;
 
-      const response = {
-        success: true,
-        msg: 'Google Auth Success',
-        data: {
-          token:token
-        },
-      }; 
-  
-      return res.status(StatusCodes.OK).json(response);
-  
+        const roles = await this.getRoles(userId);
+        const token = generateJWT(userId, roles);
+
+        const response = {
+          success: true,
+          msg: "Google Auth Success",
+          data: {
+            token: token,
+          },
+        };
+
+        return res.status(StatusCodes.OK).json(response);
+      }
     } catch (error) {
-      console.error('Error interno:', error);
-  
+      console.error("Error interno:", error);
+
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
         success: false,
-        msg: 'Error interno al verificar el token',
+        msg: "Error interno al verificar el token",
       });
     }
-
-  }
+  };
 
   static getRoles = async (userId) => {
     try {
@@ -112,9 +111,7 @@ class AuthController {
       };
 
       res.status(StatusCodes.CREATED).json({ response });
-    } catch (error) {
-      
-    }
+    } catch (error) {}
   };
 
   static createRoleUser = async (userId, roleId) => {

@@ -1,4 +1,6 @@
 <app-navbar></app-navbar>
+
+<app-toast></app-toast>
 <div class="flex flex-col md:flex-row justify-center bg-white p-6 items-stretch">
     <!-- Contenedor del formulario -->
     <div class="w-full md:w-1/2 flex flex-col">
@@ -139,8 +141,8 @@
             <h2 class="text-xl font-bold mb-4">Mis gustos</h2>
             @for(category of categories; track category.category_id){
             <label class="flex mt-1">
-                <input type="checkbox" [checked]="hasCategory(category,userInterests)" (change)="toggleCategory()">
-                <span class="ml-2 -mt-1 text-gray-700">{{ category.name}}</span>
+                <input type="checkbox" class="custom-checkbox" [checked]="hasCategory(category, userInterests)" (change)="toggleCategory(category)">
+                <span class="ml-2 -mt-0.5 text-gray-700">{{ category.name}}</span>
             </label>
             }
 
