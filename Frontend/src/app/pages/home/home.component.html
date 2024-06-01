@@ -1,1 +1,124 @@
 <app-navbar></app-navbar>
+
+@if(isSmallScreen){
+    <div class="flex justify-center w-full">
+        <div class="grid grid-cols-1 p-5 w-full max-w-screen-lg">
+            <div class="self-start text-center">
+                <h1 class="text-5xl font-bold text-black py-3">
+                    DISEÑAMOS
+                </h1>
+            </div>
+            <div class="self-center text-center">
+                <div class="flex items-center justify-center py-3">
+                    <div class="h-3 w-16 bg-black"></div>
+                    <h1 class="text-5xl font-bold text-black ml-4">
+                        MARCAS
+                    </h1>
+                </div>
+            </div>
+            <div class="self-end text-center">
+                <h1 class="text-5xl font-bold text-black py-3">
+                    QUE VENDEN
+                </h1>
+            </div>
+        </div>
+    </div>
+
+}@else if(isMediumScreen){
+    <div class="flex justify-center w-full">
+        <div class="grid grid-cols-1 p-5 w-full max-w-screen-lg">
+            <div class="self-start text-center">
+                <h1 class="text-5xl font-bold text-black py-3">
+                    DISEÑAMOS
+                </h1>
+            </div>
+            <div class="self-center text-center">
+                <div class="flex items-center justify-center py-3">
+                    <div class="h-3 w-16 bg-black"></div>
+                    <h1 class="text-5xl font-bold text-black ml-4">
+                        MARCAS
+                    </h1>
+                </div>
+            </div>
+            <div class="self-end text-center">
+                <h1 class="text-5xl font-bold text-black py-3">
+                    QUE VENDEN
+                </h1>
+            </div>
+        </div>
+    </div>
+
+}@else {
+    <div class="flex justify-start w-full ml-3">
+        <div class="grid grid-cols-1 sm:grid-cols-1 p-5 sm:p-10 w-full max-w-screen-lg">
+            <div class="self-start text-left sm:mr-10 ml-3">
+                <h1 class="sm:text-5xl md:text-6xl lg:text-7xl custom-text-xl text-5xl font-bold text-black py-3 sm:ml-12">
+                    DISEÑAMOS
+                </h1>
+            </div>
+            <div class="self-center text-left -mt-6">
+                <div class="flex items-center justify-end sm:mr-10 lg:-mr-48 py-3">
+                    <div class="ml-4 h-3 w-20 bg-black"></div>
+                    <h1 class="sm:text-5xl md:text-6xl lg:text-7xl custom-text-xl text-5xl font-bold text-black ml-4">
+                        MARCAS
+                    </h1>
+                </div>
+            </div>
+            <div class="self-end text-center -mt-6 mr-0 w-125">
+                <h1 class="sm:text-5xl md:text-6xl lg:text-7xl custom-text-xl text-5xl font-bold text-black py-3 sm:ml-25 lg:ml-32">
+                    QUE VENDEN
+                </h1>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+
+<div class="flex justify-center w-full mt-8">
+    @if(isSmallScreen){
+        <div class="grid grid-cols-2 sm:grid-cols-2 gap-4">
+            <!-- Imagen 1 -->
+            <div class="flex justify-start items-center">
+                <img src="assets/artem.jpg" alt="Imagen 1" class="w-80 h-80 object-cover">
+            </div>
+            
+            <!-- Imagen 2 -->
+            <div class="flex justify-end items-center">
+                <img src="assets/f3.jpg" alt="Imagen 3" class="w-80 h-80 object-cover">
+            </div>
+
+            <div class="flex justify-end items-center">
+                <img src="assets/artboard.png" alt="Imagen 3" class="w-80 h-80 object-cover">
+            </div>
+
+            <div class="flex justify-end items-end">
+                <img src="assets/albert-vincent-wu.jpg" alt="Imagen 3" class="w-80 h-80 object-cover">
+            </div>
+        </div>
+    }@else {
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+            <!-- Imagen 1 -->
+            <div class="flex justify-start items-end sm:col-span-1">
+                <img src="assets/artem.jpg" alt="Imagen 1" class="w-full h-auto sm:w-80 sm:h-60 object-cover">
+            </div>
+            
+            <!-- Contenedor de la imagen 2 con superposición -->
+            <div class="relative flex justify-center items-center sm:col-span-2">
+                <!-- Imagen superpuesta -->
+                <img src="assets/artboard.png" alt="Imagen Superpuesta" class="absolute bottom-0 right-0 h-auto sm:w-64 sm:h-32 object-cover -mb-20 -mr-52">
+                
+                <!-- Imagen 2 -->
+                <div class="relative flex justify-center items-center">
+                    <img src="assets/f3.jpg" alt="Imagen 2" class="custom-img">
+                </div>
+            </div>
+            
+            <!-- Imagen 3 -->
+            <div class="flex justify-end items-start sm:col-span-1">
+                <img src="assets/albert-vincent-wu.jpg" alt="Imagen 3" class="w-full h-auto sm:w-80 sm:h-60 object-cover">
+            </div>
+        </div>
+    }  
+</div>
