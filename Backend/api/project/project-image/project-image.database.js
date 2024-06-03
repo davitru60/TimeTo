@@ -61,8 +61,6 @@ class ProjectImage {
         await image.update({
           path: body.path[0]
         })
-
-        console.log('pasa')
       }
 
       return image

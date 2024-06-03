@@ -20,13 +20,16 @@ export class CategoryAdminComponent {
 
   isAddCategoryModalOpen=false
   isEditCategoryModalOpen: boolean[] = [];
+  isDeleteCategoryModalOpen: boolean[] = [];
 
 
   selectedCategory: Category | null = null;
+  deleteModalStyle = 'lg:w-1/3'
 
   currentPage: number = 1;
   itemsPerPage: number = 5;
   totalPages: number = 0;
+
   
   constructor (private projectService:ProjectService,   
     private toastService: ToastService){
@@ -68,10 +71,16 @@ export class CategoryAdminComponent {
   }
 
   closeEditCategoryModal(index:number){
-
-
     this.isEditCategoryModalOpen[index] = false;
     this.selectedCategory = null;
+  }
+
+  openDeleteCategoryModal(index:number){
+    this.isDeleteCategoryModalOpen[index] = true;
+  }
+
+  closeDeleteCategoryModal(index:number){
+    this.isDeleteCategoryModalOpen[index] = false;
   }
 
   showSuccessToast(message: string) {
@@ -98,11 +107,24 @@ export class CategoryAdminComponent {
         (response:CategoryPutResponse)=>{
           console.log(response)
           if(response.success){
-            this.showSuccessToast('Proyecto actualizado exitosamente');
+            this.showSuccessToast('Categoría actualizada exitosamente');
             this.closeEditCategoryModal(this.categories.findIndex(category => category.category_id === categoryId));
             this.closeEditCategoryModal(categoryId);
           }
       })
     }
+  }
+
+  deleteCategory(categoryId:number){
+    this.projectService.deleteCategory(categoryId).subscribe(
+      (response) =>{
+        if(response.success){
+          this.showSuccessToast('Categoría eliminada correctamente')
+          this.closeDeleteCategoryModal(categoryId)
+          this.getCategories()
+        }
+      }
+    )
+
   }
 }

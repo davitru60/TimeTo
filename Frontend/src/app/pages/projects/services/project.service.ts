@@ -46,12 +46,17 @@ export class ProjectService {
     return this.http.get<CategoryGetResponse>(projectRoutes.getCategories)
   }
 
+
   createCategory(category:CategoryPostData): Observable<CategoryPostResponse>{
     return this.http.post<CategoryPostResponse>(projectRoutes.createCategory, category)
   }
 
   updateCategory(categoryId:number,category:CategoryPutData): Observable<CategoryPutResponse>{
     return this.http.put<CategoryPutResponse>(projectRoutes.updateCategory(categoryId),category)
+  }
+
+  deleteCategory(categoryId:number):Observable<any>{
+    return this.http.delete<any>(projectRoutes.deleteCategory(categoryId))
   }
 
   getProjectCategories(projectId:number): Observable<ProjectCategoryGetResponse>{
@@ -86,7 +91,6 @@ export class ProjectService {
   }
 
   
-
   deleteProjectTexts(projTextId: number): Observable<any> {
     return this.http.delete<any>(projectRoutes.deleteProjectTexts(projTextId));
   }

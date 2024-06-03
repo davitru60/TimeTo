@@ -128,7 +128,6 @@ export class ProjectAdminComponent {
     this.isDeleteProjectModalOpen[index] = false;
   }
 
-  
 
   openCategoryModal(index: number, project: Project) {
     this.projectService
@@ -252,8 +251,6 @@ export class ProjectAdminComponent {
 
   updateProject(projectId: number) {
     if (this.selectedProject) {
-  
-
       const formData = new FormData();
       formData.append('name', this.selectedProject.name);
       formData.append('description', this.selectedProject.description);
@@ -273,7 +270,7 @@ export class ProjectAdminComponent {
           this.showErrorToast('Error al actualizar el proyecto');
         }
       );
-    }
+    } 
   }
 
   deleteProject(projectId: number) {

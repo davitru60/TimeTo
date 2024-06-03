@@ -26,6 +26,7 @@ export const environment = {
     getCategories: environment.baseUrl + endpoints.projectEndpoint + '/category',
     createCategory: environment.baseUrl + endpoints.projectEndpoint + '/category',
     updateCategory: (categoryId:number) => environment.baseUrl + endpoints.projectEndpoint + '/category/' + categoryId ,
+    deleteCategory: (categoryId:number) => environment.baseUrl + endpoints.projectEndpoint + '/category/' + categoryId ,
 
     //Project categories
     getProjectCategories: (projectId:number) => environment.baseUrl + endpoints.projectEndpoint + '/project-category/'+ projectId,
