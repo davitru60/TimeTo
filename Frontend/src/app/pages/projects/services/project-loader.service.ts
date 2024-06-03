@@ -9,7 +9,32 @@ import { FormFields } from '../../../core/interfaces/project.interface';
 export class ProjectLoaderService {
   constructor(private projectService: ProjectService) {}
 
+  // Funciones para el modo vista
+  getImagesObservableView(projectId:number){
+    return this.projectService.getProjectImages(projectId).pipe(
+      map((response) => {
+        if (response.success) {
+          return response.data.images;
+        } else {
+          throw new Error('Error al obtener imágenes');
+        }
+      })
+    );
+  }
 
+  getTextsObservableView(projectId: number) {
+    return this.projectService.getProjectTexts(projectId).pipe(
+      map((response) => {
+        if (response.success) {
+          return response.data.texts;
+        } else {
+          throw new Error('Error al obtener textos');
+        }
+      })
+    );
+  }
+
+   // Funciones para el modo edición
   getImagesObservable(projectId: number) {
     return this.projectService.getProjectFormImages(projectId).pipe(
       map((response) => {

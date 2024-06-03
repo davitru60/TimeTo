@@ -11,7 +11,9 @@ export class OnDropService {
 
   constructor(private projectService: ProjectService) { }
 
-  onDrop(projectId:number,dynamicFields: FormArray, event: CdkDragDrop<FormArray>): void {
+  onDrop(projectId: number, dynamicFields: FormArray, event: CdkDragDrop<FormArray>): void {
+    console.log('onDrop called', { projectId, dynamicFields, event });
+  
     const previousOrder = dynamicFields.controls.map((control) => {
       return {
         type: control.get('type')?.value,
@@ -19,15 +21,21 @@ export class OnDropService {
         proj_img_id: control.get('proj_img_id')?.value,
       };
     });
-
+  
+    console.log('Previous Order:', previousOrder);
+  
     moveItemInArray(
       dynamicFields.controls,
       event.previousIndex,
       event.currentIndex
     );
-
+  
+    console.log('Controls after move:', dynamicFields.controls);
+  
     this.updateFieldIndices(dynamicFields);
-
+  
+    console.log('Field indices updated');
+  
     const newOrder = dynamicFields.controls.map((control) => {
       return {
         type: control.get('type')?.value,
@@ -35,7 +43,9 @@ export class OnDropService {
         proj_img_id: control.get('proj_img_id')?.value,
       };
     });
-
+  
+    console.log('New Order:', newOrder);
+  
     const indexMapping = newOrder.map((newItem, i) => {
       const previousIndex = previousOrder.findIndex((oldItem) => {
         if (newItem.proj_img_id) {
@@ -46,7 +56,7 @@ export class OnDropService {
         }
         return false;
       });
-
+  
       return {
         type: newItem.type,
         newIndex: i,
@@ -55,21 +65,24 @@ export class OnDropService {
         proj_text_id: newItem.proj_text_id,
       };
     });
-
+  
+    console.log('Index Mapping:', indexMapping);
+  
     indexMapping.forEach((field) => {
+      console.log('Processing field:', field);
       switch (field.type) {
         case 'image':
-          this.updateImageOrder(projectId,{
+          this.updateImageOrder(projectId, {
             proj_img_id: field.proj_img_id,
             previousIndex: field.previousIndex,
-            newIndex: field.newIndex
+            newIndex: field.newIndex,
           });
           break;
         case 'editor':
-          this.updateEditorOrder(projectId,{
+          this.updateEditorOrder(projectId, {
             proj_text_id: field.proj_text_id,
             previousIndex: field.previousIndex,
-            newIndex: field.newIndex
+            newIndex: field.newIndex,
           });
           break;
         default:
@@ -77,7 +90,10 @@ export class OnDropService {
           break;
       }
     });
+  
+    console.log('onDrop completed');
   }
+  
 
   updateFieldIndices(dynamicFields: FormArray): void {
     dynamicFields.controls.forEach((control, i) => {
@@ -89,6 +105,7 @@ export class OnDropService {
   updateImageOrder(projectId: number,imageOrder: ImageOrderPut) {
     this.projectService.updateImageOrder(projectId,imageOrder).subscribe(
       (response: any) => {
+
         if (response.success) {
           console.log('Image order updated successfully');
         } else {

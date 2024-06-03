@@ -2,12 +2,12 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, Subject, interval, startWith, switchMap, tap } from 'rxjs';
 import { projectRoutes } from '../../../../environments/environment.development';
-import { ProjectGetResponse, ProjectImagesResponse, ImageOrderPut, EditorOrderPut, ProjectPutData, ProjectPutResponse, ProjectDeleteResponse } from '../../../core/interfaces/project.interface';
+import { ProjectGetResponse, ProjectImagesResponse, ImageOrderPut, EditorOrderPut, ProjectPutResponse, ProjectDeleteResponse } from '../../../core/interfaces/project.interface';
 import { TextPutData, TextPostData } from '../../../core/interfaces/project-text.interface';
 import { ProjectCategoryDeleteResponse, ProjectCategoryPostData, ProjectCategoryPostResponse } from '../../../core/interfaces/project-category.interface';
 import { CategoryGetResponse, CategoryPostData ,CategoryPutResponse,CategoryPutData, CategoryPostResponse } from '../../../core/interfaces/category.interface';
 import { ProjectCategoryGetResponse } from '../../../core/interfaces/project-category.interface';
-import { UserInterestGetResponse } from '../../../core/interfaces/user-preferences';
+
 
 @Injectable({
   providedIn: 'root'

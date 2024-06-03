@@ -2,10 +2,8 @@ import { Component } from '@angular/core';
 import { NavbarComponent } from '../../../shared/components/layout/navbar/navbar.component';
 import { ProjectFormComponent } from '../project-form/project-form.component';
 import { CommonModule } from '@angular/common';
-import { ProjectService } from '../services/project.service';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { combineLatest, filter, map } from 'rxjs';
-import { ProjectImagesResponse } from '../../../core/interfaces/project.interface';
 import { GoogleAuthComponent } from "../../auth/login/google-auth/google-auth.component";
 import { AngularSplitModule } from 'angular-split';
 import { AuthService } from '../../auth/services/auth.service';
@@ -45,15 +43,13 @@ export class SingleProjectComponent {
   }
 
   loadProjectData(projectId: number): void {
-    const imagesObservable = this.projectLoaderService.getImagesObservable(projectId)
-    const textsObservable = this.projectLoaderService.getTextsObservable(projectId)
+    const imagesObservable = this.projectLoaderService.getImagesObservableView(projectId)
+    const textsObservable = this.projectLoaderService.getTextsObservableView(projectId)
 
     // Usa `combineLatest` para esperar ambos resultados
     combineLatest([imagesObservable, textsObservable]).subscribe(
       ([images, texts]) => {
         this.fields = this.projectLoaderService.combineAndSortFields(images,texts)
-      
-
       },
       (error) => {
         console.error("Error al combinar datos:", error);

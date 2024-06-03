@@ -69,7 +69,7 @@ export class ProjectAdminComponent {
   itemsPerPage: number = 5;
   totalPages: number = 0;
 
-  searchTerm: string = ''; // Variable to hold search term
+  searchTerm: string = '';
   deleteModalStyle = 'lg:w-1/3'
   
 

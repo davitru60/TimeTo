@@ -14,7 +14,10 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   ProjectImage.init({
-    proj_img_id:DataTypes.INTEGER,
+    proj_img_id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true 
+    },
     project_id: DataTypes.INTEGER,
     f_type_id: DataTypes.INTEGER,
     path: DataTypes.STRING,

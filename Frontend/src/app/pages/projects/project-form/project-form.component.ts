@@ -178,7 +178,7 @@ export class ProjectFormComponent {
   }
 
   removeField(index: number): void {
-    this.dynamicFieldService.removeField(this.dynamicFields, index);
+    this.dynamicFieldService.removeField(this.dynamicFields,index, this.projectId);
   }
 
 
@@ -187,13 +187,14 @@ export class ProjectFormComponent {
   }
 
   //Project operations
-  addNewImage(index: number): void {
+  addImageToProject(index: number): void {
     this.projectInteractionsService.addImageToProject(this.projectId, index, this.dynamicFields);
+    this.closeAddModal(index)
   }
 
-  addNewText(index:number):void{
+  addProjectTexts(index:number):void{
     this.projectInteractionsService.addProjectTexts(this.projectId,index,this.dynamicFields)
-    this.closeAddModal(index)
+  
   }
 
   addNewTextImage(index: number): void {

@@ -26,7 +26,7 @@ body {
 
 //Buttons
 .add-btn {
-  @apply bg-black text-white hover:bg-gray-800 transition-transform transform hover:scale-105;
+  @apply bg-gray-800 text-white hover:bg-gray-700 transition-transform transform hover:scale-105;
 }
 
 .edit-btn {
@@ -36,6 +36,15 @@ body {
 .delete-btn {
   @apply bg-black text-white hover:bg-gray-800 transition-transform transform hover:scale-105;
 }
+
+.cancel-btn{
+  @apply  bg-gray-600 text-white hover:bg-gray-500 transition-transform transform hover:scale-105;
+}
+
+.modal-add-btn{
+  @apply w-full bg-black text-white font-bold py-3 hover:bg-gray-800 
+}
+
 
 //Checkbox styles
 .custom-checkbox {

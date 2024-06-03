@@ -31,6 +31,7 @@ export class AllProjectsComponent {
   currentPage = 1;
   itemsPerPage = 4;
   isModalOpen: boolean [] = []
+  isDeleteModalOpen: boolean [] = []
   isLoading = false;
 
   project: ProjectPutData = {
@@ -39,8 +40,7 @@ export class AllProjectsComponent {
     path: ''
   }
 
-
-  @ViewChild('f', { static: false }) projectForm!: NgForm;
+  deleteModalStyle = 'lg:w-1/3'
 
   constructor(
     private projectService: ProjectService, 
@@ -94,6 +94,14 @@ export class AllProjectsComponent {
 
   closeModal(index:number){
     this.isModalOpen[index] = false
+  }
+
+  openDeleteModal(index:number){
+    this.isDeleteModalOpen[index]=true
+  }
+
+  closeDeleteModal(index:number){
+    this.isDeleteModalOpen[index]=false
   }
 
   onFileChange(event: any) {
