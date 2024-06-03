@@ -181,7 +181,6 @@ class ProjectGeneralController {
         };
   
         updatedImage = await projectGeneral.updateProjectHomeImage(projectImg);
-        console.log(updatedImage)
       }
   
       const projectUpdate = await projectGeneral.updateProject(projectId, req.body);

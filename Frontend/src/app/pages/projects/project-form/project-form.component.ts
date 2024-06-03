@@ -202,10 +202,10 @@ export class ProjectFormComponent {
   }
 
   updateImageField(index: number): void {
-    
+    this.projectInteractionsService.updateImageField(this.projectId, index, this.dynamicFields)
   }
 
-  updateTextField(index: number): void {
+  updateProjectTexts(index: number): void {
     this.projectInteractionsService.updateProjectTexts(this.projectId, index, this.dynamicFields);
     this.closeEditModal(index)
   }

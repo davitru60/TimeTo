@@ -95,11 +95,29 @@ export class ProjectInteractionsService {
     }
   }
 
-  updateProjectTexts(
-    projectId: number,
-    index: number,
-    dynamicFields: FormArray
-  ): void {
+  updateImageField(projectId:number,index: number,dynamicFields: FormArray){
+    const field = dynamicFields.at(index);
+    if (field.get('type')?.value === 'image') {
+      console.log('pasa por aqui')
+      const imageFile = field.get('path')?.value;
+
+      if(imageFile){
+        const formData = new FormData();
+        formData.append('image', imageFile);
+        this.projectService.updateImageFromProject(projectId,formData).subscribe(
+          (response) => {
+            if (response.success) {
+              this.showSuccessToast('Imagen actualizada con éxito');
+            }else{
+              this.showErrorToast('Error al actualizar la imagen');
+            }
+        })
+
+      }
+    }
+  }
+
+  updateProjectTexts(projectId: number,index: number,dynamicFields: FormArray): void {
     const field = dynamicFields.at(index);
     const title = field?.get('title')?.value;
     const text = field?.get('content')?.value;

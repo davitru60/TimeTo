@@ -85,6 +85,8 @@ export class ProjectService {
     return this.http.put<any>(projectRoutes.updateProjectTexts(projTextId), text);
   }
 
+  
+
   deleteProjectTexts(projTextId: number): Observable<any> {
     return this.http.delete<any>(projectRoutes.deleteProjectTexts(projTextId));
   }
@@ -100,6 +102,18 @@ export class ProjectService {
     return this.http.post<any>(projectRoutes.addImageToProject(projectId), formData).pipe(
       tap((response) => {
         this.imageAddedSubject.next(response); // Notificar que se agregó una imagen
+      })
+    );
+  }
+
+  updateImageFromProject(projectId:number,formData:FormData):Observable<any>{
+    return this.http.put<any>(projectRoutes.updateImageFromProject(projectId),formData);
+  }
+
+  deleteImage(projImgId: number): Observable<any> {
+    return this.http.delete<any>(projectRoutes.deleteImage(projImgId)).pipe(
+      tap(() => {
+        this.imageDeletedSubject.next();
       })
     );
   }
@@ -121,11 +135,5 @@ export class ProjectService {
     );
   }
 
-  deleteImage(projImgId: number): Observable<any> {
-    return this.http.delete<any>(projectRoutes.deleteImage(projImgId)).pipe(
-      tap(() => {
-        this.imageDeletedSubject.next();
-      })
-    );
-  }
+ 
 }

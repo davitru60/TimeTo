@@ -104,7 +104,6 @@ class ProjectGeneral {
 
   static updateProjectHomeImage = async (body) =>{
     try{
-      console.log(body)
       const projectHomeImage = await models.HomeProjectImage.findByPk(body.project_id)
 
       if(projectHomeImage){

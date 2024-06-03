@@ -49,6 +49,29 @@ class ProjectImage {
     return createdImages;
   };
 
+  static updateImageFromProject = async(body) =>{
+    try{
+
+      const image = await models.ProjectImage.findOne({
+        where: {
+          project_id: body.project_id
+        }
+      });
+      if(image){
+        await image.update({
+          path: body.path[0]
+        })
+
+        console.log('pasa')
+      }
+
+      return image
+
+    }catch(error){
+      throw new Error(`Failed to update image: ${error.message}`);
+    }
+  }
+
   static deleteImage = async (projImgId) => {
     let result = true;
 

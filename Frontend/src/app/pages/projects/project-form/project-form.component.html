@@ -45,7 +45,12 @@
           </div>
 
           <label class="block text-gray-700 font-bold">Editar imagen:</label>
-          <button (click)="updateImageField(i)" class="p-2 bg-blue-500 text-white rounded mt-4">Guardar Cambios</button>
+          <input type="file" (change)="onFileChange($event, i)"
+            class="w-full p-3 border-gray-300 focus:outline-none focus:border-blue-500 transition duration-200" />
+          <div class="form-group flex"> 
+            <button (click)="updateImageField(i)" class="modal-add-btn">Editar</button>
+          </div>
+     
         </app-modal>
 
 
@@ -68,8 +73,7 @@
             class="w-full p-3 border-gray-300 focus:outline-none focus:border-blue-500 transition duration-200" />
 
           <div class="form-group flex">
-            <button (click)="addImageToProject(i)"
-              class="modal-add-btn">Añadir</button>
+            <button (click)="addImageToProject(i)" class="modal-add-btn">Añadir</button>
 
           </div>
 
@@ -105,14 +109,14 @@
 
             <label class="block text-gray-700 font-bold">Título:</label>
             <input id="editorTitle" type="text" [formControlName]="'title'"
-              class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition duration-200 mb-4"
+              class="w-full text-lg py-2 border-b border-black focus:outline-none custom-field"
               placeholder="Ingrese el título" (mousemove)="disableDrag()" (blur)="enableDrag()" />
-            <label class="block text-gray-700 font-bold">Contenido:</label>
+            <label class="block text-gray-700 font-bold mt-3">Contenido:</label>
             <quill-editor [formControlName]="'content'" [modules]="editorModules" (mouseenter)="isEditingText = true"
               (mouseleave)="isEditingText = false" class="w-full border border-gray-300 rounded-lg"></quill-editor>
 
             <div class="form-group flex">
-              <button (click)="updateTextField(i)"
+              <button (click)="updateProjectTexts(i)"
                 class="w-full bg-black text-white font-bold py-3 hover:bg-gray-800 mt-2 ">Actualizar</button>
 
             </div>
@@ -121,14 +125,19 @@
 
           <!-- Modal añadir editor texto -->
           <app-modal [isModalOpen]="isAddModalOpen[i]">
-            <button (click)="closeAddModal(i)" (click)="enableDrag()" class="text-gray-600 hover:text-gray-900">
-              <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                viewBox="0 0 14 14">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
-              </svg>
-              <span class="sr-only">Cerrar modal</span>
-            </button>
+            <div class="flex justify-between items-center mb-4">
+              <h2 class="text-lg font-bold text-gray-700">Agregar sección </h2>
+
+              <button (click)="closeAddModal(i)" (click)="enableDrag()" class="text-gray-600 hover:text-gray-900">
+                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                  viewBox="0 0 14 14">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                </svg>
+                <span class="sr-only">Cerrar modal</span>
+              </button>
+            </div>
+
 
             <label class="block text-gray-700 font-bold">Agregar nuevo texto:</label>
             <input id="editorTitle" type="text" [formControlName]="'title'"
@@ -137,7 +146,10 @@
             <label class="block text-gray-700 font-bold">Contenido:</label>
             <quill-editor [formControlName]="'content'" [modules]="editorModules" (mouseenter)="isEditingText = true"
               (mouseleave)="isEditingText = false" class="w-full border border-gray-300 rounded-lg"></quill-editor>
-            <button (click)="addProjectTexts(i)" class="p-2 bg-blue-500 text-white rounded mt-4">Guardar Cambios</button>
+            <div class="form-group flex">
+              <button (click)="addProjectTexts(i)"
+                class="w-full bg-black text-white font-bold py-3 hover:bg-gray-800 ">Añadir</button>
+            </div>
           </app-modal>
         </div>
         }

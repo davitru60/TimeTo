@@ -45,6 +45,7 @@ router.delete('/project-texts/:id',projectText.deleteProjectTexts)
 //Project images
 router.get('/project-images/:id',projectImage.getProjectImages)
 router.post('/project-images/:id',[uploadImageMiddleware,handleUploadImage],projectImage.addImageToProject)
+router.put('/project-images/:id',[uploadImageMiddleware,handleUpdateImage],projectImage.updateImageFromProject)
 router.delete('/project-images/:id',projectImage.deleteImage)
 
 

@@ -63,6 +63,42 @@ class ProjectImageController{
           });
         }
       };
+
+      static updateImageFromProject = async (req,res)=>{
+        const projectId = req.params.id;
+        let updatedImage = null;
+
+        if (req.files) {
+          const imageOriginalName = await uploadImageToDropbox(req);
+    
+          const projectImg = {
+            project_id: projectId,
+            path: imageOriginalName,
+          };
+    
+          updatedImage = await projectImage.updateImageFromProject(projectImg);
+
+          if(updatedImage){
+            const response = {
+              success: true,
+              msg: "Image has been successfully updated",
+              data: {
+                updatedImage
+              }
+            };
+            res.status(StatusCodes.OK).json(response);
+          }else{
+            
+          }
+
+          
+
+          
+        }
+
+        
+
+      }
     
       static deleteImage = async (req, res) => {
         try {

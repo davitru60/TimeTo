@@ -42,6 +42,7 @@ export const environment = {
     //Project images
     getProjectImages: environment.baseUrl + endpoints.projectEndpoint + '/project-images/',
     addImageToProject: (projectId: number) => environment.baseUrl + endpoints.projectEndpoint + '/project-images/' + projectId,
+    updateImageFromProject:(projectId:number)=> environment.baseUrl + endpoints.projectEndpoint + '/project-images/' + projectId,
     deleteImage: (projImgId: number) => environment.baseUrl + endpoints.projectEndpoint + '/project-images/' + projImgId,
 
     //Drag and drop operations
