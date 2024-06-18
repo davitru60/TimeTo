@@ -40,6 +40,8 @@ class ContentOrderController {
     try {
       const projectId = req.params.id;
 
+      console.log(req.body)
+
       const updatedOrder = await contentOrder.updateEditorOrder(
         projectId,
         req.body

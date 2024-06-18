@@ -1,4 +1,3 @@
-
 export interface ProjectTexts{
     proj_text_id:number;
     project_id: number;

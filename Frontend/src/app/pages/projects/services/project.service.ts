@@ -20,7 +20,7 @@ export class ProjectService {
   constructor(private http: HttpClient) { }
   
   getAllProjects(): Observable<ProjectGetResponse> {
-    return interval(50000).pipe(
+    return interval(30000).pipe(
       startWith(0),
       switchMap(() => this.http.get<ProjectGetResponse>(projectRoutes.getAllProjects))
     );
@@ -72,7 +72,7 @@ export class ProjectService {
   }
 
   getProjectTexts(projectId: number): Observable<any> {
-    return interval(3000).pipe(
+    return interval(5000).pipe(
       startWith(0),
       switchMap(() => this.http.get<any>(projectRoutes.getProjectTexts + projectId))
     );
@@ -96,7 +96,7 @@ export class ProjectService {
   }
 
   getProjectImages(projectId: number): Observable<ProjectImagesResponse> {
-    return interval(3000).pipe(
+    return interval(5000).pipe(
       startWith(0),
       switchMap(() => this.http.get<ProjectImagesResponse>(projectRoutes.getProjectImages + projectId))
     );

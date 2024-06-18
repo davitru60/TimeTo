@@ -139,11 +139,11 @@
             </div>
 
 
-            <label class="block text-gray-700 font-bold">Agregar nuevo texto:</label>
+            <label class="block text-gray-700 font-bold">Título:</label>
             <input id="editorTitle" type="text" [formControlName]="'title'"
-              class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition duration-200 mb-4"
+              class="w-full text-lg py-2 border-b border-black focus:outline-none custom-field"
               placeholder="Ingrese el título" />
-            <label class="block text-gray-700 font-bold">Contenido:</label>
+            <label class="block text-gray-700 font-bold mt-3">Contenido:</label>
             <quill-editor [formControlName]="'content'" [modules]="editorModules" (mouseenter)="isEditingText = true"
               (mouseleave)="isEditingText = false" class="w-full border border-gray-300 rounded-lg"></quill-editor>
             <div class="form-group flex">
