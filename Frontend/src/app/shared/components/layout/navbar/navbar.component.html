@@ -5,14 +5,14 @@
 
             <div class="group relative cursor-pointer py-2">
                 <div class="bg-white mr-8">
-                    <a  routerLink="" aria-label="Home" title="Home"
+                    <a routerLink="" aria-label="Home" title="Home"
                         class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400">
                         Inicio
                     </a>
                 </div>
 
             </div>
-            
+
 
             <div class="group relative cursor-pointer py-2">
                 <div class="bg-white">
@@ -23,7 +23,7 @@
                 </div>
 
                 <div
-                    class="invisible absolute z-50 flex w-28 flex-col bg-black py-1 px-4 text-gray-800 shadow-xl group-hover:visible">
+                    class="invisible absolute z-50 flex w-28 flex-col bg-black py-1 text-gray-800 shadow-xl group-hover:visible">
 
                     <a routerLink="/projects" aria-label="Product pricing" title="Product pricing"
                         class="my-2  border-gray-100 py-1 font-normal text-white hover:text-gray-500 md:mx-2">
@@ -37,16 +37,13 @@
                 </div>
             </div>
 
-            
 
-           
 
-           
         </ul>
         <div class="flex items-center justify-between w-full lg:w-fit p-2">
             <a href="/" aria-label="Company" title="Company" class="inline-flex justify-center items-center">
                 <img src="assets/LOGO.svg" alt="Imagen 1" class="w-8 h-8">
-           
+
             </a>
 
             <!-- Mobile menu and profile -->
@@ -75,7 +72,7 @@
                 </div>
 
                 <div
-                    class="invisible absolute z-50 flex w-auto flex-col bg-black py-1 px-4 text-gray-800 group-hover:visible">
+                    class="invisible absolute z-50 flex w-auto flex-col bg-black py-1 text-gray-800 group-hover:visible">
                     <a routerLink="" aria-label="Product pricing" title="Product pricing"
                         class="my-2 border-gray-100 py-1 font-normal text-white hover:text-gray-500 md:mx-2">
                         Recursos
@@ -87,7 +84,7 @@
                     </a>
                 </div>
             </div>
-            
+
 
             <li>
                 <a href="/" aria-label="About us" title="About us"
@@ -111,9 +108,12 @@
     <div [class.hidden]="!isMenuOpen" [@slideDown]="isMenuOpen ? 'visible' : 'hidden'"
         class="fixed inset-0 bg-gray-100 z-50">
         <!-- Menú desplegable -->
-        <div class="px-4 py-6 mx-auto lg:py-8 sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8">
-            <!-- Logo y otros elementos -->
-            <div class="flex justify-end items-center">
+        <div class="px-10 py-10 mx-auto lg:py-8 md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 border">
+            <div class="flex justify-between items-center">
+                <a href="/" aria-label="Company" title="Company" class="inline-flex justify-center items-center">
+                    <img src="assets/LOGO.svg" alt="Imagen 1" class="w-8 h-8">
+
+                </a>
                 <!-- Botón para cerrar el menú -->
                 <button type="button" (click)="toggleMenu()"
                     class="text-gray-500 hover:text-gray-700 focus:outline-none">
@@ -125,31 +125,132 @@
                 </button>
             </div>
 
-            <ul class="py-2 flex justify-center items-center flex-col">
-                <li>
+            <ul class="py-5 flex justify-center items-start flex-col">
+                <li class="w-full py-2">
+                    <div class="relative">
+                        <a routerLink=""
+                            class="py-2 text-3xl font-medium text-gray-700 hover:text-deep-purple-accent-400 flex justify-between items-center w-full dropdown-toggle">
+                            Inicio
+                        </a>
+
+                    </div>
+                </li>
+
+                <li class="w-full py-2" (mouseenter)="toggleSubMenu(MenuOption.Projects)"
+                    (mouseleave)="toggleSubMenu(MenuOption.None)" (click)="toggleSubMenu(MenuOption.Projects)">
+                    <div class="relative">
+                        <a routerLink="#"
+                            class="py-2 text-3xl font-medium text-gray-700 hover:text-deep-purple-accent-400 flex justify-between items-center w-full dropdown-toggle">
+                            Proyectos
+                            <div class="ml-auto flex items-center">
+                                <svg class="w-6 h-6"
+                                    [@chevronAnimation]="subMenuOpen === MenuOption.Projects ? 'expanded' : 'collapsed'"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </div>
+                        </a>
+
+                        @if(subMenuOpen === MenuOption.Projects){
+                        <ul class="py-2 flex justify-center items-start flex-col w-full">
+                            <li class="w-full">
+                                <a routerLink="/projects"
+                                    class="py-2 text-xl font-medium text-gray-700 hover:text-deep-purple-accent-400 flex justify-between items-center w-full">
+                                    Todos
+                                </a>
+                            </li>
+                            <li class="w-full">
+                                <a href="#"
+                                    class="py-2 text-xl font-medium text-gray-700 hover:text-deep-purple-accent-400 flex justify-between items-center w-full">
+                                    Para ti
+                                </a>
+                            </li>
+                        </ul>
+                        }
+
+                    </div>
+                </li>
+
+                <li class="w-full py-2" (mouseenter)="toggleSubMenu(MenuOption.Learn)"
+                    (mouseleave)="toggleSubMenu(MenuOption.None)">
+                    <div class="relative">
+                        <a routerLink="#"
+                            class="py-2 text-3xl font-medium text-gray-700 hover:text-deep-purple-accent-400 flex justify-between items-center w-full dropdown-toggle">
+                            Aprende
+                            <div class="ml-auto flex items-center">
+                                <svg class="w-6 h-6"
+                                    [@chevronAnimation]="subMenuOpen === MenuOption.Learn ? 'expanded' : 'collapsed'"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </div>
+                        </a>
+
+                        @if(subMenuOpen === MenuOption.Learn){
+                        <ul class="py-2 flex justify-center items-start flex-col w-full">
+                            <li class="w-full">
+                                <a href="#"
+                                    class="py-2 text-xl font-medium text-gray-700 hover:text-deep-purple-accent-400 flex justify-between items-center w-full">
+                                    Recursos
+                                </a>
+                            </li>
+                            <li class="w-full">
+                                <a href="#"
+                                    class="py-2 text-xl font-medium text-gray-700 hover:text-deep-purple-accent-400 flex justify-between items-center w-full">
+                                    Asesorías
+                                </a>
+                            </li>
+                        </ul>
+                        }
+
+                    </div>
+                </li>
+
+                <li class="w-full py-2">
                     <a href="/"
-                        class="block py-2 px-4 text-sm font-medium text-gray-700 hover:text-deep-purple-accent-400">Features</a>
+                        class="py-2 text-3xl font-medium text-gray-700 hover:text-deep-purple-accent-400 flex justify-between items-center w-full">
+                        Sobre nosotros
+                        <div class="ml-auto flex items-center">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </div>
+                    </a>
                 </li>
-                <li>
-                    <a routerLink="/projects"
-                        class="block py-2 px-4 text-sm font-medium text-gray-700 hover:text-deep-purple-accent-400">Proyectos</a>
+                <li class="w-full py-2">
+                    <a href="/login"
+                        class="py-2 text-3xl font-medium text-gray-700 hover:text-deep-purple-accent-400 flex justify-between items-center w-full">
+                        Sign in
+                        <div class="ml-auto flex items-center">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </div>
+                    </a>
                 </li>
-                <li>
+                <li class="w-full py-2">
                     <a href="/"
-                        class="block py-2 px-4 text-sm font-medium text-gray-700 hover:text-deep-purple-accent-400">Sobre
-                        nosotros</a>
-                </li>
-                <li>
-                    <a routerLink="/login"
-                        class="block py-2 px-4 text-sm font-medium text-gray-700 hover:text-deep-purple-accent-400">Sign
-                        in</a>
-                </li>
-                <li>
-                    <a href="/"
-                        class="block py-2 px-4 text-sm font-medium text-gray-700 hover:text-deep-purple-accent-400">Sign
-                        up</a>
+                        class="py-2 text-3xl font-medium text-gray-700 hover:text-deep-purple-accent-400 flex justify-between items-center w-full">
+                        Sign up
+                        <div class="ml-auto flex items-center">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </div>
+                    </a>
                 </li>
             </ul>
+
         </div>
     </div>
 </div>

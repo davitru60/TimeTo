@@ -38,8 +38,6 @@ class ProjectGeneralController {
 
       const userId = req.tokenId
 
-      console.log(req)
-
       const categoriesDatavalues = await category.getCategories();
       const projectCategoriesDatavalues = await projectCategory.getProjectsCategories();
       const userInterestsDatavalues = await projectGeneral.getUserInterests();
@@ -66,6 +64,9 @@ class ProjectGeneralController {
       const userCategoryInterests = userInterests
         .filter(interest => interest.user_id === userId)
         .map(interest => interest.category_id);
+        
+
+    
 
       // Encontrar proyectos que coincidan con los intereses del usuario
       const recommendedProjects = projects.filter(project => {
