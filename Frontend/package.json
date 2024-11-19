@@ -26,6 +26,7 @@
     "angular-split": "^17.2.0",
     "flowbite": "^2.3.0",
     "jwt-decode": "^4.0.0",
+    "marked": "^13.0.2",
     "ngx-editor": "^17.0.2",
     "ngx-pagination": "^6.0.3",
     "ngx-quill": "^25.3.1",

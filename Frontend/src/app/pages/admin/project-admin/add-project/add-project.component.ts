@@ -13,13 +13,14 @@ import { ProjectService } from '../../../projects/services/project.service';
 import { LoaderComponent } from '../../../../shared/components/ui/loader/loader.component';
 import { ToastService } from '../../../../shared/components/ui/toast/toast.service';
 import { CategoryPostResponse } from '../../../../core/interfaces/category.interface';
+import { ButtonComponent } from "../../../../shared/components/ui/button/button.component";
 
 @Component({
   selector: 'app-add-project',
   standalone: true,
   templateUrl: './add-project.component.html',
   styleUrl: './add-project.component.scss',
-  imports: [CommonModule, FormsModule, ModalComponent, LoaderComponent],
+  imports: [CommonModule, FormsModule, ModalComponent, LoaderComponent, ButtonComponent],
 })
 export class AddProjectComponent {
   @Input() isModalOpen = false;

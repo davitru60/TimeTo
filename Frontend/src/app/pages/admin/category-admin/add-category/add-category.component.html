@@ -1,57 +1,28 @@
 <app-modal [isModalOpen]="isModalOpen ">
-
-    <form
-    name="form"
-    #f="ngForm"
-    (ngSubmit)="f.form.valid && createCategory()"
-    novalidate
-  >
+  <form name="form" #f="ngForm" (ngSubmit)="f.form.valid && createCategory()" novalidate>
     <div class="flex justify-between items-center mb-4">
       <h2 class="text-lg font-bold text-gray-700">Añadir categoría</h2>
-      <button type="reset" (click)="closeModal()" class="text-gray-600 hover:text-gray-900">
-        <svg
-          class="w-3 h-3"
-          aria-hidden="true"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 14 14"
-        >
-          <path
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
-          />
+
+      <app-button [type]="'reset'" (action)="closeModal()" [classes]="'text-gray-600 hover:text-gray-900'"><svg
+          class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
         </svg>
         <span class="sr-only">Close modal</span>
-      </button>
+      </app-button>
     </div>
 
     <div class="form-group mb-4">
-      <label class="block text-gray-700 font-bold mb-2"
-      >Nombre de la categoría:</label>
-      <input
-        type="text"
-        class="w-full text-lg py-2 border-b border-black focus:outline-none custom-field"
-        name="name"
-        [(ngModel)]="category.name"
-        required
-        #name="ngModel"
-        [ngClass]="{ 'is-invalid': f.submitted && name.errors }"
-      />
+      <label class="block text-gray-700 font-bold mb-2">Nombre de la categoría:</label>
+      <input type="text" class="w-full text-lg py-2 border-b border-black focus:outline-none custom-field" name="name"
+        [(ngModel)]="category.name" required #name="ngModel" [ngClass]="{ 'is-invalid': f.submitted && name.errors }" />
     </div>
 
- 
-    <div class="form-group flex">
-      <button type="submit" class="w-full bg-black text-white font-bold py-3 hover:bg-gray-800">Añadir categoría</button>
-     
+    <div class="form-group">
+      <app-button [type]="'submit'" [classes]="'w-full bg-black text-white font-bold py-3 hover:bg-gray-800'">
+        Añadir categoría
+      </app-button>
     </div>
-
-   
   </form>
-
-
-
 
 </app-modal>

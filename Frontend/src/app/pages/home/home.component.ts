@@ -2,13 +2,16 @@ import { CommonModule } from '@angular/common';
 import { Component, HostListener } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NavbarComponent } from '../../shared/components/layout/navbar/navbar.component';
+import { TestimonialsComponent } from "./testimonials/testimonials.component";
+import { LatestProjectsComponent } from "./latest-projects/latest-projects.component";
+import { FooterComponent } from "../../shared/components/layout/footer/footer.component";
 
 @Component({
-  selector: 'app-home',
-  standalone: true,
-  templateUrl: './home.component.html',
-  styleUrl: './home.component.scss',
-  imports: [CommonModule, RouterLink, NavbarComponent],
+    selector: 'app-home',
+    standalone: true,
+    templateUrl: './home.component.html',
+    styleUrl: './home.component.scss',
+    imports: [CommonModule, RouterLink, NavbarComponent, TestimonialsComponent, LatestProjectsComponent, FooterComponent]
 })
 export class HomeComponent {
   isSmallScreen = false;
@@ -36,4 +39,6 @@ export class HomeComponent {
   selectContent(content: string) {
     this.selectedContent = content;
   }
+
+  
 }

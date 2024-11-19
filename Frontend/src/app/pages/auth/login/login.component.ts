@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { environment } from '../../../../environments/environment.development';
 import { UserLogin } from '../../../core/interfaces/auth.interface';
 import { GoogleAuthComponent } from './google-auth/google-auth.component';
 import { Router, RouterLink } from '@angular/router';
@@ -46,14 +45,18 @@ export class LoginComponent {
     this.user.email = email!;
     this.user.password = password!;
 
-    this.authService.login(this.user).subscribe((response) => {
-      if (response?.success) {
-        sessionStorage.setItem('token', response.data.token);
-        this.router.navigate(['']);
-      }else{}
-    }, (error)=>{
+    this.authService.login(this.user).subscribe({
+      next: (response) => {
+        if(response?.success){
+          sessionStorage.setItem('token', response.data.token);
+          this.router.navigate(['']);
+        }
+      },
+      error: () => {
         this.showErroMessage()
-    });
+      }
+    })
+
   }
 
  

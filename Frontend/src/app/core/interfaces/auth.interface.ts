@@ -22,11 +22,15 @@ export interface LoginResponse{
     }
 }
 
+export interface ValidationError {
+    errors:string
+  }
+
 export interface LoginResponseError{
     success:boolean;
     msg: string;
-    data: {};
-
+    data?: {}; // Es opcional porque puede que no haya datos en caso de error
+    errors?: ValidationError[]
 }
 
 export interface RegisterResponse{

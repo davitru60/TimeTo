@@ -3,7 +3,7 @@ import { NavbarComponent } from '../../../shared/components/layout/navbar/navbar
 import { ProjectFormComponent } from '../project-form/project-form.component';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { combineLatest, filter, map } from 'rxjs';
+import { combineLatest, filter } from 'rxjs';
 import { GoogleAuthComponent } from "../../auth/login/google-auth/google-auth.component";
 import { AngularSplitModule } from 'angular-split';
 import { AuthService } from '../../auth/services/auth.service';

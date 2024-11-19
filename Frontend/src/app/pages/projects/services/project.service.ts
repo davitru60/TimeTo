@@ -43,7 +43,7 @@ export class ProjectService {
   }
 
   getCategories():Observable<CategoryGetResponse>{
-    return this.http.get<CategoryGetResponse>(projectRoutes.getCategories)
+    return this.http.get<CategoryGetResponse>(projectRoutes.getCategories,{params:{auth:'true'}})
   }
 
 

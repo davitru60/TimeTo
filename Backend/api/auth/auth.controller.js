@@ -6,13 +6,19 @@ const { googleVerify } = require("../../helpers/googleVerify");
 class AuthController {
   static login = async (req, res) => {
     const { email, password } = req.body;
+    console.log(req.hostname)
 
     try {
       const user = await auth.getLoggedUser(email, password);
       if (user) {
         const roles = await this.getRoles(user.dataValues.user_id);
 
-        const token = generateJWT(user.dataValues.user_id, roles);
+        const userData = {
+          user_id: user.dataValues.user_id,
+          roles: roles,
+        };
+
+        const token = generateJWT(userData);
 
         const response = {
           success: true,

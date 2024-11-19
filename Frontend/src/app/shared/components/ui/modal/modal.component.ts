@@ -33,8 +33,6 @@ export class ModalComponent {
     this.closeEvent.emit();
   }
 
-  
-
 
   
 }

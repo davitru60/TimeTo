@@ -1,0 +1,34 @@
+<div class="w-full font-bold py-10 text-center md:text-start sm:max-w-xl md:max-w-full lg:w-auto md:px-24 lg:ml-14">
+    <h5> &#9679; Mis últimos proyectos</h5>
+</div>
+
+
+@for(project of projects; track project.project_id ; let i = $index){
+<div>
+    <div class="w-full px-25 py-8 mx-auto sm:max-w-xl md:max-w-full lg:w-auto md:px-24">
+
+        <a [routerLink]="['/projects', project.project_id]" class="block px-20 sm:px-8 md:px-12 lg:px-20">
+            <div class="px-5 mt-[-30px] grid gap-5 row-gap-8 lg:grid-cols-[1fr,1.5fr]">
+                <div class="h-custom">
+                    <img class="object-cover h-56 w-72 sm:h-128" [src]="project.path" alt="" />
+                </div>
+                <div class="flex flex-col items-start justify-center">
+                    <div>
+                        <h5 class="text-sm lg:text-lg mt-5 mb-3 font-bold tracking-tight text-gray-900 ">
+                            &#9679; {{ project.name }}
+                          </h5>
+                          
+                        <h1 class="mt-2 text-xl sm:text-2xl lg:text-3xl font-bold w-full sm:w-96 leading-tight">
+                            {{ project.description }}
+                        </h1>
+                    </div>
+
+                </div>
+
+            </div>
+        </a>
+
+    </div>
+</div>
+
+}

@@ -1,14 +1,12 @@
 const { Router } = require("express");
 const router = Router();
 const auth = require("./auth.controller");
-
-const { check, body } = require("express-validator");
-//const validateFields = require('../../middlewares/validateFields');
-//const emailExists = require( "../../middlewares/emailExists" );
+const {loginValidator,registerValidator} = require('../../middlewares/validators')
 
 
-router.post("/login", auth.login);
+
+router.post("/login",loginValidator, auth.login);
 router.post("/google-sign-in", auth.googleSignIn)
-router.post("/register",auth.register)
+router.post("/register",registerValidator,auth.register)
 
 module.exports = router;

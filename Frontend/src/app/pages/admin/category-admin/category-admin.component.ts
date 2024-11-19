@@ -2,38 +2,49 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ProjectService } from '../../projects/services/project.service';
-import { Category, CategoryGetResponse, CategoryPutResponse, CategoryPutData } from '../../../core/interfaces/category.interface';
-import { PaginationComponent } from "../../../shared/components/ui/pagination/pagination.component";
-import { AddCategoryComponent } from "./add-category/add-category.component";
-import { ModalComponent } from "../../../shared/components/ui/modal/modal.component";
+import {
+  Category,
+  CategoryGetResponse,
+  CategoryPutResponse,
+  CategoryPutData,
+} from '../../../core/interfaces/category.interface';
+import { PaginationComponent } from '../../../shared/components/ui/pagination/pagination.component';
+import { AddCategoryComponent } from './add-category/add-category.component';
+import { ModalComponent } from '../../../shared/components/ui/modal/modal.component';
 import { ToastService } from '../../../shared/components/ui/toast/toast.service';
 
 @Component({
-    selector: 'app-category-admin',
-    standalone: true,
-    templateUrl: './category-admin.component.html',
-    styleUrl: './category-admin.component.scss',
-    imports: [CommonModule, FormsModule, PaginationComponent, AddCategoryComponent, ModalComponent]
+  selector: 'app-category-admin',
+  standalone: true,
+  templateUrl: './category-admin.component.html',
+  styleUrl: './category-admin.component.scss',
+  imports: [
+    CommonModule,
+    FormsModule,
+    PaginationComponent,
+    AddCategoryComponent,
+    ModalComponent,
+  ],
 })
 export class CategoryAdminComponent {
-  categories: Category[] = []
+  categories: Category[] = [];
 
-  isAddCategoryModalOpen=false
+  isAddCategoryModalOpen = false;
   isEditCategoryModalOpen: boolean[] = [];
   isDeleteCategoryModalOpen: boolean[] = [];
 
-
   selectedCategory: Category | null = null;
-  deleteModalStyle = 'lg:w-1/3'
+  deleteModalStyle = 'lg:w-1/3';
 
   currentPage: number = 1;
   itemsPerPage: number = 5;
   totalPages: number = 0;
 
-  
-  constructor (private projectService:ProjectService,   
-    private toastService: ToastService){
-    this.getCategories()
+  constructor(
+    private projectService: ProjectService,
+    private toastService: ToastService
+  ) {
+    this.getCategories();
   }
 
   get paginatedCategories() {
@@ -57,12 +68,12 @@ export class CategoryAdminComponent {
     this.totalPages = Math.ceil(this.categories.length / this.itemsPerPage);
   }
 
-  openAddCategoryModal(){
-    this.isAddCategoryModalOpen=true
+  openAddCategoryModal() {
+    this.isAddCategoryModalOpen = true;
   }
 
-  closeAddCategoryModal(){
-    this.isAddCategoryModalOpen=false
+  closeAddCategoryModal() {
+    this.isAddCategoryModalOpen = false;
   }
 
   openEditCategoryModal(index: number) {
@@ -70,16 +81,16 @@ export class CategoryAdminComponent {
     this.selectedCategory = this.categories[index];
   }
 
-  closeEditCategoryModal(index:number){
+  closeEditCategoryModal(index: number) {
     this.isEditCategoryModalOpen[index] = false;
     this.selectedCategory = null;
   }
 
-  openDeleteCategoryModal(index:number){
+  openDeleteCategoryModal(index: number) {
     this.isDeleteCategoryModalOpen[index] = true;
   }
 
-  closeDeleteCategoryModal(index:number){
+  closeDeleteCategoryModal(index: number) {
     this.isDeleteCategoryModalOpen[index] = false;
   }
 
@@ -87,44 +98,50 @@ export class CategoryAdminComponent {
     this.toastService.showToast({ text: message, type: 'success' });
   }
 
-  getCategories(){
-    this.projectService.getCategories().subscribe(
-      (response:CategoryGetResponse)=>{
-        this.categories = response.data.categories
+  getCategories() {
+    this.projectService.getCategories().subscribe({
+      next: (response: CategoryGetResponse) => {
+        this.categories = response.data.categories;
         this.totalPages = Math.ceil(this.categories.length / this.itemsPerPage);
-
-        this.isEditCategoryModalOpen = new Array(this.categories.length).fill(false);
-      }
-    )
+        this.isEditCategoryModalOpen = new Array(this.categories.length).fill(
+          false
+        );
+      },
+    });
   }
 
-  updateCategory(categoryId:number){
-    if(this.selectedCategory){
-      const categoryData:CategoryPutData = {
-        name: this.selectedCategory.name
-      }
-      this.projectService.updateCategory(categoryId,categoryData).subscribe(
-        (response:CategoryPutResponse)=>{
-          console.log(response)
-          if(response.success){
+  updateCategory(categoryId: number) {
+    if (this.selectedCategory) {
+      const categoryData: CategoryPutData = {
+        name: this.selectedCategory.name,
+      };
+
+      this.projectService.updateCategory(categoryId, categoryData).subscribe({
+        next: (response: CategoryPutResponse) => {
+          if (response.success) {
             this.showSuccessToast('Categoría actualizada exitosamente');
-            this.closeEditCategoryModal(this.categories.findIndex(category => category.category_id === categoryId));
+            this.closeEditCategoryModal(
+              this.categories.findIndex(
+                (category) => category.category_id === categoryId
+              )
+            );
             this.closeEditCategoryModal(categoryId);
           }
-      })
+        },
+      });
     }
   }
 
-  deleteCategory(categoryId:number){
-    this.projectService.deleteCategory(categoryId).subscribe(
-      (response) =>{
-        if(response.success){
-          this.showSuccessToast('Categoría eliminada correctamente')
-          this.closeDeleteCategoryModal(categoryId)
-          this.getCategories()
+  deleteCategory(categoryId: number) {
+    this.projectService.deleteCategory(categoryId).subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.showSuccessToast('Categoría eliminada correctamente');
+          this.closeDeleteCategoryModal(categoryId);
+          this.getCategories();
         }
-      }
-    )
+      },
+    });
 
   }
 }

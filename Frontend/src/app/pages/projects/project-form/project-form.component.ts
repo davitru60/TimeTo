@@ -14,7 +14,7 @@ import { ProjectLoaderService } from '../services/project-loader.service';
 import { DynamicFieldService } from '../services/dynamicfield.service';
 import { ProjectInteractionsService } from '../services/project-interactions.service';
 import { OnDropService } from '../services/on-drop.service';
-import { editorModules } from '../../../core/conf/editor-config';
+import { editorModules } from '../../../shared/conf/editor-config';
 import { ToastComponent } from "../../../shared/components/ui/toast/toast.component";
 
 @Component({

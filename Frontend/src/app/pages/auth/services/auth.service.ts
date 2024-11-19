@@ -35,14 +35,15 @@ export class AuthService {
           this.loggedIn = true;
           return auth;
         }),
-        catchError((error: HttpErrorResponse) => {
+        catchError((error: any) => {
           const errorResponse: LoginResponseError = {
             success: false,
             msg: error.error.msg || 'Unknown error',
             data: error.error.data || {},
+            errors: error.error.errors || []
           };
           console.error('Login error:', errorResponse.msg);
-          return throwError(errorResponse);
+          return throwError(() => error)
         })
       );
   }
@@ -60,7 +61,7 @@ export class AuthService {
           'Google Sign-In error:',
           error.message || 'Unknown error'
         );
-        return throwError(error);
+        return throwError(() => error)
       })
     );
   }
@@ -69,8 +70,31 @@ export class AuthService {
     return this.http.post<RegisterResponse>(authRoutes.register, user);
   }
 
+  getAuthToken(){
+    return sessionStorage.getItem('token');
+  }
+
+  getTokenExpiration(){
+    const token = this.getAuthToken();
+    if (!token) {
+      return null;
+    }
+    const expirationDate = this.jwtHelper.getTokenExpirationDate(token);
+    return expirationDate;
+  }
+
+  isTokenExpired(): boolean {
+    const token = this.getAuthToken()
+    if (!token) {
+      return true;
+    }
+
+    return this.jwtHelper.isTokenExpired(token);
+  }
+
   logout(): boolean {
     sessionStorage.removeItem('token');
+    this.loggedIn=false
     return true;
   }
 
@@ -81,7 +105,7 @@ export class AuthService {
   isAdmin(): boolean {
     let result = false;
 
-    const token = sessionStorage.getItem('token');
+    const token = this.getAuthToken()
     if (token) {
       const decodedToken = this.jwtHelper.decodeToken(token);
       const roles = decodedToken.roles
@@ -100,7 +124,7 @@ export class AuthService {
   isClient(): boolean {
     let result = false;
 
-    const token = sessionStorage.getItem('token');
+    const token = this.getAuthToken()
     if (token) {
       const decodedToken = this.jwtHelper.decodeToken(token);
       const roles = decodedToken.roles

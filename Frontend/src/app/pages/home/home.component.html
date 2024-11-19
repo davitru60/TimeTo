@@ -49,29 +49,31 @@
 </div>
 
 }@else {
-<div class="flex justify-start w-full ml-3">
-    <div class="grid grid-cols-1 sm:grid-cols-1 p-5 sm:p-10 w-full max-w-screen-lg">
-        <div class="self-start text-left sm:mr-10 ml-3">
-            <h1 class="sm:text-5xl md:text-6xl lg:text-7xl custom-text-xl text-5xl font-bold text-black py-3 sm:ml-12">
-                DISEÑAMOS
-            </h1>
-        </div>
-        <div class="self-center text-left -mt-6">
-            <div class="flex items-center justify-end sm:mr-10 lg:-mr-48 py-3">
-                <div class="ml-4 h-3 w-20 bg-black"></div>
-                <h1 class="sm:text-5xl md:text-6xl lg:text-7xl custom-text-xl text-5xl font-bold text-black ml-4">
-                    MARCAS
+    <div class="flex justify-start w-full">
+        <div class="grid grid-cols-1 sm:grid-cols-1 p-5 sm:p-10 w-full max-w-screen-lg">
+            <!-- Título 1 -->
+            <div class="self-start text-left sm:mr-10 ml-3">
+                <h1 class="sm:text-5xl md:text-6xl lg:text-7xl custom-text-xl text-5xl font-bold text-black py-1 sm:ml-12">
+                    DISEÑAMOS
+                </h1>
+            </div>
+            <!-- Título 2 -->
+            <div class="self-center text-left">
+                <div class="flex items-center justify-end sm:mr-10 lg:-mr-48 py-1">
+                    <div class="ml-4 h-3 w-20 bg-black"></div>
+                    <h1 class="sm:text-5xl md:text-6xl lg:text-7xl custom-text-xl text-5xl font-bold text-black ml-4">
+                        MARCAS
+                    </h1>
+                </div>
+            </div>
+            <!-- Título 3 -->
+            <div class="self-end text-center mr-0 w-125">
+                <h1 class="sm:text-5xl md:text-6xl lg:text-7xl custom-text-xl text-5xl font-bold text-black py-1 sm:ml-25 lg:ml-32">
+                    QUE VENDEN
                 </h1>
             </div>
         </div>
-        <div class="self-end text-center -mt-6 mr-0 w-125">
-            <h1
-                class="sm:text-5xl md:text-6xl lg:text-7xl custom-text-xl text-5xl font-bold text-black py-3 sm:ml-25 lg:ml-32">
-                QUE VENDEN
-            </h1>
-        </div>
     </div>
-</div>
 }
 
 
@@ -127,7 +129,7 @@
 
 
 <!-- Container 2-->
-<div class="flex justify-between flex-col sm:flex-row w-full mt-44 sm:p-10">
+<div class="flex justify-between flex-col sm:flex-row w-full mt-24 sm:p-10">
     @if(isSmallScreen){
     <div class="flex justify-center items-center mb-8 sm:mb-0">
         <h1 class="text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-bold text-black">CRECE TU MARCA</h1>
@@ -138,7 +140,7 @@
     <div class="flex flex-col justify-center items-center text-center mb-8 sm:mb-0">
         <p class="text-base sm:text-lg lg:text-xl text-gray-700 mb-4 w-96 text-center">AYUDAMOS A EMPRESAS, STARTUPS Y
             MARCAS PERSONALES A JUSTIFICAR SUS PRECIOS USANDO ESTRATEGIA Y DISEÑO.</p>
-        <button class="bg-black text-white font-bold py-2 px-4 rounded">Solicita tu presupuesto</button>
+        <button class="bg-black text-white font-bold py-2 px-4 ">Solicita tu presupuesto</button>
     </div>
 
     <!-- Image on the left -->
@@ -153,10 +155,10 @@
     </div>
 
     <!-- Text and button in the center -->
-    <div class="flex flex-col justify-center items-center text-center mb-8 sm:mb-0 px-2">
-        <p class="text-base sm:text-lg lg:text-xl text-gray-700 mb-4 w-96 text-start">AYUDAMOS A EMPRESAS, STARTUPS Y
+    <div class="flex flex-col justify-center items-center text-center mb-8 sm:mb-0 px-2 ">
+        <p class="text-base font-bold sm:text-lg lg:text-xl text-gray-700 mb-4 w-96 text-start">AYUDAMOS A EMPRESAS, STARTUPS Y
             MARCAS PERSONALES A JUSTIFICAR SUS PRECIOS USANDO ESTRATEGIA Y DISEÑO.</p>
-        <button class="bg-black text-white font-bold py-5 px-4 text-3xl w-96">Solicita tu presupuesto</button>
+        <button class="bg-black text-white font-bold py-4 px-4 text-2xl w-96 mt-16">Solicita tu presupuesto</button>
     </div>
 
     <!-- Image on the left -->
@@ -167,17 +169,44 @@
     }
 </div>
 
-<div class="flex flex-col sm:flex-row w-full mt-10 p-10">
+<div class="flex flex-col sm:flex-row w-full p-10">
 
     <!-- Left Column -->
-    <div class="flex flex-col w-full sm:w-1/3 p-5 lg:px-20">
-        <h4 class="text-3xl sm:text-4xl font-excal-gold cursor-pointer border-b-2 border-gray-300 pb-2"
-            (click)="selectContent('estrategia')">Estrategia</h4>
-        <h4 class="text-3xl sm:text-4xl font-excal-gold cursor-pointer border-b-2 border-gray-300 pb-2 mt-4"
-            (click)="selectContent('diseno')">Diseño</h4>
-        <h4 class="text-3xl sm:text-4xl font-excal-gold cursor-pointer border-b-2 border-gray-300 pb-2 mt-4"
-            (click)="selectContent('contenido')">Creación de contenido</h4>
-        <button class="bg-black text-white font-bold py-2 px-4 rounded mt-6 w-full sm:w-auto">
+    <div class="flex flex-col w-full sm:w-96 xl:w-1/3 p-5 lg:px-20">
+        <div class="flex items-center justify-between cursor-pointer border-b-1 border-black pb-2"
+            (click)="selectContent('estrategia')">
+            <h4 class="text-3xl sm:text-2xl md:text-3xl xl:text-4xl font-bold font-excal-gold">Estrategia</h4>
+
+            @if(selectedContent === 'estrategia'){
+            <span>
+              <img src="assets/arrow-cta.svg" alt="Imagen 1" class="w-4 h-4 object-cover mr-2">
+            </span>
+            }
+        </div>
+
+        <div class="flex items-center justify-between cursor-pointer border-b-1 border-black  pb-2 mt-4"
+            (click)="selectContent('diseno')">
+            <h4 class="text-3xl sm:text-2xl md:text-3xl xl:text-4xl font-bold font-excal-gold">Diseño</h4>
+
+            @if(selectedContent === 'diseno'){
+            <span>
+                <img src="assets/arrow-cta.svg" alt="Imagen 1" class="w-4 h-4 object-cover mr-2">
+            </span>
+            }
+        </div>
+
+
+        <div class="flex items-center justify-between cursor-pointer border-b-1 border-black  pb-2 mt-4"
+            (click)="selectContent('contenido')">
+            <h4 class="text-3xl sm:text-2xl md:text-3xl xl:text-4xl font-bold font-excal-gold">Creación de contenido</h4>
+
+            @if(selectedContent === 'contenido'){
+            <span>
+                <img src="assets/arrow-cta.svg" alt="Imagen 1" class="w-4 h-4 object-cover mr-2">
+            </span>
+            }
+        </div>
+        <button class="bg-black text-white font-bold py-2 px-4 mt-12 w-56 text-s">
             Solicita tu presupuesto
         </button>
     </div>
@@ -185,7 +214,8 @@
     <!-- Right Column -->
     <div class="flex flex-col w-full p-5 sm:w-2/3 lg:px-40 ">
         @if(selectedContent === 'estrategia'){
-        <h2 class="text-2xl sm:text-3xl lg:text-5xl font-bold mb-4">Generamos <br> estrategias para <br> impulsar tu marca</h2>
+        <h2 class="text-2xl sm:text-3xl lg:text-5xl font-bold mb-4">Generamos <br> estrategias para <br> impulsar tu
+            marca</h2>
         <p class="text-base sm:text-lg lg:text-xl text-gray-700 mb-4">
             Este servicio, está pensado para justificar tus precios sin tener que hablar.
         </p>
@@ -195,7 +225,8 @@
             creación de contenido.
         </p>
         }@else if(selectedContent === 'diseno'){
-        <h2 class="text-2xl sm:text-3xl lg:text-5xl font-bold mb-4">No hay dos veces <br> para una primera <br> impresión</h2>
+        <h2 class="text-2xl sm:text-3xl lg:text-5xl font-bold mb-4">No hay dos veces <br> para una primera <br>
+            impresión</h2>
         <p class="text-base sm:text-lg lg:text-xl text-gray-700 mb-4">
             En un mercado saturado donde innumerables marcas compiten por destacar, muchas descuidan su presencia.
         </p>
@@ -208,7 +239,8 @@
             transmite confianza y credibilidad.
         </p>
         }@else {
-        <h2 class="text-2xl sm:text-3xl lg:text-5xl font-bold mb-4">¿Eres tan selectivo <br> con tu contenido <br> como con tu
+        <h2 class="text-2xl sm:text-3xl lg:text-5xl font-bold mb-4">¿Eres tan selectivo <br> con tu contenido <br> como
+            con tu
             café?</h2>
         <p class="text-base sm:text-lg lg:text-xl text-gray-700 mb-4">
             Pasamos horas guardando posts para conseguir inspiración y nunca los volvemos a ver.
@@ -221,3 +253,42 @@
         }
     </div>
 </div>
+
+<app-testimonials></app-testimonials>
+
+<app-latest-projects></app-latest-projects>
+
+
+<div class="w-full mt-10 px-4 py-8 lg:mx-52 sm:max-w-full md:max-w-full lg:w-auto flex justify-center">
+    <a class="block w-full sm:w-auto px-4 sm:px-8 md:px-12 lg:px-20">
+        <div class="px-5 mt-[-30px] grid gap-5 row-gap-8 lg:grid-cols-[1fr,1.5fr]">
+       
+            <div class="h-custom flex justify-center">
+           
+                <img class="object-cover h-56 w-72 sm:h-56 sm:w-72 lg:h-56 lg:w-72" src="assets/artem.jpg" alt="" />
+            </div>
+       
+            <div class="flex flex-col items-center lg:items-start">
+                <div>
+           
+                    <h5 class="text-center lg:text-left text-sm lg:text-lg mb-3 font-bold tracking-tight text-gray-900">
+                        &#9679; Diseñador gráfico
+                    </h5>
+                   
+                    <h1 class="mt-2 text-center lg:text-left text-xl sm:text-2xl lg:text-3xl font-bold leading-tight">
+                        Rubén <br> Trujillo
+                    </h1>
+                   
+                    <h2 class="mt-2 text-center lg:text-left text-base sm:text-sm lg:text-xl sm:w-96 lg:w-auto leading-tight ">
+                        Lorem, ipsum dolor sit amet consectetur adipisicing elit. Saepe ducimus fugiat libero.
+                    </h2>
+                </div>
+            </div>
+        </div>
+    </a>
+</div>
+
+
+
+
+<app-footer></app-footer>

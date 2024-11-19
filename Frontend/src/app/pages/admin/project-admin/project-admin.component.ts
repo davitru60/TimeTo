@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component} from '@angular/core';
 import { NavbarComponent } from '../../../shared/components/layout/navbar/navbar.component';
 import { ProjectService } from '../../projects/services/project.service';
 import {
@@ -13,7 +13,7 @@ import { ProjectCategory,ProjectCategoryDeleteResponse,ProjectCategoryPostData, 
 import { Category,CategoryGetResponse } from '../../../core/interfaces/category.interface';
 import { CommonModule } from '@angular/common';
 import { ToastService } from '../../../shared/components/ui/toast/toast.service';
-import { FormsModule, NgForm } from '@angular/forms';
+import { FormsModule} from '@angular/forms';
 import { ModalComponent } from '../../../shared/components/ui/modal/modal.component';
 import { ToastComponent } from '../../../shared/components/ui/toast/toast.component';
 import { PaginationComponent } from '../../../shared/components/ui/pagination/pagination.component';

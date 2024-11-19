@@ -1,7 +1,12 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component} from '@angular/core';
 import { NavbarComponent } from '../../../shared/components/layout/navbar/navbar.component';
 import { ProjectService } from '../services/project.service';
-import { Project, ProjectGetResponse, ProjectPutData, ProjectPutResponse} from '../../../core/interfaces/project.interface';
+import {
+  Project,
+  ProjectGetResponse,
+  ProjectPutData,
+  ProjectPutResponse,
+} from '../../../core/interfaces/project.interface';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { NgxPaginationModule } from 'ngx-pagination';
@@ -10,45 +15,65 @@ import { ModalComponent } from './../../../shared/components/ui/modal/modal.comp
 import { FormsModule, NgForm } from '@angular/forms';
 import { ToastService } from '../../../shared/components/ui/toast/toast.service';
 import { ToastComponent } from '../../../shared/components/ui/toast/toast.component';
-import { LoaderComponent } from "../../../shared/components/ui/loader/loader.component";
+import { LoaderComponent } from '../../../shared/components/ui/loader/loader.component';
 import { AuthService } from '../../auth/services/auth.service';
-
-
-
+import { ButtonComponent } from '../../../shared/components/ui/button/button.component';
 
 @Component({
-    selector: 'app-all-projects',
-    standalone: true,
-    templateUrl: './all-projects.component.html',
-    styleUrl: './all-projects.component.scss',
-    imports: [CommonModule, NavbarComponent, RouterLink, NgxPaginationModule, FormsModule, PaginationComponent, ModalComponent, ToastComponent, LoaderComponent]
+  selector: 'app-all-projects',
+  standalone: true,
+  templateUrl: './all-projects.component.html',
+  styleUrl: './all-projects.component.scss',
+  imports: [
+    CommonModule,
+    NavbarComponent,
+    RouterLink,
+    NgxPaginationModule,
+    FormsModule,
+    PaginationComponent,
+    ModalComponent,
+    ToastComponent,
+    LoaderComponent,
+    ButtonComponent,
+  ],
 })
-
 export class AllProjectsComponent {
   projects: Project[] = [];
   selectedProject: Project | null = null;
 
   currentPage = 1;
   itemsPerPage = 4;
-  isModalOpen: boolean [] = []
-  isDeleteModalOpen: boolean [] = []
+  isModalOpen: boolean[] = [];
+  isDeleteModalOpen: boolean[] = [];
+  isImageModalOpen: boolean[] = [];
   isLoading = false;
+  isDropdownOpen = false;
 
   project: ProjectPutData = {
     name: '',
     description: '',
-    path: ''
-  }
+    path: '',
+  };
 
-  deleteModalStyle = 'lg:w-1/3'
+  deleteModalStyle = 'lg:w-1/3';
+
+  imageOption: string = '';
 
   constructor(
-    private projectService: ProjectService, 
+    private projectService: ProjectService,
     private toastService: ToastService,
     public authService: AuthService
-  
   ) {
     this.getAllProjects();
+  }
+
+  selectImageOption(option: string) {
+    this.imageOption = option;
+    this.isDropdownOpen = false;
+  }
+
+  toggleDropdown() {
+    this.isDropdownOpen = !this.isDropdownOpen;
   }
 
   showSuccessToast(message: string) {
@@ -86,22 +111,32 @@ export class AllProjectsComponent {
     this.currentPage = 1;
   }
 
-  
-  openModal(index:number){
-    this.selectedProject = this.projects.find(project => project.project_id === index) || null;
-    this.isModalOpen[index]= true
+  openModal(index: number) {
+    this.selectedProject =
+      this.projects.find((project) => project.project_id === index) || null;
+    this.isModalOpen[index] = true;
   }
 
-  closeModal(index:number){
-    this.isModalOpen[index] = false
+  closeModal(index: number) {
+    this.isModalOpen[index] = false;
   }
 
-  openDeleteModal(index:number){
-    this.isDeleteModalOpen[index]=true
+  openDeleteModal(index: number) {
+    this.isDeleteModalOpen[index] = true;
   }
 
-  closeDeleteModal(index:number){
-    this.isDeleteModalOpen[index]=false
+  closeDeleteModal(index: number) {
+    this.isDeleteModalOpen[index] = false;
+  }
+
+  openImageModal(index: number) {
+    this.isImageModalOpen[index] = true;
+    this.imageOption = ''
+    this.isDropdownOpen=false
+  }
+
+  closeImageModal(index: number) {
+    this.isImageModalOpen[index] = false;
   }
 
   onFileChange(event: any) {
@@ -115,32 +150,26 @@ export class AllProjectsComponent {
     this.projectService
       .getAllProjects()
       .subscribe((response: ProjectGetResponse) => {
-        if(response.success){
+        if (response.success) {
           this.projects = response.data.projects;
-
         }
       });
   }
 
-
   updateProject(projectId: number) {
     if (this.selectedProject) {
-     
-
       const formData = new FormData();
       formData.append('name', this.selectedProject.name);
       formData.append('description', this.selectedProject.description);
       formData.append('path', this.selectedProject.path);
-     
 
       this.projectService.updateProject(projectId, formData).subscribe(
         (response: ProjectPutResponse) => {
-          if(response.success){
+          if (response.success) {
             this.showSuccessToast('Proyecto actualizado exitosamente');
             this.closeModal(projectId);
             this.getAllProjects();
           }
-         
         },
         (error: any) => {
           this.showErrorToast('Error al actualizar el proyecto');
@@ -148,9 +177,6 @@ export class AllProjectsComponent {
       );
     }
   }
-
-
- 
 
   deleteProject(projectId: number) {
     this.projectService.deleteProject(projectId).subscribe(
@@ -162,11 +188,10 @@ export class AllProjectsComponent {
         }, 2000);
       },
       (error: any) => {
-        this.showErrorToast(`Error al eliminar el proyecto: ${error.message || error}`);
+        this.showErrorToast(
+          `Error al eliminar el proyecto: ${error.message || error}`
+        );
       }
     );
   }
-
-  
-
 }

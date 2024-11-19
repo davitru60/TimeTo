@@ -54,8 +54,6 @@ class ContentOrder {
         },
         attributes: { exclude: ["id"] },
       });
-
-      console.log("Text",text)
   
       if (text) {
         await models.ProjectText.update(

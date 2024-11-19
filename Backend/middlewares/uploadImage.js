@@ -12,6 +12,15 @@ const handleUploadImage = async (req, res, next) => {
         .json({ error: "Images haven't been provided" });
     }
 
+    // Verificar que todos los archivos sean imágenes
+    const areAllImages = req.files.every(file => file.mimetype.startsWith('image/'));
+
+    if (!areAllImages) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ error: "Only image files are allowed" });
+    }
+
     const imageOriginalNames = req.files.map((file) => file.originalname);
     req.imageOriginalNames = imageOriginalNames; // Guardar los nombres originales de las imágenes en el objeto req
 

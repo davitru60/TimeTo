@@ -24,7 +24,7 @@ router.put('/projects/:id',[uploadImageMiddleware,handleUpdateImage], projectGen
 router.delete('/projects/:id',projectGeneral.deleteProject)
 
 //Categories
-router.get('/category',category.getCategories)
+router.get('/category',[midsJWT.validateJWT],category.getCategories)
 router.post('/category',category.createCategory)
 router.put('/category/:id',category.updateCategory)
 router.delete('/category/:id',category.deleteCategory)

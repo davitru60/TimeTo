@@ -5,13 +5,14 @@ import { FormsModule } from '@angular/forms';
 import { CategoryPostData, CategoryPostResponse } from '../../../../core/interfaces/category.interface';
 import { ProjectService } from '../../../projects/services/project.service';
 import { ToastService } from '../../../../shared/components/ui/toast/toast.service';
+import { ButtonComponent } from "../../../../shared/components/ui/button/button.component";
 
 @Component({
     selector: 'app-add-category',
     standalone: true,
     templateUrl: './add-category.component.html',
     styleUrl: './add-category.component.scss',
-    imports: [CommonModule,FormsModule, ModalComponent]
+    imports: [CommonModule, FormsModule, ModalComponent, ButtonComponent]
 })
 export class AddCategoryComponent {
   @Input() isModalOpen = false;
