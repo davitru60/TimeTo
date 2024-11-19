@@ -98,9 +98,8 @@
       </button>
 
       <!-- Menú dropdown -->
-       @if(isDropdownOpen){
-        <div
-        class="absolute bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
+      @if(isDropdownOpen){
+      <div class="absolute bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
         <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
           <li>
             <a (click)="openImageModal(i)"
@@ -114,8 +113,8 @@
           </li>
         </ul>
       </div>
-       }
-      
+      }
+
 
       @if(imageOption==='new'){
       <input (change)="onFileChange($event)" type="file" name="image"
@@ -135,7 +134,7 @@
   </form>
 </app-modal>
 
-<app-modal [isModalOpen]="isImageModalOpen[i]" [modalClasses]="deleteModalStyle">
+<app-modal [isModalOpen]="isImageModalOpen[i]" [modalClasses]="imageModalStyle">
   <div class="bg-white py-3 px-3">
     <div class="sm:flex sm:items-start">
       <div
@@ -146,21 +145,39 @@
       </div>
       <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
         <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
-          Eliminar proyecto
+          Seleccionar imagen
         </h3>
         <div class="mt-2">
           <p class="text-sm text-gray-500">
-            ¿Estás seguro de que deseas eliminar este proyecto? Esta acción no se puede deshacer.
+            Selecciona una imagen de la lista a continuación para usar en tu proyecto.
           </p>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- Contenedor de imágenes -->
+  <div class="max-h-96 overflow-y-auto px-4 py-4">
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 px-4 py-4">
+      <div *ngFor="let image of images" class="flex flex-col items-center">
+        <img [src]="image.url" [alt]="image.name"
+          class="h-24 w-24 object-cover rounded-lg shadow-md cursor-pointer hover:opacity-80 transition duration-200"
+          (click)="selectImage(image)" />
+        <span class="mt-2 text-sm text-gray-700 dark:text-gray-300">{{ image.name }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Botones de acción -->
   <div class="px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
     <button type="button" class="w-full inline-flex justify-center px-3 py-2 ml-4 sm:w-auto sm:px-3 cancel-btn"
       (click)="closeImageModal(i)">
       Cancelar
     </button>
+    <button type="button" class="w-full inline-flex justify-center px-3 py-2 ml-4 sm:w-auto sm:px-3 cancel-btn"
+    (click)="updateProjectHomeImage(project.project_id)">
+    Actualizar
+  </button>
   </div>
 </app-modal>
 

@@ -3,6 +3,7 @@ const queries = require("../project.queries");
 const { Sequelize, QueryTypes } = require("sequelize");
 
 class ProjectImage {
+
   static getProjectImages = async (projectId) => {
     try {
       const images = await models.ProjectImage.findAll({

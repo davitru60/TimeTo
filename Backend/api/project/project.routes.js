@@ -9,7 +9,8 @@ const category = require("./categories/category.controller")
 const projectCategory = require("./project-categories/project-category.controller")
 const projectText = require("./project-text/project-text.controller")
 const projectImage = require("./project-image/project-image.controller")
-const contentOrder = require("./content-order/content-order.controller")
+const contentOrder = require("./content-order/content-order.controller");
+const { updateProjectHomeImage } = require("./project-general/project-general.database");
 
 
 // Usar el middleware antes de las rutas que necesiten acceso a Dropbox
@@ -21,6 +22,7 @@ router.get('/recommended-projects', [midsJWT.validateJWT], projectGeneral.getRec
 router.get('/show-image',projectGeneral.showImage)
 router.post('/projects', [uploadImageMiddleware,handleUploadImage],projectGeneral.createProject)
 router.put('/projects/:id',[uploadImageMiddleware,handleUpdateImage], projectGeneral.updateProject)
+router.put('/projects/home-image/:id',projectGeneral.updateProjectHomeImage)
 router.delete('/projects/:id',projectGeneral.deleteProject)
 
 //Categories
@@ -43,6 +45,7 @@ router.delete('/project-texts/:id',projectText.deleteProjectTexts)
 
 
 //Project images
+router.get('/images',projectImage.getImages)
 router.get('/project-images/:id',projectImage.getProjectImages)
 router.post('/project-images/:id',[uploadImageMiddleware,handleUploadImage],projectImage.addImageToProject)
 router.put('/project-images/:id',[uploadImageMiddleware,handleUpdateImage],projectImage.updateImageFromProject)

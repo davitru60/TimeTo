@@ -130,15 +130,16 @@ export class ProjectAdminComponent {
 
 
   openCategoryModal(index: number, project: Project) {
-    this.projectService
-      .getProjectCategories(project.project_id)
-      .subscribe((response: ProjectCategoryGetResponse) => {
+    this.projectService.getProjectCategories(project.project_id).subscribe({
+      next: (response: ProjectCategoryGetResponse) => {
         if(response.success){
           this.projectCategories = response.data.projectCategories;
           this.isCategoryModalOpen[index] = true;
         }
+      }
        
       });
+      
   }
 
   closeCategoryModal(index: number) {
@@ -192,9 +193,7 @@ export class ProjectAdminComponent {
       };
       this.projectCategories.push(newProjectCategory);
 
-      this.projectService
-        .addProjectCategory(newProjectCategory)
-        .subscribe((response: ProjectCategoryPostResponse) => {
+      this.projectService.addProjectCategory(newProjectCategory).subscribe((response: ProjectCategoryPostResponse) => {
           if(response.success){
             console.log(response)
             this.showSuccessToast('Categoría añadida correctamente');

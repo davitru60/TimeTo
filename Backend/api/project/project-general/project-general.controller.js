@@ -1,5 +1,5 @@
 const { StatusCodes } = require("http-status-codes");
-const {uploadImageToDropbox,} = require("../../../helpers/dropboxImageUploader");
+const {uploadImageToDropbox} = require("../../../helpers/dropboxImageUploader");
 const projectGeneral = require("./project-general.database");
 const category = require("../categories/category.database");
 const projectCategory = require("../project-categories/project-category.database");
@@ -204,6 +204,21 @@ class ProjectGeneralController {
       });
     }
   };
+
+  static updateProjectHomeImage = async(req,res) =>{
+    try {
+      const projectId = req.params.id;
+      console.log("Req",req.files.path)
+
+      const projectImg = {
+        project_id: projectId,
+      };
+
+      updatedImage = await projectGeneral.updateProjectHomeImage(projectImg,req.body);
+    }catch(error){
+
+    }
+  }
 
   static deleteProject = async (req, res) => {
     try {

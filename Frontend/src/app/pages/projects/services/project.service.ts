@@ -38,6 +38,10 @@ export class ProjectService {
     return this.http.put<ProjectPutResponse>(projectRoutes.updateProject(projectId),formData)
   }
 
+  updateProjectHomeImage(projectId: number,formData:FormData): Observable<ProjectPutResponse>{
+    return this.http.put<ProjectPutResponse>(projectRoutes.updateProjectHomeImage(projectId),formData)
+  }
+
   deleteProject(projectId:number): Observable<ProjectDeleteResponse>{
     return this.http.delete<ProjectDeleteResponse>(projectRoutes.deleteProject(projectId))
   }
@@ -93,6 +97,10 @@ export class ProjectService {
   
   deleteProjectTexts(projTextId: number): Observable<any> {
     return this.http.delete<any>(projectRoutes.deleteProjectTexts(projTextId));
+  }
+
+  getImages(){
+    return this.http.get<any>(projectRoutes.getImages)
   }
 
   getProjectImages(projectId: number): Observable<ProjectImagesResponse> {

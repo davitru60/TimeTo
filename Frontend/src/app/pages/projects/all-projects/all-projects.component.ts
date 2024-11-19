@@ -1,4 +1,4 @@
-import { Component} from '@angular/core';
+import { Component } from '@angular/core';
 import { NavbarComponent } from '../../../shared/components/layout/navbar/navbar.component';
 import { ProjectService } from '../services/project.service';
 import {
@@ -39,6 +39,7 @@ import { ButtonComponent } from '../../../shared/components/ui/button/button.com
 })
 export class AllProjectsComponent {
   projects: Project[] = [];
+  images: any [] = []
   selectedProject: Project | null = null;
 
   currentPage = 1;
@@ -56,6 +57,7 @@ export class AllProjectsComponent {
   };
 
   deleteModalStyle = 'lg:w-1/3';
+  imageModalStyle = 'lg:w-1/2';
 
   imageOption: string = '';
 
@@ -65,6 +67,7 @@ export class AllProjectsComponent {
     public authService: AuthService
   ) {
     this.getAllProjects();
+    this.getImages()
   }
 
   selectImageOption(option: string) {
@@ -119,6 +122,7 @@ export class AllProjectsComponent {
 
   closeModal(index: number) {
     this.isModalOpen[index] = false;
+    this.isDropdownOpen = false;
   }
 
   openDeleteModal(index: number) {
@@ -131,8 +135,8 @@ export class AllProjectsComponent {
 
   openImageModal(index: number) {
     this.isImageModalOpen[index] = true;
-    this.imageOption = ''
-    this.isDropdownOpen=false
+    this.imageOption = '';
+    this.isDropdownOpen = false;
   }
 
   closeImageModal(index: number) {
@@ -141,57 +145,102 @@ export class AllProjectsComponent {
 
   onFileChange(event: any) {
     const file = event.target.files[0];
+    console.log(file)
     if (file && this.selectedProject != null) {
       this.selectedProject.path = file;
     }
   }
 
+  getImages() {
+    this.projectService.getImages().subscribe({
+      next: (response:any) => {
+        this.images= response.data.images
+        console.log(this.images[0])
+      }
+    })
+  }
+
+  selectImage(image: any) {
+    console.log('Imagen seleccionada:', image);
+  
+    if (this.selectedProject) {
+      // Actualiza la propiedad 'path' del proyecto con la URL de la imagen seleccionada
+      this.selectedProject.path = image.url;
+  
+      // Puedes también manejar la vista previa de la imagen si se necesita
+      // Si la imagen es un archivo (y no una URL), usa URL.createObjectURL
+      if (image.file) {
+        this.selectedProject.path = URL.createObjectURL(image.file);
+      }
+    }
+  }
+
+
+
   getAllProjects() {
-    this.projectService
-      .getAllProjects()
-      .subscribe((response: ProjectGetResponse) => {
+    this.projectService.getAllProjects().subscribe({
+      next: (response: ProjectGetResponse) => {
         if (response.success) {
           this.projects = response.data.projects;
         }
-      });
+      },
+    });
+  }
+
+  updateProjectHomeImage(projectId:number){
+
+    if (this.selectedProject) {
+      console.log("Proj",this.selectedProject)
+      const formData = new FormData();
+      formData.append('name', this.selectedProject.name);
+      formData.append('description', this.selectedProject.description);
+      formData.append('path', this.selectedProject.path);
+      this.projectService.updateProjectHomeImage(projectId, formData).subscribe({
+        next: (response: ProjectPutResponse) => {
+          console.log(response)
+        }
+      })
+    }
+    
+  
   }
 
   updateProject(projectId: number) {
     if (this.selectedProject) {
+      console.log("Proj",this.selectedProject)
       const formData = new FormData();
       formData.append('name', this.selectedProject.name);
       formData.append('description', this.selectedProject.description);
       formData.append('path', this.selectedProject.path);
 
-      this.projectService.updateProject(projectId, formData).subscribe(
-        (response: ProjectPutResponse) => {
+      this.projectService.updateProject(projectId, formData).subscribe({
+        next: (response: ProjectPutResponse) => {
           if (response.success) {
             this.showSuccessToast('Proyecto actualizado exitosamente');
             this.closeModal(projectId);
-            this.getAllProjects();
           }
         },
-        (error: any) => {
+        error: (error: any) => {
           this.showErrorToast('Error al actualizar el proyecto');
-        }
-      );
+        },
+      });
     }
   }
 
   deleteProject(projectId: number) {
-    this.projectService.deleteProject(projectId).subscribe(
-      (response: any) => {
+    this.projectService.deleteProject(projectId).subscribe({
+      next: (response: any) => {
         this.showInfoToast('Eliminación del proyecto en progreso...');
         setTimeout(() => {
           this.showSuccessToast('Proyecto eliminado exitosamente');
           this.getAllProjects(); // Refrescar la lista de proyectos después de la eliminación
         }, 2000);
       },
-      (error: any) => {
+      error: (error: any) => {
         this.showErrorToast(
           `Error al eliminar el proyecto: ${error.message || error}`
         );
-      }
-    );
+      },
+    });
   }
 }
