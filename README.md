@@ -20,5 +20,36 @@ En resumen, este proyecto tiene como meta fortalecer la presencia digital de los
 - **Vista dividida**: Modo de pantalla dividida para gestionar información y vista previa del proyecto.
 
 ## 🏛️ Tecnologías empleadas
-- **Frontend**: Angular, Tailwind
+- **Frontend**: Angular 17, Tailwind
 - **Backend**: Node.js con Express.js
+- **Subida de imagenes**: Dropbox
+
+## 💭 Puesta en marcha de la aplicación
+Para instalar las dependencias necesarias en la parte del frontend, abriremos una terminal en la carpeta frontend y usaremos el siguiente comando:
+```
+npm install
+```
+Para ejecutar el script de construcción definido en el archivo `package.json` usaremos el siguiente comando:
+```
+npm run build
+```
+Esto mismo haremos con la carpeta de backend.
+### ✅ Ejecutar migraciones y seeders para crear la base de datos
+Para disponer de las tablas en la base de datos y de registros en ella vamos a necesitar ejecutar los siguientes comandos:
+```
+npx sequelize-cli db:migrate
+npx sequelize-cli db:migrate --env development
+```
+
+### 🖱️ Iniciar los servidores de frontend y backend
+Para iniciar el frontend, abriremos en una terminal la carpeta de frontend y escribiremos el siguiente comando:
+```
+ng s -o
+```
+
+Para iniciar el backend, abriremos en una terminal la carpeta de backend y escribiremos el siguiente comando:
+```
+npm run dev
+```
+
+
