@@ -3,7 +3,7 @@
 <div class="project-admin">
   <div class="flex justify-center py-6">
     <div class="overflow-x-auto w-full max-w-6xl px-5">
-      <h1 class="text-2xl font-semibold mb-6">Lista de Proyectos</h1>
+      <h1 class="text-2xl font-semibold mb-6">Lista de proyectos</h1>
 
       <!-- Barra de búsqueda -->
       <div class="flex justify-between items-center mb-4">
@@ -11,7 +11,7 @@
           [(ngModel)]="searchTerm" (input)="onSearchChange($event)" />
         <button type="button"
           class="px-4 py-2 ml-2  add-btn text-white"
-          (click)="openAddProjectModal()"> Añadir Proyecto
+          (click)="openAddProjectModal()"> Añadir proyecto
         </button>
       </div>
 
@@ -152,8 +152,40 @@
 
     <div class="form-group mb-4">
       <label class="block text-gray-700 font-bold mb-2">Imagen:</label>
+      <button
+        class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        type="button" (click)="toggleDropdown()">
+        Añadir imagen
+        <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+          viewBox="0 0 10 6">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="m1 1 4 4 4-4" />
+        </svg>
+      </button>
+
+      <!-- Menú dropdown -->
+      @if(isDropdownOpen){
+      <div class="absolute bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
+        <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
+          <li>
+            <a (click)="openImageModal(i)"
+              class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Añadir imagen
+              existente</a>
+          </li>
+          <li>
+            <a (click)="selectImageOption('new')"
+              class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Añadir nueva
+              imagen</a>
+          </li>
+        </ul>
+      </div>
+      }
+
+
+      @if(imageOption==='new'){
       <input (change)="onFileChange($event)" type="file" name="image"
         class="w-full p-3 rounded-lg focus:outline-none focus:border-blue-500 transition duration-200" required />
+      }
 
       @if(projectEdit.submitted && !projectEdit.path){
       <div class="text-red-500">Imagen obligatoria</div>
@@ -167,6 +199,47 @@
     </div>
   </form>
 
+</app-modal>
+
+<app-modal [isModalOpen]="isImageModalOpen[i]" [modalClasses]="imageModalStyle">
+  <div class="bg-white py-3 px-3">
+    <div class="sm:flex sm:items-start">
+      <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+        <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+          Seleccionar imagen
+        </h3>
+        <div class="mt-2">
+          <p class="text-sm text-gray-500">
+            Selecciona una imagen de la lista a continuación para usar en tu proyecto.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenedor de imágenes -->
+  <div class="max-h-96 overflow-y-auto px-4 py-4">
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 px-4 py-4">
+      <div *ngFor="let image of images" class="flex flex-col items-center">
+        <img [src]="image.url" [alt]="image.name"
+          class="h-24 w-24 object-cover rounded-lg shadow-md cursor-pointer hover:opacity-80 transition duration-200"
+          (click)="selectImage(image)" />
+        <span class="mt-2 text-sm text-gray-700 dark:text-gray-300">{{ image.name }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Botones de acción -->
+  <div class="px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+    <button type="button" class="w-full inline-flex justify-center px-3 py-2 ml-4 sm:w-auto sm:px-3 cancel-btn"
+      (click)="closeImageModal(i)">
+      Cancelar
+    </button>
+    <button type="button" class="w-full inline-flex justify-center px-3 py-2 ml-4 sm:w-auto sm:px-3 cancel-btn"
+    (click)="updateProjectHomeImage(project.project_id,i)">
+    Actualizar
+  </button>
+  </div>
 </app-modal>
 
 

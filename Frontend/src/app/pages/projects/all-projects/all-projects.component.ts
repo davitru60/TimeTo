@@ -4,6 +4,7 @@ import { ProjectService } from '../services/project.service';
 import {
   Project,
   ProjectGetResponse,
+  ProjectHomeImagePutData,
   ProjectPutData,
   ProjectPutResponse,
 } from '../../../core/interfaces/project.interface';
@@ -15,9 +16,7 @@ import { ModalComponent } from './../../../shared/components/ui/modal/modal.comp
 import { FormsModule, NgForm } from '@angular/forms';
 import { ToastService } from '../../../shared/components/ui/toast/toast.service';
 import { ToastComponent } from '../../../shared/components/ui/toast/toast.component';
-import { LoaderComponent } from '../../../shared/components/ui/loader/loader.component';
 import { AuthService } from '../../auth/services/auth.service';
-import { ButtonComponent } from '../../../shared/components/ui/button/button.component';
 
 @Component({
   selector: 'app-all-projects',
@@ -33,13 +32,11 @@ import { ButtonComponent } from '../../../shared/components/ui/button/button.com
     PaginationComponent,
     ModalComponent,
     ToastComponent,
-    LoaderComponent,
-    ButtonComponent,
   ],
 })
 export class AllProjectsComponent {
   projects: Project[] = [];
-  images: any [] = []
+  images: any[] = [];
   selectedProject: Project | null = null;
 
   currentPage = 1;
@@ -56,6 +53,11 @@ export class AllProjectsComponent {
     path: '',
   };
 
+  projectHomeImage: ProjectHomeImagePutData = {
+    project_id: 0,
+    path: '',
+  };
+
   deleteModalStyle = 'lg:w-1/3';
   imageModalStyle = 'lg:w-1/2';
 
@@ -67,7 +69,7 @@ export class AllProjectsComponent {
     public authService: AuthService
   ) {
     this.getAllProjects();
-    this.getImages()
+    this.getImages();
   }
 
   selectImageOption(option: string) {
@@ -115,8 +117,7 @@ export class AllProjectsComponent {
   }
 
   openModal(index: number) {
-    this.selectedProject =
-      this.projects.find((project) => project.project_id === index) || null;
+    this.selectedProject = this.projects.find((project) => project.project_id === index) || null;
     this.isModalOpen[index] = true;
   }
 
@@ -145,7 +146,7 @@ export class AllProjectsComponent {
 
   onFileChange(event: any) {
     const file = event.target.files[0];
-    console.log(file)
+    console.log(file);
     if (file && this.selectedProject != null) {
       this.selectedProject.path = file;
     }
@@ -153,29 +154,26 @@ export class AllProjectsComponent {
 
   getImages() {
     this.projectService.getImages().subscribe({
-      next: (response:any) => {
-        this.images= response.data.images
-        console.log(this.images[0])
-      }
-    })
+      next: (response: any) => {
+        this.images = response.data.images;
+      },
+    });
   }
 
   selectImage(image: any) {
     console.log('Imagen seleccionada:', image);
-  
+
     if (this.selectedProject) {
-      // Actualiza la propiedad 'path' del proyecto con la URL de la imagen seleccionada
       this.selectedProject.path = image.url;
-  
-      // Puedes también manejar la vista previa de la imagen si se necesita
-      // Si la imagen es un archivo (y no una URL), usa URL.createObjectURL
+      this.projectHomeImage.path = image.name;
+
+      this.showSuccessToast(`Imagen seleccionada: ${image.name}`);
+
       if (image.file) {
         this.selectedProject.path = URL.createObjectURL(image.file);
       }
     }
   }
-
-
 
   getAllProjects() {
     this.projectService.getAllProjects().subscribe({
@@ -187,27 +185,25 @@ export class AllProjectsComponent {
     });
   }
 
-  updateProjectHomeImage(projectId:number){
-
+  updateProjectHomeImage(projectId: number, index: number) {
     if (this.selectedProject) {
-      console.log("Proj",this.selectedProject)
-      const formData = new FormData();
-      formData.append('name', this.selectedProject.name);
-      formData.append('description', this.selectedProject.description);
-      formData.append('path', this.selectedProject.path);
-      this.projectService.updateProjectHomeImage(projectId, formData).subscribe({
-        next: (response: ProjectPutResponse) => {
-          console.log(response)
-        }
-      })
+      this.projectHomeImage.project_id = projectId;
+      this.projectService
+        .updateProjectHomeImage(projectId, this.projectHomeImage)
+        .subscribe({
+          next: (response: any) => {
+            if (response.success) {
+              this.showSuccessToast('Imagen actualizada con éxito');
+              this.closeImageModal(index);
+            }
+          },
+        });
     }
-    
-  
   }
 
   updateProject(projectId: number) {
     if (this.selectedProject) {
-      console.log("Proj",this.selectedProject)
+      console.log('Proj', this.selectedProject);
       const formData = new FormData();
       formData.append('name', this.selectedProject.name);
       formData.append('description', this.selectedProject.description);

@@ -26,7 +26,7 @@ class CategoryController {
         const response = {
           success: true,
           msg: "Project has been successfully created",
-          data: categoryCreate
+          data: categoryCreate,
         };
 
         res.status(StatusCodes.OK).json(response);
@@ -47,13 +47,16 @@ class CategoryController {
   static updateCategory = async (req, res) => {
     try {
       const categoryId = req.params.id;
-      const categoryUpdate = await category.updateCategory(categoryId, req.body);
+      const categoryUpdate = await category.updateCategory(
+        categoryId,
+        req.body
+      );
 
       if (categoryUpdate) {
         const response = {
           success: true,
           msg: "Category has been successfully updated",
-          data: categoryUpdate
+          data: categoryUpdate,
         };
         res.status(StatusCodes.OK).json(response);
       } else {
@@ -73,26 +76,31 @@ class CategoryController {
   static deleteCategory = async (req, res) => {
     try {
       const categoryId = req.params.id;
-      const categoryDelete = await category.deleteCategory(categoryId);
 
-      if (categoryDelete) {
+      // Llama a la función de servicio para eliminar la categoría
+      const result = await category.deleteCategory(categoryId);
+
+      if (result.success) {
         const response = {
           success: true,
-          msg: "Category has been successfully deleted",
+          msg: result.msg,
         };
-
-        res.status(StatusCodes.OK).json(response);
-      } else {
-        const response = {
-          success: false,
-          msg: "Failed to delete category",
-        };
-        res.status(StatusCodes.BAD_REQUEST).json(response);
+        return res.status(StatusCodes.OK).json(response);
       }
+      
+      const response = {
+        success: false,
+        msg: result.msg,
+      };
+      return res.status(StatusCodes.BAD_REQUEST).json(response);
     } catch (error) {
-      res
-        .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .json({ error: "Error deleting category", detail: error });
+      console.log("Error deleting category:", error);
+
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        success: false,
+        msg: "An internal error occurred while trying to delete the category",
+        detail: error.message,
+      });
     }
   };
 }

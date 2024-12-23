@@ -5,7 +5,7 @@
 
       <div class="flex justify-end mb-4">
         <button type="button" class="px-4 py-2 ml-2 add-btn" (click)="openAddCategoryModal()">
-          Añadir Categoría
+          Añadir categoría
         </button>
       </div>
 
@@ -67,7 +67,7 @@
     <div class="form-group mb-4">
       <label class="block text-gray-700 font-bold mb-2">Nombre de la categoría:</label>
       <input type="text"
-        class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition duration-200 form-control"
+        class="w-full text-lg py-2 border-b border-black focus:outline-none custom-field"
         name="name" [(ngModel)]="category.name" required #name="ngModel"
         [ngClass]="{ 'is-invalid': f.submitted && name.errors }" />
 

@@ -20,7 +20,7 @@ export const environment = {
     getRecommendedProjects: environment.baseUrl + endpoints.projectEndpoint + '/recommended-projects/',
     createProject: environment.baseUrl + endpoints.projectEndpoint + '/projects',
     updateProject:(projectId:number) => environment.baseUrl + endpoints.projectEndpoint + '/projects/' + projectId,
-    updateProjectHomeImage:(projectId:number) => environment.baseUrl + endpoints.projectEndpoint + '/projects/home-image' + projectId,
+    updateProjectHomeImage:(projectId:number) => environment.baseUrl + endpoints.projectEndpoint + '/projects/home-image/' + projectId,
     deleteProject: (projectId:number) => environment.baseUrl + endpoints.projectEndpoint + '/projects/' + projectId,
 
     //Categories

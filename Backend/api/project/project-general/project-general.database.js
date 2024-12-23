@@ -102,22 +102,25 @@ class ProjectGeneral {
     return result;
   };
 
-  static updateProjectHomeImage = async (body) =>{
-    try{
-      const projectHomeImage = await models.HomeProjectImage.findByPk(body.project_id)
-
-      if(projectHomeImage){
+  static updateProjectHomeImage = async (body) => {
+    try {
+      const projectHomeImage = await models.HomeProjectImage.findByPk(body.project_id);
+  
+      if (projectHomeImage) {
+      
+        // Si body.path es un array, tomará el primer elemento (body.path[0]).
+        const pathToUpdate = Array.isArray(body.path) ? body.path[0] : body.path;
+  
         await projectHomeImage.update({
-          path: body.path[0]
-        })
+          path: pathToUpdate,
+        });
       }
-
-      return projectHomeImage
-
-    }catch(error){
+  
+      return projectHomeImage;
+    } catch (error) {
       throw new Error(`Failed to update image: ${error.message}`);
     }
-  }
+  };
 }
 
 

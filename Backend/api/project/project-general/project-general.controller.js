@@ -1,5 +1,7 @@
 const { StatusCodes } = require("http-status-codes");
-const {uploadImageToDropbox} = require("../../../helpers/dropboxImageUploader");
+const {
+  uploadImageToDropbox,
+} = require("../../../helpers/dropboxImageUploader");
 const projectGeneral = require("./project-general.database");
 const category = require("../categories/category.database");
 const projectCategory = require("../project-categories/project-category.database");
@@ -11,10 +13,11 @@ class ProjectGeneralController {
 
       for (let i = 0; i < projects.length; i++) {
         if (projects[i].path != null) {
-          projects[i].path = `${process.env.REQUEST_URL}${process.env.PORT}${process.env.IMAGE_REQUEST
-            }/show-image?path=${encodeURIComponent(
-              process.env.FOLDER_PATH + "/" + projects[i].path
-            )}`;
+          projects[i].path = `${process.env.REQUEST_URL}${process.env.PORT}${
+            process.env.IMAGE_REQUEST
+          }/show-image?path=${encodeURIComponent(
+            process.env.FOLDER_PATH + "/" + projects[i].path
+          )}`;
         }
       }
 
@@ -74,10 +77,11 @@ class ProjectGeneralController {
 
       for (let i = 0; i < recommendedProjects.length; i++) {
         if (recommendedProjects[i].path != null) {
-          recommendedProjects[i].path = `${process.env.REQUEST_URL}${process.env.PORT
-            }${process.env.IMAGE_REQUEST}/show-image?path=${encodeURIComponent(
-              process.env.FOLDER_PATH + "/" + recommendedProjects[i].path
-            )}`;
+          recommendedProjects[i].path = `${process.env.REQUEST_URL}${
+            process.env.PORT
+          }${process.env.IMAGE_REQUEST}/show-image?path=${encodeURIComponent(
+            process.env.FOLDER_PATH + "/" + recommendedProjects[i].path
+          )}`;
         }
       }
 
@@ -158,7 +162,7 @@ class ProjectGeneralController {
           message: "Failed to add images to the project",
         });
       }
-    } catch (error) { }
+    } catch (error) {}
   };
 
   static updateProject = async (req, res) => {
@@ -205,20 +209,35 @@ class ProjectGeneralController {
     }
   };
 
-  static updateProjectHomeImage = async(req,res) =>{
+  static updateProjectHomeImage = async (req, res) => {
     try {
       const projectId = req.params.id;
-      console.log("Req",req.files.path)
+      const path = req.body.path
 
       const projectImg = {
         project_id: projectId,
+        path: path,
       };
 
-      updatedImage = await projectGeneral.updateProjectHomeImage(projectImg,req.body);
-    }catch(error){
+      const updatedImage = await projectGeneral.updateProjectHomeImage(
+        projectImg
+      );
 
+      res.status(200).json({
+        success: true,
+        msg: "Project has been successfully updated",
+        data: updatedImage,
+      });
+    } catch (error) {
+      console.error("Error updating project image:", error);
+
+      res.status(500).json({
+        success: false,
+        msg: "An error occurred while updating the project image",
+        data: null,
+      });
     }
-  }
+  };
 
   static deleteProject = async (req, res) => {
     try {

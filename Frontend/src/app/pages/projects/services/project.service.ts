@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, Subject, interval, startWith, switchMap, tap } from 'rxjs';
 import { projectRoutes } from '../../../../environments/environment.development';
-import { ProjectGetResponse, ProjectImagesResponse, ImageOrderPut, EditorOrderPut, ProjectPutResponse, ProjectDeleteResponse } from '../../../core/interfaces/project.interface';
+import { ProjectGetResponse, ProjectImagesResponse, ImageOrderPut, EditorOrderPut, ProjectPutResponse, ProjectDeleteResponse, ProjectHomeImagePutData } from '../../../core/interfaces/project.interface';
 import { TextPutData, TextPostData } from '../../../core/interfaces/project-text.interface';
 import { ProjectCategoryDeleteResponse, ProjectCategoryPostData, ProjectCategoryPostResponse } from '../../../core/interfaces/project-category.interface';
 import { CategoryGetResponse, CategoryPostData ,CategoryPutResponse,CategoryPutData, CategoryPostResponse } from '../../../core/interfaces/category.interface';
@@ -20,10 +20,7 @@ export class ProjectService {
   constructor(private http: HttpClient) { }
   
   getAllProjects(): Observable<ProjectGetResponse> {
-    return interval(30000).pipe(
-      startWith(0),
-      switchMap(() => this.http.get<ProjectGetResponse>(projectRoutes.getAllProjects))
-    );
+    return this.http.get<ProjectGetResponse>(projectRoutes.getAllProjects)
   }
 
   getRecommendedProjects(): Observable<any>{
@@ -38,8 +35,8 @@ export class ProjectService {
     return this.http.put<ProjectPutResponse>(projectRoutes.updateProject(projectId),formData)
   }
 
-  updateProjectHomeImage(projectId: number,formData:FormData): Observable<ProjectPutResponse>{
-    return this.http.put<ProjectPutResponse>(projectRoutes.updateProjectHomeImage(projectId),formData)
+  updateProjectHomeImage(projectId: number,projectHomeImage:ProjectHomeImagePutData): Observable<ProjectPutResponse>{
+    return this.http.put<any>(projectRoutes.updateProjectHomeImage(projectId),projectHomeImage)
   }
 
   deleteProject(projectId:number): Observable<ProjectDeleteResponse>{

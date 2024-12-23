@@ -10,7 +10,6 @@ const projectCategory = require("./project-categories/project-category.controlle
 const projectText = require("./project-text/project-text.controller")
 const projectImage = require("./project-image/project-image.controller")
 const contentOrder = require("./content-order/content-order.controller");
-const { updateProjectHomeImage } = require("./project-general/project-general.database");
 
 
 // Usar el middleware antes de las rutas que necesiten acceso a Dropbox

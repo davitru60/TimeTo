@@ -17,24 +17,23 @@ class Category {
       const newCategory = await models.Category.create({
         name: body.name,
       });
-  
-      return newCategory; 
+
+      return newCategory;
     } catch (error) {
       throw new Error(`Failed to create category: ${error.message}`);
     }
   };
 
-  
   static updateCategory = async (categoryId, body) => {
     try {
       const category = await models.Category.findByPk(categoryId);
-  
+
       if (!category) {
-        throw new Error('Category not found');
+        throw new Error("Category not found");
       }
-  
+
       await category.update(body);
-  
+
       return category;
     } catch (error) {
       throw new Error(`Failed to update category: ${error.message}`);
@@ -42,20 +41,35 @@ class Category {
   };
 
   static deleteCategory = async (categoryId) => {
-    let result = false;
-
     try {
       const category = await models.Category.findByPk(categoryId);
 
-      if (category) {
-        result = true;
-        await category.destroy();
-      } else {
-        result = false;
+      if (!category) {
+        return {
+          success: false,
+          msg: "Category not found",
+        };
       }
-    } catch (error) {}
 
-    return result;
+      await category.destroy();
+      return {
+        success: true,
+        msg: "Category deleted successfully",
+      };
+    } catch (error) {
+      if (error.name === "SequelizeForeignKeyConstraintError") {
+        return {
+          success: false,
+          msg: "Category cannot be deleted due to associated foreign key constraints",
+        };
+      }
+
+      console.error("Error deleting category:", error);
+      return {
+        success: false,
+        msg: "An error occurred while trying to delete the category",
+      };
+    }
   };
 }
 

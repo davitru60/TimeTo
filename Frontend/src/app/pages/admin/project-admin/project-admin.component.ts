@@ -5,6 +5,7 @@ import {
   Project,
   ProjectDeleteResponse,
   ProjectGetResponse,
+  ProjectHomeImagePutData,
   ProjectPutData,
   ProjectPutResponse,
 } from '../../../core/interfaces/project.interface';
@@ -39,18 +40,20 @@ import { ProjectCategoryGetResponse } from '../../../core/interfaces/project-cat
 })
 export class ProjectAdminComponent {
   projects: Project[] = [];
-  filteredProjects: Project[] = []; // Array to hold filtered projects
+  filteredProjects: Project[] = [];
   categories: Category[] = [];
   projectCategories: ProjectCategory[] = [];
 
   isEditProjectModalOpen: boolean[] = [];
   isCategoryModalOpen: boolean[] = [];
   isDeleteProjectModalOpen: boolean[] = [];
-
+  isImageModalOpen: boolean[] = [];
+  images: any[] = [];
 
   isAddProjectModalOpen = false;
   isAddCategoryModalOpen = false;
   isDeleteCategoryModalOpen = false;
+  isDropdownOpen = false;
 
   selectedProject: Project | null = null;
 
@@ -65,12 +68,20 @@ export class ProjectAdminComponent {
     category_id: 0,
   };
 
+  projectHomeImage: ProjectHomeImagePutData = {
+    project_id: 0,
+    path: ''
+  }
+
   currentPage: number = 1;
   itemsPerPage: number = 5;
   totalPages: number = 0;
 
   searchTerm: string = '';
+  imageOption: string = '';
+
   deleteModalStyle = 'lg:w-1/3'
+  imageModalStyle = 'lg:w-1/2';
   
 
   constructor(
@@ -79,6 +90,17 @@ export class ProjectAdminComponent {
   ) {
     this.getAllProjects();
     this.getCategories();
+    this.getImages()
+  }
+
+
+  toggleDropdown() {
+    this.isDropdownOpen = !this.isDropdownOpen;
+  }
+
+  selectImageOption(option: string) {
+    this.imageOption = option;
+    this.isDropdownOpen = false;
   }
 
   get paginatedProjects() {
@@ -128,6 +150,30 @@ export class ProjectAdminComponent {
     this.isDeleteProjectModalOpen[index] = false;
   }
 
+  selectImage(image: any) {
+    console.log('Imagen seleccionada:', image);
+
+    if (this.selectedProject) {
+      this.selectedProject.path = image.url;
+      this.projectHomeImage.path = image.name
+      this.showSuccessToast(`Imagen seleccionada: ${image.name}`)
+
+  
+      if (image.file) {
+        this.selectedProject.path = URL.createObjectURL(image.file);
+      }
+    }
+  }
+
+  getImages() {
+    this.projectService.getImages().subscribe({
+      next: (response: any) => {
+        console.log(this.images)
+        this.images = response.data.images;
+      },
+    });
+  }
+
 
   openCategoryModal(index: number, project: Project) {
     this.projectService.getProjectCategories(project.project_id).subscribe({
@@ -144,6 +190,16 @@ export class ProjectAdminComponent {
 
   closeCategoryModal(index: number) {
     this.isCategoryModalOpen[index] = false;
+  }
+
+  openImageModal(index: number) {
+    this.isImageModalOpen[index] = true;
+    this.imageOption = '';
+    this.isDropdownOpen = false;
+  }
+
+  closeImageModal(index: number) {
+    this.isImageModalOpen[index] = false;
   }
 
   showSuccessToast(message: string) {
@@ -227,6 +283,21 @@ export class ProjectAdminComponent {
       console.log(
         `La categoría "${category.name}" no está presente en el proyecto.`
       );
+    }
+  }
+
+  updateProjectHomeImage(projectId: number,index:number) {
+    if (this.selectedProject) {
+      this.projectHomeImage.project_id=projectId
+      this.projectService.updateProjectHomeImage(projectId, this.projectHomeImage).subscribe({
+          next: (response: any) => {
+            if (response.success) {
+              this.showSuccessToast('Imagen actualizada con éxito');
+              this.closeImageModal(index)
+            }
+
+          },
+        });
     }
   }
 

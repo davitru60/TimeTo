@@ -1,6 +1,7 @@
 import { ApiResponse } from "./api-response.interface";
 
 export interface Project {
+  previewUrl: string;
   project_id: number;
   name: string;
   description: string;
@@ -26,6 +27,11 @@ export interface ProjectGetResponse {
   data: {
     projects: Project[];
   };
+}
+
+export interface ProjectHomeImagePutData{
+  project_id:number,
+  path:string
 }
 
 export interface ProjectPutResponse extends ApiResponse{

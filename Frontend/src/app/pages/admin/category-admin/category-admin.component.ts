@@ -98,6 +98,10 @@ export class CategoryAdminComponent {
     this.toastService.showToast({ text: message, type: 'success' });
   }
 
+  showErrorToast(message:string){
+    this.toastService.showToast({ text: message, type: 'error' });
+  }
+
   getCategories() {
     this.projectService.getCategories().subscribe({
       next: (response: CategoryGetResponse) => {
@@ -141,6 +145,9 @@ export class CategoryAdminComponent {
           this.getCategories();
         }
       },
+      error: (err:any)=>{
+        this.showErrorToast('No se puede eliminar la categoría ya que está en uso')
+      }
     });
 
   }
