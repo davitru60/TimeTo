@@ -15,7 +15,7 @@ En resumen, este proyecto tiene como meta fortalecer la presencia digital de los
 - **Perfil de usuario**: Gestión de gustos y categorías personalizadas.
 
 ### Requisitos funcionales del administrador
-- **Gestión de proyectos y categorías**:Crear, editar y eliminar proyectos y categorías asignadas.
+- **Gestión de proyectos y categorías**: Crear, editar y eliminar proyectos y categorías asignadas.
 - **Modo edición de proyectos**: Inclusión de imágenes y descripciones dinámicas con opciones de edición/eliminación. Posicionamiento de elementos mediante Drag & Drop.
 - **Vista dividida**: Modo de pantalla dividida para gestionar información y vista previa del proyecto.
 
