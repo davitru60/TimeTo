@@ -6,7 +6,7 @@ El objetivo principal es ayudar a los diseñadores a mostrar sus identidades vis
 
 En resumen, este proyecto tiene como meta fortalecer la presencia digital de los diseñadores, facilitando la creación de portfolios atractivos y funcionales que les ayuden a destacar y generar oportunidades en el entorno corporativo.
 
-## Características
+## 💻 Características
 ### Requisitos funcionales de los usuarios
 - **Registro e inicio de sesión**: Validación en tiempo real al registrar datos y opción de autenticación con Google o credenciales propias.
 - **Barra de navegación**: Acceso a secciones clave: Inicio, Proyectos, Aprende, Sobre Nosotros y Comunidad, con menús desplegables.
