@@ -1,5 +1,7 @@
 const { StatusCodes } = require("http-status-codes");
 const user = require("./user.database");
+const responseHandler = require("../../helpers/responseHandler");
+const messages = require("../../config/messages");
 
 class UserController {
   static getUserInterests = async (req, res) => {
@@ -7,79 +9,44 @@ class UserController {
       const userId = req.tokenId;
       const userInterests = await user.getUserInterests(userId);
 
-      const response = {
-        success: true,
-        data: {
-          userInterests: userInterests,
-        },
-      };
+      responseHandler.success(res, messages.SUCCESS, { userInterests });
 
-      res.status(StatusCodes.OK).json(response);
     } catch (error) {
-      res
-        .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .json({ error: "Error getting user preferences", detail: error });
+      responseHandler.error(res, messages.INTERNAL_SERVER_ERROR, error, StatusCodes.INTERNAL_SERVER_ERROR);
     }
   };
 
-  static addUserInterest = async (req,res)=>{
+  static addUserInterest = async (req, res) => {
     try {
       const userId = req.tokenId;
-      const userInterestAdd = await user.addUserInterest(userId,req.body)
+      const userInterestAdd = await user.addUserInterest(userId, req.body);
 
-      if(userInterestAdd){
-        const response = {
-          success: true,
-          msg: "User interest has been successfully added",
-          data: userInterestAdd
-        }
-
-        res.status(StatusCodes.OK).json(response);
-      }else{
-        const response = {
-          success: false,
-          msg: "Failed to update project user interest",
-        };
-
-        res.status(StatusCodes.BAD_REQUEST).json(response);
+      if (userInterestAdd) {
+        responseHandler.success(res, messages.CREATE_SUCCESS, { userInterestAdd });
+      } else {
+        responseHandler.error(res, messages.CREATE_FAILED, null, StatusCodes.BAD_REQUEST);
       }
 
-    }catch(error){
-      res
-      .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ error: "Error adding user interest", detail: error });
+    } catch (error) {
+      responseHandler.error(res, messages.INTERNAL_SERVER_ERROR, error, StatusCodes.INTERNAL_SERVER_ERROR);
     }
-  }
+  };
 
-  static deleteUserInterest = async(req,res) =>{
+  static deleteUserInterest = async (req, res) => {
     try {
       const userIntId = req.params.id;
-      const userInterestDelete = await user.deleteUserInterest(userIntId)
+      const userInterestDelete = await user.deleteUserInterest(userIntId);
 
-      if(userInterestDelete){
-        const response = {
-          success: true,
-          msg: "User interest has been successfully deleted",
-          data: userInterestDelete
-        }
-
-        res.status(StatusCodes.OK).json(response);
-      }else{
-        const response = {
-          success: false,
-          msg: "Failed to delete user interest",
-        };
-
-        res.status(StatusCodes.BAD_REQUEST).json(response);
+      if (userInterestDelete) {
+        responseHandler.success(res, messages.DELETE_SUCCESS, { userInterestDelete });
+      } else {
+        responseHandler.error(res, messages.DELETE_FAILED, null, StatusCodes.BAD_REQUEST);
       }
 
-    }catch(error){
-      res
-      .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ error: "Error deleting user interest", detail: error });
+    } catch (error) {
+      responseHandler.error(res, messages.INTERNAL_SERVER_ERROR, error, StatusCodes.INTERNAL_SERVER_ERROR);
     }
-  }
-
+  };
 }
 
 module.exports = UserController;

@@ -1,76 +1,38 @@
 const { StatusCodes } = require("http-status-codes");
 const contentOrder = require("./content-order.database");
+const responseHandler = require("../../../helpers/responseHandler");
+const messages = require("../../../config/messages");
 
 class ContentOrderController {
   static updateImageOrder = async (req, res) => {
     try {
       const projectId = req.params.id;
-
-      const updatedOrder = await contentOrder.updateImageOrder(
-        projectId,
-        req.body
-      );
+      const updatedOrder = await contentOrder.updateImageOrder(projectId, req.body);
 
       if (updatedOrder) {
-        const response = {
-          success: true,
-          msg: "Images order has been successfully updated",
-          data: updatedOrder,
-        };
-
-        res.status(StatusCodes.OK).json(response);
+        responseHandler.success(res, messages.UPDATE_SUCCESS, { updatedOrder });
       } else {
-        const response = {
-          success: false,
-          msg: "Failed to update image order",
-        };
-        res.status(StatusCodes.BAD_REQUEST).json(response);
+        responseHandler.error(res, messages.UPDATE_FAILED, null, StatusCodes.BAD_REQUEST);
       }
     } catch (error) {
-      console.error("Error updating", error);
-      const response = {
-        success: false,
-        msg: "Failed to update image order",
-      };
-      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(response);
+      console.error("Error updating image order:", error);
+      responseHandler.error(res, messages.INTERNAL_SERVER_ERROR, error, StatusCodes.INTERNAL_SERVER_ERROR);
     }
   };
 
   static updateEditorOrder = async (req, res) => {
     try {
       const projectId = req.params.id;
-
-      console.log(req.body)
-
-      const updatedOrder = await contentOrder.updateEditorOrder(
-        projectId,
-        req.body
-      );
-
-      console.log("Update order",updatedOrder)
+      const updatedOrder = await contentOrder.updateEditorOrder(projectId, req.body);
 
       if (updatedOrder) {
-        const response = {
-          success: true,
-          msg: "Editor order has been successfully updated",
-          data: updatedOrder,
-        };
-
-        res.status(StatusCodes.OK).json(response);
+        responseHandler.success(res, messages.UPDATE_SUCCESS, { updatedOrder });
       } else {
-        const response = {
-          success: false,
-          msg: "Failed to update editor order",
-        };
-        res.status(StatusCodes.BAD_REQUEST).json(response);
+        responseHandler.error(res, messages.UPDATE_FAILED, null, StatusCodes.BAD_REQUEST);
       }
     } catch (error) {
-      console.error("Error updating", error);
-      const response = {
-        success: false,
-        msg: "Failed to update editor order",
-      };
-      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(response);
+      console.error("Error updating editor order:", error);
+      responseHandler.error(res, messages.INTERNAL_SERVER_ERROR, error, StatusCodes.INTERNAL_SERVER_ERROR);
     }
   };
 }

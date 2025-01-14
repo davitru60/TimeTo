@@ -1,106 +1,67 @@
 const { StatusCodes } = require("http-status-codes");
-const projectText = require("./project-text.database")
+const projectText = require("./project-text.database");
+const responseHandler = require("../../../helpers/responseHandler");
+const messages = require("../../../config/messages");
 
-class ProjectTextController{
-    static getProjectTexts = async (req, res) => {
-        try {
-          const projectId = req.params.id;
+class ProjectTextController {
+  static getProjectTexts = async (req, res) => {
+    try {
+      const projectId = req.params.id;
     
-          const texts = await projectText.getProjectTexts(projectId);
+      const texts = await projectText.getProjectTexts(projectId);
     
-          const response = {
-            success: true,
-            data: {
-              texts: texts,
-            },
-          };
-          res.status(StatusCodes.OK).json(response);
-        } catch (error) {
-          res
-            .status(StatusCodes.INTERNAL_SERVER_ERROR)
-            .json({ error: "Error getting project texts", detail: error });
-        }
-      };
+      responseHandler.success(res, messages.SUCCESS, { texts });
+    } catch (error) {
+      responseHandler.error(res, messages.INTERNAL_SERVER_ERROR, error, StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+  };
+
+  static addProjectTexts = async (req, res) => {
+    try {
+      const projectId = req.params.id;
+      const texts = await projectText.addProjectTexts(projectId, req.body);
     
-      static addProjectTexts = async (req, res) => {
-        try {
-          const projectId = req.params.id;
-          const texts = await projectText.addProjectTexts(projectId, req.body);
+      if (texts) {
+        responseHandler.success(res, messages.ADD_TEXT_SUCCESS);
+      } else {
+        responseHandler.error(res, messages.ADD_TEXT_FAILED, null, StatusCodes.INTERNAL_SERVER_ERROR);
+      }
+    } catch (error) {
+      responseHandler.error(res, messages.ADD_TEXT_FAILED, error, StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+  };
+
+  static updateProjectTexts = async (req, res) => {
+    try {
+      const updatedText = await projectText.updateProjectTexts(req.body);
     
-          if (texts) {
-            res.status(StatusCodes.OK).json({
-              success: true,
-              message: "Project texts added successfully.",
-            });
-          } else {
-            res
-              .status(StatusCodes.INTERNAL_SERVER_ERROR)
-              .json({ success: false, message: "Failed to add project texts" });
-          }
-        } catch (error) {
-          res
-            .status(StatusCodes.INTERNAL_SERVER_ERROR)
-            .json({ error: "Error adding project texts", detail: error });
-        }
-      };
+      if (updatedText) {
+        responseHandler.success(res, messages.UPDATE_TEXT_SUCCESS, { updatedText });
+      } else {
+        responseHandler.error(res, messages.UPDATE_TEXT_FAILED, null, StatusCodes.BAD_REQUEST);
+      }
+    } catch (error) {
+      console.error("Error updating", error);
+      responseHandler.error(res, messages.UPDATE_TEXT_FAILED, error, StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+  };
+
+  static deleteProjectTexts = async (req, res) => {
+    try {
+      const projTextId = req.params.id;
     
-      static updateProjectTexts = async (req, res) => {
-        try {
-          const updatedText = projectText.updateProjectTexts(req.body);
+      const isDeleted = await projectText.deleteProjectTexts(projTextId);
     
-          if (updatedText) {
-            const response = {
-              success: true,
-              msg: "Text has been successfully updated",
-            };
-    
-            res.status(StatusCodes.OK).json(response);
-          } else {
-            const response = {
-              success: false,
-              msg: "Failed to update text",
-            };
-            res.status(StatusCodes.BAD_REQUEST).json(response);
-          }
-        } catch (error) {
-          console.error("Error updating", error);
-          const response = {
-            success: false,
-            msg: "Failed to update text",
-          };
-          return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(response);
-        }
-      };
-    
-      static deleteProjectTexts = async (req, res) => {
-        try {
-          const projTextId = req.params.id;
-    
-          const isDeleted = await projectText.deleteProjectTexts(projTextId);
-    
-          if (isDeleted) {
-            const response = {
-              success: true,
-              msg: "Text has been successfully deleted",
-            };
-            res.status(StatusCodes.OK).json(response);
-          } else {
-            const response = {
-              success: false,
-              msg: "Failed to delete text",
-            };
-            res.status(StatusCodes.BAD_REQUEST).json(response);
-          }
-        } catch (error) {
-          console.error("Error deleting", error);
-          const response = {
-            success: false,
-            msg: "Failed to delete text",
-          };
-          return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(response);
-        }
-      };
+      if (isDeleted) {
+        responseHandler.success(res, messages.DELETE_TEXT_SUCCESS);
+      } else {
+        responseHandler.error(res, messages.DELETE_TEXT_FAILED, null, StatusCodes.BAD_REQUEST);
+      }
+    } catch (error) {
+      console.error("Error deleting", error);
+      responseHandler.error(res, messages.DELETE_TEXT_FAILED, error, StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+  };
 }
 
-
-module.exports=ProjectTextController
+module.exports = ProjectTextController;

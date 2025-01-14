@@ -1,7 +1,7 @@
 const { StatusCodes } = require("http-status-codes");
 
 class ResponseHandler {
-    static success = (res,message,data=null,statusCode=StatusCodes.OK)=>{
+    static success = (res,message=null,data=null,statusCode=StatusCodes.OK)=>{
         res.status(statusCode).json({
             success: true,
             msg: message,
@@ -14,6 +14,7 @@ class ResponseHandler {
         res.status(statusCode).json({
             success: false,
             msg: message,
+            statusCode:statusCode,
             error: error
         })
     }

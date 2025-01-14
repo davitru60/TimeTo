@@ -1,5 +1,7 @@
 const { StatusCodes } = require("http-status-codes");
 const projectCategory = require("./project-category.database");
+const responseHandler = require("../../../helpers/responseHandler");
+const messages = require("../../../config/messages");
 
 class ProjectCategoryController {
   static getProjectCategories = async (req, res) => {
@@ -7,18 +9,9 @@ class ProjectCategoryController {
       const projectId = req.params.id;
       const projectCategories = await projectCategory.getProjectCategories(projectId);
 
-      const response = {
-        success: true,
-        data: {
-          projectCategories: projectCategories,
-        },
-      };
-
-      res.status(StatusCodes.OK).json(response);
+      responseHandler.success(res, messages.SUCCESS, { projectCategories });
     } catch (error) {
-      res
-        .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .json({ error: "Error getting categories", detail: error });
+      responseHandler.error(res, messages.INTERNAL_SERVER_ERROR, error, StatusCodes.INTERNAL_SERVER_ERROR);
     }
   };
 
@@ -27,24 +20,12 @@ class ProjectCategoryController {
       const projectCategoryAdd = await projectCategory.addProjectCategory(req.body);
 
       if (projectCategoryAdd) {
-        const response = {
-          success: true,
-          msg: "Project category has been successfully added",
-          data: projectCategoryAdd
-        };
-
-        res.status(StatusCodes.OK).json(response);
+        responseHandler.success(res, messages.CREATE_SUCCESS, { projectCategoryAdd });
       } else {
-        const response = {
-          success: false,
-          msg: "Failed to update project category",
-        };
-        res.status(StatusCodes.BAD_REQUEST).json(response);
+        responseHandler.error(res, messages.CREATE_FAILED, null, StatusCodes.BAD_REQUEST);
       }
     } catch (error) {
-      res
-        .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .json({ error: "Error creating project categories", detail: error });
+      responseHandler.error(res, messages.INTERNAL_SERVER_ERROR, error, StatusCodes.INTERNAL_SERVER_ERROR);
     }
   };
 
@@ -54,23 +35,12 @@ class ProjectCategoryController {
       const categoryDelete = await projectCategory.deleteProjectCategory(projCatId);
 
       if (categoryDelete) {
-        const response = {
-          success: true,
-          msg: "Category has been successfully deleted",
-        };
-
-        res.status(StatusCodes.OK).json(response);
+        responseHandler.success(res, messages.DELETE_SUCCESS);
       } else {
-        const response = {
-          success: false,
-          msg: "Failed to delete category",
-        };
-        res.status(StatusCodes.BAD_REQUEST).json(response);
+        responseHandler.error(res, messages.DELETE_FAILED, null, StatusCodes.BAD_REQUEST);
       }
     } catch (error) {
-      res
-        .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .json({ error: "Error deleting category", detail: error });
+      responseHandler.error(res, messages.INTERNAL_SERVER_ERROR, error, StatusCodes.INTERNAL_SERVER_ERROR);
     }
   };
 }

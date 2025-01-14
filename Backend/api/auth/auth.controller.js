@@ -8,7 +8,6 @@ const messages = require("../../config/messages");
 class AuthController {
   static login = async (req, res) => {
     const { email, password } = req.body;
-    console.log(req.hostname);
 
     try {
       const user = await auth.getLoggedUser(email, password);
@@ -28,7 +27,7 @@ class AuthController {
         responseHandler.error(res, messages.AUTH_FAILED, StatusCodes.UNAUTHORIZED);
       }
     } catch (error) {
-      responseHandler.error(res, "Server fail", StatusCodes.INTERNAL_SERVER_ERROR);
+      responseHandler.error(res, messages.INTERNAL_SERVER_ERROR , StatusCodes.INTERNAL_SERVER_ERROR);
     }
   };
 
@@ -38,7 +37,6 @@ class AuthController {
     try {
       const googleUser = await googleVerify(idToken);
       const user = await auth.emailExists(googleUser.email);
-      console.log(user);
 
       if (!user) {
         const newUser = {
@@ -50,21 +48,18 @@ class AuthController {
         };
         const userId = await auth.register(newUser);
         await auth.createRoleUser(userId, 2);
+
+        responseHandler.success(res, messages.GOOGLE_AUTH_SUCCESS, { token: generateJWT({ user_id: userId, roles: [2] }) });
       } else {
-        
         const userId = user.dataValues.user_id;
         const roles = await this.getRoles(userId);
-        const token = generateJWT(userId, roles);
+        const token = generateJWT({ user_id: userId, roles });
 
-        responseHandler.success(res, "Google Auth Success", { token });
+        responseHandler.success(res, messages.GOOGLE_AUTH_SUCCESS, { token });
       }
     } catch (error) {
       console.error("Error interno:", error);
-
-      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-        success: false,
-        msg: "Error interno al verificar el token",
-      });
+      responseHandler.error(res, messages.GOOGLE_AUTH_FAILED, StatusCodes.INTERNAL_SERVER_ERROR);
     }
   };
 
@@ -80,26 +75,16 @@ class AuthController {
   static register = async (req, res) => {
     try {
       const user = await auth.register(req.body);
-      const roleUserMsg = await this.createRoleUser(user, 2);
-
-      const response = {
-        success: true,
-        data: {
-          msg: "User created",
-          roleUserMsg,
-        },
-      };
-
-      res.status(StatusCodes.CREATED).json({ response });
+      const roleUser = await this.createRoleUser(user, 2);
+      responseHandler.success(res, messages.CREATE_SUCCESS, roleUser);
     } catch (error) {
-      responseHandler.error(res, "Error creating user", StatusCodes.INTERNAL_SERVER_ERROR);
+      responseHandler.error(res, messages.CREATE_FAILED, StatusCodes.INTERNAL_SERVER_ERROR);
     }
   };
 
   static createRoleUser = async (userId, roleId) => {
     try {
-      await auth.createRoleUser(userId, roleId);
-      return "Role assigned successfully";
+      return await auth.createRoleUser(userId, roleId);
     } catch (error) {
       throw error;
     }

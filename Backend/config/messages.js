@@ -1,4 +1,16 @@
 module.exports = {
+    SUCCESS: "Operation successful",
     AUTH_SUCCESS: "Logged successfully",
-    AUTH_FAILED: "Invalid credentials"
+    AUTH_FAILED: "Invalid credentials",
+    INTERNAL_SERVER_ERROR: "Server fail",
+    GOOGLE_AUTH_SUCCESS: "Google authentication successful",
+    GOOGLE_AUTH_FAILED: "Google authentication failed",
+    SUCCESS: "Operation completed successfully",
+    INTERNAL_SERVER_ERROR: "An unexpected error occurred on the server",
+    CREATE_SUCCESS: "Item successfully created",
+    CREATE_FAILED: "Failed to create item",
+    UPDATE_SUCCESS: "Item successfully updated",
+    UPDATE_FAILED: "Failed to update item",
+    DELETE_SUCCESS: "Item successfully deleted",
+    DELETE_FAILED: "Failed to delete item",
 }

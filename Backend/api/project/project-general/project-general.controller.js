@@ -1,10 +1,10 @@
 const { StatusCodes } = require("http-status-codes");
-const {
-  uploadImageToDropbox,
-} = require("../../../helpers/dropboxImageUploader");
+const { uploadImageToDropbox } = require("../../../helpers/dropboxImageUploader");
 const projectGeneral = require("./project-general.database");
 const category = require("../categories/category.database");
 const projectCategory = require("../project-categories/project-category.database");
+const responseHandler = require("../../../helpers/responseHandler");
+const messages = require("../../../config/messages");
 
 class ProjectGeneralController {
   static getAllProjects = async (req, res) => {
@@ -13,23 +13,13 @@ class ProjectGeneralController {
 
       for (let i = 0; i < projects.length; i++) {
         if (projects[i].path != null) {
-          projects[i].path = `${process.env.REQUEST_URL}${process.env.PORT}${
-            process.env.IMAGE_REQUEST
-          }/show-image?path=${encodeURIComponent(
-            process.env.FOLDER_PATH + "/" + projects[i].path
-          )}`;
+          projects[i].path = `${process.env.REQUEST_URL}${process.env.PORT}${process.env.IMAGE_REQUEST}/show-image?path=${encodeURIComponent(process.env.FOLDER_PATH + "/" + projects[i].path)}`;
         }
       }
 
-      const response = {
-        success: true,
-        data: {
-          projects: projects,
-        },
-      };
-      res.status(StatusCodes.OK).json(response);
+      responseHandler.success(res, messages.SUCCESS, { projects });
     } catch (error) {
-      throw new Error("Error getting projects");
+      responseHandler.error(res, messages.INTERNAL_SERVER_ERROR, error, StatusCodes.INTERNAL_SERVER_ERROR);
     }
   };
 
@@ -38,66 +28,34 @@ class ProjectGeneralController {
       const userId = req.tokenId;
 
       const categoriesDatavalues = await category.getCategories();
-      const projectCategoriesDatavalues =
-        await projectCategory.getProjectsCategories();
+      const projectCategoriesDatavalues = await projectCategory.getProjectsCategories();
       const userInterestsDatavalues = await projectGeneral.getUserInterests();
 
       const projects = await projectGeneral.getAllProjects();
 
-      let categories = [];
-      for (let i = 0; i < categoriesDatavalues.length; i++) {
-        categories.push(categoriesDatavalues[i].dataValues);
-      }
-
-      let projectCategories = [];
-      for (let i = 0; i < projectCategoriesDatavalues.length; i++) {
-        projectCategories.push(projectCategoriesDatavalues[i].dataValues);
-      }
-
-      let userInterests = [];
-      for (let i = 0; i < userInterestsDatavalues.length; i++) {
-        userInterests.push(userInterestsDatavalues[i].dataValues);
-      }
+      let categories = categoriesDatavalues.map(category => category.dataValues);
+      let projectCategories = projectCategoriesDatavalues.map(pc => pc.dataValues);
+      let userInterests = userInterestsDatavalues.map(interest => interest.dataValues);
 
       // Filtrar intereses del usuario específico
-      const userCategoryInterests = userInterests
-        .filter((interest) => interest.user_id === userId)
-        .map((interest) => interest.category_id);
+      const userCategoryInterests = userInterests.filter(interest => interest.user_id === userId).map(interest => interest.category_id);
 
       // Encontrar proyectos que coincidan con los intereses del usuario
-      const recommendedProjects = projects.filter((project) => {
-        const projectCategoryIds = projectCategories
-          .filter((pc) => pc.project_id === project.project_id)
-          .map((pc) => pc.category_id);
-
-        return projectCategoryIds.some((categoryId) =>
-          userCategoryInterests.includes(categoryId)
-        );
+      const recommendedProjects = projects.filter(project => {
+        const projectCategoryIds = projectCategories.filter(pc => pc.project_id === project.project_id).map(pc => pc.category_id);
+        return projectCategoryIds.some(categoryId => userCategoryInterests.includes(categoryId));
       });
 
       for (let i = 0; i < recommendedProjects.length; i++) {
         if (recommendedProjects[i].path != null) {
-          recommendedProjects[i].path = `${process.env.REQUEST_URL}${
-            process.env.PORT
-          }${process.env.IMAGE_REQUEST}/show-image?path=${encodeURIComponent(
-            process.env.FOLDER_PATH + "/" + recommendedProjects[i].path
-          )}`;
+          recommendedProjects[i].path = `${process.env.REQUEST_URL}${process.env.PORT}${process.env.IMAGE_REQUEST}/show-image?path=${encodeURIComponent(process.env.FOLDER_PATH + "/" + recommendedProjects[i].path)}`;
         }
       }
 
-      const response = {
-        success: true,
-        data: {
-          recommendedProjects: recommendedProjects,
-        },
-      };
-
-      res.status(StatusCodes.OK).json(response);
+      responseHandler.success(res, messages.SUCCESS, { recommendedProjects });
     } catch (error) {
       console.error("Error getting recommended projects:", error);
-      res
-        .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .json({ error: "Internal server error" });
+      responseHandler.error(res, messages.INTERNAL_SERVER_ERROR, error, StatusCodes.INTERNAL_SERVER_ERROR);
     }
   };
 
@@ -132,11 +90,7 @@ class ProjectGeneralController {
       res.send(response.result.fileBinary);
     } catch (error) {
       console.error("Error in showImage:", error);
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-        success: false,
-        message: "Error retrieving image from Dropbox.",
-        detail: error,
-      });
+      responseHandler.error(res, messages.INTERNAL_SERVER_ERROR, error, StatusCodes.INTERNAL_SERVER_ERROR);
     }
   };
 
@@ -145,24 +99,18 @@ class ProjectGeneralController {
       const projectId = await projectGeneral.createProject(req.body);
       const imageOriginalNames = await uploadImageToDropbox(req);
 
-      const projectImg = {
-        project_id: projectId,
-        path: imageOriginalNames,
-      };
+      const projectImg = { project_id: projectId, path: imageOriginalNames };
 
       const result = await projectGeneral.addImageToProjectCreate(projectImg);
 
       if (result) {
-        res
-          .status(StatusCodes.OK)
-          .json({ success: true, message: "Project created successfully." });
+        responseHandler.success(res, messages.CREATE_SUCCESS);
       } else {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-          success: false,
-          message: "Failed to add images to the project",
-        });
+        responseHandler.error(res, messages.CREATE_FAILED, null, StatusCodes.INTERNAL_SERVER_ERROR);
       }
-    } catch (error) {}
+    } catch (error) {
+      responseHandler.error(res, messages.INTERNAL_SERVER_ERROR, error, StatusCodes.INTERNAL_SERVER_ERROR);
+    }
   };
 
   static updateProject = async (req, res) => {
@@ -172,70 +120,35 @@ class ProjectGeneralController {
 
       if (req.files) {
         const imageOriginalName = await uploadImageToDropbox(req);
-
-        const projectImg = {
-          project_id: projectId,
-          path: imageOriginalName,
-        };
-
+        const projectImg = { project_id: projectId, path: imageOriginalName };
         updatedImage = await projectGeneral.updateProjectHomeImage(projectImg);
       }
 
-      const projectUpdate = await projectGeneral.updateProject(
-        projectId,
-        req.body
-      );
+      const projectUpdate = await projectGeneral.updateProject(projectId, req.body);
 
       if (projectUpdate !== null) {
-        const response = {
-          success: true,
-          msg: "Project has been successfully updated",
-          data: {
-            updatedImage,
-            project: projectUpdate,
-          },
-        };
-
-        res.status(StatusCodes.OK).json(response);
+        responseHandler.success(res, messages.UPDATE_SUCCESS, { updatedImage, project: projectUpdate });
       } else {
-        throw new Error("Failed to update project");
+        responseHandler.error(res, messages.UPDATE_FAILED, null, StatusCodes.BAD_REQUEST);
       }
     } catch (error) {
-      res.status(StatusCodes.BAD_REQUEST).json({
-        success: false,
-        error: "Error editing project",
-        detail: error.message,
-      });
+      responseHandler.error(res, messages.INTERNAL_SERVER_ERROR, error, StatusCodes.INTERNAL_SERVER_ERROR);
     }
   };
 
   static updateProjectHomeImage = async (req, res) => {
     try {
       const projectId = req.params.id;
-      const path = req.body.path
+      const path = req.body.path;
 
-      const projectImg = {
-        project_id: projectId,
-        path: path,
-      };
+      const projectImg = { project_id: projectId, path: path };
 
-      const updatedImage = await projectGeneral.updateProjectHomeImage(
-        projectImg
-      );
+      const updatedImage = await projectGeneral.updateProjectHomeImage(projectImg);
 
-      res.status(200).json({
-        success: true,
-        msg: "Project has been successfully updated",
-        data: updatedImage,
-      });
+      responseHandler.success(res, messages.UPDATE_SUCCESS, { updatedImage });
     } catch (error) {
       console.error("Error updating project image:", error);
-
-      res.status(500).json({
-        success: false,
-        msg: "An error occurred while updating the project image",
-        data: null,
-      });
+      responseHandler.error(res, messages.INTERNAL_SERVER_ERROR, error, StatusCodes.INTERNAL_SERVER_ERROR);
     }
   };
 
@@ -245,23 +158,12 @@ class ProjectGeneralController {
       const projectDelete = await projectGeneral.deleteProject(projectId);
 
       if (projectDelete) {
-        const response = {
-          success: true,
-          msg: "Project has been successfully deleted",
-        };
-
-        res.status(StatusCodes.OK).json(response);
+        responseHandler.success(res, messages.DELETE_SUCCESS);
       } else {
-        const response = {
-          success: false,
-          msg: "Failed to delete project",
-        };
-        res.status(StatusCodes.BAD_REQUEST).json(response);
+        responseHandler.error(res, messages.DELETE_FAILED, null, StatusCodes.BAD_REQUEST);
       }
-    } catch {
-      res
-        .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .json({ error: "Error deleting project", detail: error });
+    } catch (error) {
+      responseHandler.error(res, messages.INTERNAL_SERVER_ERROR, error, StatusCodes.INTERNAL_SERVER_ERROR);
     }
   };
 }
