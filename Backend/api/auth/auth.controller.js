@@ -51,6 +51,7 @@ class AuthController {
         const userId = await auth.register(newUser);
         await auth.createRoleUser(userId, 2);
       } else {
+        
         const userId = user.dataValues.user_id;
         const roles = await this.getRoles(userId);
         const token = generateJWT(userId, roles);
