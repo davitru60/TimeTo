@@ -1,12 +1,14 @@
 const { generateJWT } = require("../../helpers/generateJWT");
 const { StatusCodes } = require("http-status-codes");
-const auth = require("./auth.database");
 const { googleVerify } = require("../../helpers/googleVerify");
+const auth = require("./auth.database");
+const responseHandler = require("../../helpers/responseHandler");
+const messages = require("../../config/messages");
 
 class AuthController {
   static login = async (req, res) => {
     const { email, password } = req.body;
-    console.log(req.hostname)
+    console.log(req.hostname);
 
     try {
       const user = await auth.getLoggedUser(email, password);
@@ -20,33 +22,13 @@ class AuthController {
 
         const token = generateJWT(userData);
 
-        const response = {
-          success: true,
-          msg: "Logged succesfully",
-          data: {
-            token: token,
-          },
-        };
+        responseHandler.success(res, messages.AUTH_SUCCESS, { token });
 
-        res.status(StatusCodes.OK).json(response);
       } else {
-        const response = {
-          success: false,
-          msg: "Login failed",
-          data: {},
-        };
-
-        res.status(StatusCodes.BAD_REQUEST).json(response);
+        responseHandler.error(res, messages.AUTH_FAILED, StatusCodes.UNAUTHORIZED);
       }
     } catch (error) {
-      console.log(error);
-      const response = {
-        success: false,
-        msg: "Server fail",
-        data: {},
-      };
-
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(response);
+      responseHandler.error(res, "Server fail", StatusCodes.INTERNAL_SERVER_ERROR);
     }
   };
 
@@ -70,19 +52,10 @@ class AuthController {
         await auth.createRoleUser(userId, 2);
       } else {
         const userId = user.dataValues.user_id;
-
         const roles = await this.getRoles(userId);
         const token = generateJWT(userId, roles);
 
-        const response = {
-          success: true,
-          msg: "Google Auth Success",
-          data: {
-            token: token,
-          },
-        };
-
-        return res.status(StatusCodes.OK).json(response);
+        responseHandler.success(res, "Google Auth Success", { token });
       }
     } catch (error) {
       console.error("Error interno:", error);
@@ -117,7 +90,9 @@ class AuthController {
       };
 
       res.status(StatusCodes.CREATED).json({ response });
-    } catch (error) {}
+    } catch (error) {
+      responseHandler.error(res, "Error creating user", StatusCodes.INTERNAL_SERVER_ERROR);
+    }
   };
 
   static createRoleUser = async (userId, roleId) => {
