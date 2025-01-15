@@ -3,7 +3,6 @@ const queries = require("../project.queries");
 const { Sequelize, QueryTypes } = require("sequelize");
 
 class ProjectImage {
-
   static getProjectImages = async (projectId) => {
     try {
       const images = await models.ProjectImage.findAll({
@@ -50,26 +49,52 @@ class ProjectImage {
     return createdImages;
   };
 
-  static updateImageFromProject = async(body) =>{
-    try{
-
+  static updateImageFromFile = async (body) => {
+    try {  
+      const imagePath = body.path[0];
+  
       const image = await models.ProjectImage.findOne({
         where: {
-          project_id: body.project_id
-        }
+          project_id: body.project_id,
+        },
       });
-      if(image){
-        await image.update({
-          path: body.path[0]
-        })
+  
+      if (image) {
+        await image.update({ path: imagePath })
+      } else {
+        throw new Error(`Image for project ID ${body.project_id} not found.`);
       }
-
-      return image
-
-    }catch(error){
-      throw new Error(`Failed to update image: ${error.message}`);
+  
+      return image;
+    } catch (error) {
+      throw new Error(`Failed to update image from file: ${error.message}`);
     }
-  }
+  };
+  
+  static updateImageFromBody = async (body) => {
+    try {
+    
+      const imagePath = body.path;
+  
+      const image = await models.ProjectImage.findOne({
+        where: {
+          project_id: body.project_id,
+        },
+      });
+  
+      if (image) {
+        await image.update({ path: imagePath });
+      } else {
+        throw new Error(`Image for project ID ${body.project_id} not found.`);
+      }
+  
+      return image; // Devuelve la imagen actualizada
+    } catch (error) {
+      throw new Error(`Failed to update image from body: ${error.message}`);
+    }
+  };
+  
+  
 
   static deleteImage = async (projImgId) => {
     let result = true;

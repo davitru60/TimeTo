@@ -10,14 +10,18 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+       // Relación inversa: HomeProjectImg pertenece a un Proyecto
+      HomeProjectImage.belongsTo(models.Project, {
+        foreignKey: 'project_id',
+      })
     }
   }
   HomeProjectImage.init({
-    project_id: {
+    home_img_id:{
       type: DataTypes.INTEGER,
       primaryKey: true 
     },
+    project_id: DataTypes.INTEGER,
     path: DataTypes.STRING,
 
 

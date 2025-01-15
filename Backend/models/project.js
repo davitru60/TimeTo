@@ -10,7 +10,29 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      Project.hasOne(models.HomeProjectImage, {
+        foreignKey: 'project_id',
+        onDelete: 'CASCADE',   
+        hooks: true
+      });
+
+      Project.hasMany(models.ProjectCategory, {
+        foreignKey: 'project_id',
+        onDelete: 'CASCADE',
+        hooks: true
+      })
+
+      Project.hasMany(models.ProjectImage, {
+        foreignKey: 'project_id',
+        onDelete: 'CASCADE',
+        hooks: true
+      })
+
+      Project.hasMany(models.ProjectText, {
+        foreignKey: 'project_id',
+        onDelete: 'CASCADE',
+        hooks: true
+      })
     }
   }
   Project.init({

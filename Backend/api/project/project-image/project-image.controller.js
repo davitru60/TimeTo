@@ -52,26 +52,44 @@ class ProjectImageController {
   };
 
   static updateImageFromProject = async (req, res) => {
-    const projectId = req.params.id;
-    let updatedImage = null;
+  const projectId = req.params.id;
+  let updatedImage = null;
 
-    try {
-      if (req.files) {
-        const imageOriginalName = await uploadImageToDropbox(req);
-        const projectImg = { project_id: projectId, path: imageOriginalName };
+  try {
+    // Si la imagen llega por `req.files`
+    if (req.files) {
+      const imageOriginalName = await uploadImageToDropbox(req);
+      const projectImg = { project_id: projectId, path: imageOriginalName };
 
-        updatedImage = await projectImage.updateImageFromProject(projectImg);
+      updatedImage = await projectImage.updateImageFromFile(projectImg);
+    } 
+    // Si la imagen llega por `req.body`
+    else if (req.body && req.body.image) {
+      const projectImg = { project_id: projectId, path: req.body.image };
 
-        if (updatedImage) {
-          responseHandler.success(res, messages.UPDATE_SUCCESS, { updatedImage });
-        } else {
-          responseHandler.error(res, messages.UPDATE_FAILED, null, StatusCodes.BAD_REQUEST);
-        }
-      }
-    } catch (error) {
-      responseHandler.error(res, messages.INTERNAL_SERVER_ERROR, error, StatusCodes.INTERNAL_SERVER_ERROR);
+      updatedImage = await projectImage.updateImageFromBody(projectImg);
+    } 
+    // Si no se recibe ninguna imagen
+    else {
+      return responseHandler.error(
+        res,
+        "No image provided in request",
+        null,
+        StatusCodes.BAD_REQUEST
+      );
     }
-  };
+
+    // Verifica si la actualización fue exitosa
+    if (updatedImage) {
+      responseHandler.success(res, messages.UPDATE_SUCCESS, { updatedImage });
+    } else {
+      responseHandler.error(res, messages.UPDATE_FAILED, null, StatusCodes.BAD_REQUEST);
+    }
+  } catch (error) {
+    responseHandler.error(res, messages.INTERNAL_SERVER_ERROR, error, StatusCodes.INTERNAL_SERVER_ERROR);
+  }
+};
+
 
   static deleteImage = async (req, res) => {
     try {

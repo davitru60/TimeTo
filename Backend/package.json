@@ -6,6 +6,7 @@
     "dev": "nodemon app/app.js",
     "start": "npm-run-all migrate startApp",
     "migrate": "npx sequelize-cli db:migrate",
+    "seed": "npx sequelize-cli db:seed:all",
     "startApp": "node app/app.js",
     "test": "jest"
   },

@@ -17,6 +17,7 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { ToastService } from '../../../shared/components/ui/toast/toast.service';
 import { ToastComponent } from '../../../shared/components/ui/toast/toast.component';
 import { AuthService } from '../../auth/services/auth.service';
+import { ImageSelectorComponent } from "../../../shared/components/ui/image-selector/image-selector.component";
 
 @Component({
   selector: 'app-all-projects',
@@ -32,7 +33,8 @@ import { AuthService } from '../../auth/services/auth.service';
     PaginationComponent,
     ModalComponent,
     ToastComponent,
-  ],
+    ImageSelectorComponent
+],
 })
 export class AllProjectsComponent {
   projects: Project[] = [];
@@ -144,13 +146,6 @@ export class AllProjectsComponent {
     this.isImageModalOpen[index] = false;
   }
 
-  onFileChange(event: any) {
-    const file = event.target.files[0];
-    console.log(file);
-    if (file && this.selectedProject != null) {
-      this.selectedProject.path = file;
-    }
-  }
 
   getImages() {
     this.projectService.getImages().subscribe({
@@ -168,7 +163,8 @@ export class AllProjectsComponent {
       this.projectHomeImage.path = image.name;
 
       this.showSuccessToast(`Imagen seleccionada: ${image.name}`);
-
+ 
+      //Si la imagen proviene de mi explorador de archivos
       if (image.file) {
         this.selectedProject.path = URL.createObjectURL(image.file);
       }

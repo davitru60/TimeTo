@@ -21,6 +21,7 @@ import { PaginationComponent } from '../../../shared/components/ui/pagination/pa
 import { AddProjectComponent } from './add-project/add-project.component';
 import { TableModule } from 'primeng/table';
 import { ProjectCategoryGetResponse } from '../../../core/interfaces/project-category.interface';
+import { ImageSelectorComponent } from "../../../shared/components/ui/image-selector/image-selector.component";
 
 @Component({
   selector: 'app-project-admin',
@@ -29,14 +30,14 @@ import { ProjectCategoryGetResponse } from '../../../core/interfaces/project-cat
   styleUrls: ['./project-admin.component.scss'],
   imports: [
     CommonModule,
-    NavbarComponent,
-    FormsModule,  
+    FormsModule,
     ModalComponent,
     ToastComponent,
     PaginationComponent,
     AddProjectComponent,
     TableModule,
-  ],
+    ImageSelectorComponent
+],
 })
 export class ProjectAdminComponent {
   projects: Project[] = [];
@@ -96,11 +97,6 @@ export class ProjectAdminComponent {
 
   toggleDropdown() {
     this.isDropdownOpen = !this.isDropdownOpen;
-  }
-
-  selectImageOption(option: string) {
-    this.imageOption = option;
-    this.isDropdownOpen = false;
   }
 
   get paginatedProjects() {

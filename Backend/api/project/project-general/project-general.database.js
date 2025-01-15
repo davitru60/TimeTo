@@ -15,7 +15,7 @@ class ProjectGeneral {
     }
   };
 
-  static getUserInterests = async () =>{
+  static getUserInterests = async () => {
     try {
       const userInterests = await models.UserInterest.findAll();
       return userInterests;
@@ -23,7 +23,7 @@ class ProjectGeneral {
       console.error(error);
       throw error;
     }
-  }
+  };
 
   static createProject = async (body) => {
     const project = await models.sequelize.query(queries.createProject, {
@@ -52,30 +52,22 @@ class ProjectGeneral {
 
   static deleteProject = async (projectId) => {
     let result = false;
+  
     try {
       const project = await models.Project.findByPk(projectId);
-  
 
-      const projectHomeImgs = await models.HomeProjectImage.findAll({
-        where: {
-          project_id: projectId,
-        },
-      });
-
-      if (project && projectHomeImgs.length > 0) {
-        for (const projectHomeImg of projectHomeImgs) {
-          await projectHomeImg.destroy();
-        }
+      if (project) {
+        
         await project.destroy();
-
-        result = true;
-      } else if (project) {
-        await project.destroy();
-        result = true;
+        console.log(`Project with ID ${projectId} and related records deleted successfully.`);
+        result = true; 
+      } else {
+        console.error(`Project with ID ${projectId} not found.`);
       }
     } catch (error) {
       console.error("Error deleting project:", error);
     }
+  
 
     return result;
   };
@@ -104,24 +96,26 @@ class ProjectGeneral {
 
   static updateProjectHomeImage = async (body) => {
     try {
-      const projectHomeImage = await models.HomeProjectImage.findByPk(body.project_id);
-  
+      const projectHomeImage = await models.HomeProjectImage.findByPk(
+        body.project_id
+      );
+
       if (projectHomeImage) {
-      
         // Si body.path es un array, tomará el primer elemento (body.path[0]).
-        const pathToUpdate = Array.isArray(body.path) ? body.path[0] : body.path;
-  
+        const pathToUpdate = Array.isArray(body.path)
+          ? body.path[0]
+          : body.path;
+
         await projectHomeImage.update({
           path: pathToUpdate,
         });
       }
-  
+
       return projectHomeImage;
     } catch (error) {
       throw new Error(`Failed to update image: ${error.message}`);
     }
   };
 }
-
 
 module.exports = ProjectGeneral;

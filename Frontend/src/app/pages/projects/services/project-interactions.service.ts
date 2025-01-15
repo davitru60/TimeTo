@@ -98,9 +98,8 @@ export class ProjectInteractionsService {
   updateImageField(projectId:number,index: number,dynamicFields: FormArray){
     const field = dynamicFields.at(index);
     if (field.get('type')?.value === 'image') {
-      console.log('pasa por aqui')
       const imageFile = field.get('path')?.value;
-
+  
       if(imageFile){
         const formData = new FormData();
         formData.append('image', imageFile);

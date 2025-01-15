@@ -1,6 +1,6 @@
 'use strict';
 
-const userRoleFactory = require('../api/users/userRole.factory')
+const userRoleFactory = require('../api/user/userRole.factory')
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {

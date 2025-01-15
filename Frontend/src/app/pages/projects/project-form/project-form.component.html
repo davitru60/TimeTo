@@ -32,26 +32,71 @@
 
         <!-- Modal editar imagen -->
         <app-modal [isModalOpen]="isEditModalOpen[i]">
-          <div class="flex justify-between items-center mb-4">
-            <h2 class="text-lg font-bold text-gray-700">Imagen</h2>
-            <button (click)="closeEditModal(i)" class="text-gray-600 hover:text-gray-900">
-              <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                viewBox="0 0 14 14">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
-              </svg>
-              <span class="sr-only">Cerrar modal</span>
-            </button>
+          <form name="form" #f="ngForm" (ngSubmit)="f.form.valid && updateImageField(i)">
+            <div class="flex justify-between items-center mb-4">
+              <h2 class="text-lg font-bold text-gray-700">Imagen</h2>
+              <button (click)="closeEditModal(i)" class="text-gray-600 hover:text-gray-900">
+                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                  viewBox="0 0 14 14">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                </svg>
+                <span class="sr-only">Cerrar modal</span>
+              </button>
+            </div>
+
+            <app-image-selector [isImageModalOpen]="isImageModalOpen[i]" [index]="i"
+              (toggleModal)="openImageModal($event)" (imageSelected)="onFileChange($event,i)">
+            </app-image-selector>
+
+          </form>
+
+
+
+
+        </app-modal>
+
+        <app-modal [isModalOpen]="isImageModalOpen[i]" [modalClasses]="imageModalStyle">
+          <div class="bg-white py-3 px-3">
+            <div class="sm:flex sm:items-start">
+              <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                  Seleccionar imagen
+                </h3>
+                <div class="mt-2">
+                  <p class="text-sm text-gray-500">
+                    Selecciona una imagen de la lista a continuación para usar en tu proyecto.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <label class="block text-gray-700 font-bold">Editar imagen:</label>
-          <input type="file" (change)="onFileChange($event, i)"
-            class="w-full p-3 border-gray-300 focus:outline-none focus:border-blue-500 transition duration-200" />
-          <div class="form-group flex"> 
-            <button (click)="updateImageField(i)" class="modal-add-btn">Editar</button>
+          <!-- Contenedor de imágenes -->
+          <div class="max-h-96 overflow-y-auto px-4 py-4">
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 px-4 py-4">
+              <div *ngFor="let image of images" class="flex flex-col items-center">
+                <img [src]="image.url" [alt]="image.name"
+                  class="h-24 w-24 object-cover rounded-lg shadow-md cursor-pointer hover:opacity-80 transition duration-200"
+                  (click)="selectImage(image,i)" />
+                <span class="mt-2 text-sm text-gray-700 dark:text-gray-300">{{ image.name }}</span>
+              </div>
+            </div>
           </div>
-     
+
+          <!-- Botones de acción -->
+          <div class="px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+            <button type="button" class="w-full inline-flex justify-center px-3 py-2 ml-4 sm:w-auto sm:px-3 cancel-btn"
+              (click)="closeImageModal(i)">
+              Cancelar
+            </button>
+            <button type="button" class="w-full inline-flex justify-center px-3 py-2 ml-4 sm:w-auto sm:px-3 cancel-btn"
+              (click)="updateImageField(i)">
+              Actualizar
+            </button>
+          </div>
         </app-modal>
+
 
 
         <!-- Modal añadir imagen -->
