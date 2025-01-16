@@ -39,6 +39,7 @@ class ProjectGeneral {
 
   static updateProject = async (projectId, body) => {
     try {
+      
       const project = await models.Project.findByPk(projectId);
 
       await project.update(body);

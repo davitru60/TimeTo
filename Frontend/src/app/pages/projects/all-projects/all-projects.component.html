@@ -84,7 +84,7 @@
     </div>
 
     <app-image-selector [isImageModalOpen]="isImageModalOpen[i]" [index]="i" (toggleModal)="openImageModal($event)"
-      (imageSelected)="selectImage($event)">
+      (imageSelected)="handleImageSelection($event,true)">
     </app-image-selector>
   </form>
 </app-modal>
@@ -108,24 +108,27 @@
   <!-- Contenedor de imágenes -->
   <div class="max-h-96 overflow-y-auto px-4 py-4">
     <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 px-4 py-4">
-      <div *ngFor="let image of images" class="flex flex-col items-center">
-        <img [src]="image.url" [alt]="image.name"
-          class="h-24 w-24 object-cover rounded-lg shadow-md cursor-pointer hover:opacity-80 transition duration-200"
-          (click)="selectImage(image)" />
-        <span class="mt-2 text-sm text-gray-700 dark:text-gray-300">{{ image.name }}</span>
-      </div>
+      @for(image of images; track image.image_id; let i = $index){
+        <div class="flex flex-col items-center">
+          <img [src]="image.url" [alt]="image.name"
+            class="h-24 w-24 object-cover rounded-lg shadow-md cursor-pointer hover:opacity-80 transition duration-200"
+            (click)="handleImageSelection(image,false)" />
+          <span class="mt-2 text-sm text-gray-700 dark:text-gray-300">{{ image.name }}</span>
+        </div>
+      }
+     
     </div>
   </div>
 
   <!-- Botones de acción -->
   <div class="px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
     <button type="button" class="w-full inline-flex justify-center px-3 py-2 ml-4 sm:w-auto sm:px-3 cancel-btn"
-      (click)="closeImageModal(i)">
+      (click)="cancelImageUpload(i)">
       Cancelar
     </button>
     <button type="button" class="w-full inline-flex justify-center px-3 py-2 ml-4 sm:w-auto sm:px-3 cancel-btn"
-      (click)="updateProjectHomeImage(project.project_id,i)">
-      Actualizar
+      (click)="imageSelected(i)">
+      Aceptar
     </button>
   </div>
 </app-modal>

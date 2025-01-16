@@ -1,5 +1,7 @@
 const { StatusCodes } = require("http-status-codes");
-const { uploadImageToDropbox } = require("../../../helpers/dropboxImageUploader");
+const {
+  uploadImageToDropbox,
+} = require("../../../helpers/dropboxImageUploader");
 const projectGeneral = require("./project-general.database");
 const category = require("../categories/category.database");
 const projectCategory = require("../project-categories/project-category.database");
@@ -13,13 +15,22 @@ class ProjectGeneralController {
 
       for (let i = 0; i < projects.length; i++) {
         if (projects[i].path != null) {
-          projects[i].path = `${process.env.REQUEST_URL}${process.env.PORT}${process.env.IMAGE_REQUEST}/show-image?path=${encodeURIComponent(process.env.FOLDER_PATH + "/" + projects[i].path)}`;
+          projects[i].path = `${process.env.REQUEST_URL}${process.env.PORT}${
+            process.env.IMAGE_REQUEST
+          }/show-image?path=${encodeURIComponent(
+            process.env.FOLDER_PATH + "/" + projects[i].path
+          )}`;
         }
       }
 
       responseHandler.success(res, messages.SUCCESS, { projects });
     } catch (error) {
-      responseHandler.error(res, messages.INTERNAL_SERVER_ERROR, error, StatusCodes.INTERNAL_SERVER_ERROR);
+      responseHandler.error(
+        res,
+        messages.INTERNAL_SERVER_ERROR,
+        error,
+        StatusCodes.INTERNAL_SERVER_ERROR
+      );
     }
   };
 
@@ -28,34 +39,56 @@ class ProjectGeneralController {
       const userId = req.tokenId;
 
       const categoriesDatavalues = await category.getCategories();
-      const projectCategoriesDatavalues = await projectCategory.getProjectsCategories();
+      const projectCategoriesDatavalues =
+        await projectCategory.getProjectsCategories();
       const userInterestsDatavalues = await projectGeneral.getUserInterests();
 
       const projects = await projectGeneral.getAllProjects();
 
-      let categories = categoriesDatavalues.map(category => category.dataValues);
-      let projectCategories = projectCategoriesDatavalues.map(pc => pc.dataValues);
-      let userInterests = userInterestsDatavalues.map(interest => interest.dataValues);
+      let categories = categoriesDatavalues.map(
+        (category) => category.dataValues
+      );
+      let projectCategories = projectCategoriesDatavalues.map(
+        (pc) => pc.dataValues
+      );
+      let userInterests = userInterestsDatavalues.map(
+        (interest) => interest.dataValues
+      );
 
       // Filtrar intereses del usuario específico
-      const userCategoryInterests = userInterests.filter(interest => interest.user_id === userId).map(interest => interest.category_id);
+      const userCategoryInterests = userInterests
+        .filter((interest) => interest.user_id === userId)
+        .map((interest) => interest.category_id);
 
       // Encontrar proyectos que coincidan con los intereses del usuario
-      const recommendedProjects = projects.filter(project => {
-        const projectCategoryIds = projectCategories.filter(pc => pc.project_id === project.project_id).map(pc => pc.category_id);
-        return projectCategoryIds.some(categoryId => userCategoryInterests.includes(categoryId));
+      const recommendedProjects = projects.filter((project) => {
+        const projectCategoryIds = projectCategories
+          .filter((pc) => pc.project_id === project.project_id)
+          .map((pc) => pc.category_id);
+        return projectCategoryIds.some((categoryId) =>
+          userCategoryInterests.includes(categoryId)
+        );
       });
 
       for (let i = 0; i < recommendedProjects.length; i++) {
         if (recommendedProjects[i].path != null) {
-          recommendedProjects[i].path = `${process.env.REQUEST_URL}${process.env.PORT}${process.env.IMAGE_REQUEST}/show-image?path=${encodeURIComponent(process.env.FOLDER_PATH + "/" + recommendedProjects[i].path)}`;
+          recommendedProjects[i].path = `${process.env.REQUEST_URL}${
+            process.env.PORT
+          }${process.env.IMAGE_REQUEST}/show-image?path=${encodeURIComponent(
+            process.env.FOLDER_PATH + "/" + recommendedProjects[i].path
+          )}`;
         }
       }
 
       responseHandler.success(res, messages.SUCCESS, { recommendedProjects });
     } catch (error) {
       console.error("Error getting recommended projects:", error);
-      responseHandler.error(res, messages.INTERNAL_SERVER_ERROR, error, StatusCodes.INTERNAL_SERVER_ERROR);
+      responseHandler.error(
+        res,
+        messages.INTERNAL_SERVER_ERROR,
+        error,
+        StatusCodes.INTERNAL_SERVER_ERROR
+      );
     }
   };
 
@@ -90,49 +123,98 @@ class ProjectGeneralController {
       res.send(response.result.fileBinary);
     } catch (error) {
       console.error("Error in showImage:", error);
-      responseHandler.error(res, messages.INTERNAL_SERVER_ERROR, error, StatusCodes.INTERNAL_SERVER_ERROR);
+      responseHandler.error(
+        res,
+        messages.INTERNAL_SERVER_ERROR,
+        error,
+        StatusCodes.INTERNAL_SERVER_ERROR
+      );
     }
   };
 
   static createProject = async (req, res) => {
     try {
       const projectId = await projectGeneral.createProject(req.body);
-      const imageOriginalNames = await uploadImageToDropbox(req);
+      let createdImage = null;
 
-      const projectImg = { project_id: projectId, path: imageOriginalNames };
+      if (req.files.length > 0) {
+        const imageOriginalNames = await uploadImageToDropbox(req);
+        const projectImg = { project_id: projectId, path: imageOriginalNames };
+        createdImage = await projectGeneral.addImageToProjectCreate(projectImg);
+      } else {
+        console.log(req.body)
+        const projectImg = { project_id: projectId, path: req.body.path };
+        createdImage = await projectGeneral.addImageToProjectCreate(projectImg);
+      }
 
-      const result = await projectGeneral.addImageToProjectCreate(projectImg);
-
-      if (result) {
+      if (createdImage) {
         responseHandler.success(res, messages.CREATE_SUCCESS);
       } else {
-        responseHandler.error(res, messages.CREATE_FAILED, null, StatusCodes.INTERNAL_SERVER_ERROR);
+        responseHandler.error(
+          res,
+          messages.CREATE_FAILED,
+          null,
+          StatusCodes.INTERNAL_SERVER_ERROR
+        );
       }
     } catch (error) {
-      responseHandler.error(res, messages.INTERNAL_SERVER_ERROR, error, StatusCodes.INTERNAL_SERVER_ERROR);
+      responseHandler.error(
+        res,
+        messages.INTERNAL_SERVER_ERROR,
+        error,
+        StatusCodes.INTERNAL_SERVER_ERROR
+      );
     }
   };
+
 
   static updateProject = async (req, res) => {
     try {
       const projectId = req.params.id;
       let updatedImage = null;
 
-      if (req.files) {
+      //Imagen tipo File
+      if (req.files.length > 0) {
         const imageOriginalName = await uploadImageToDropbox(req);
         const projectImg = { project_id: projectId, path: imageOriginalName };
         updatedImage = await projectGeneral.updateProjectHomeImage(projectImg);
+      } else {
+
+        //Imagen ya existente
+        const projectImg = { project_id: projectId, path: req.body.path };
+        updatedImage = await projectGeneral.updateProjectHomeImage(projectImg);
       }
 
-      const projectUpdate = await projectGeneral.updateProject(projectId, req.body);
+      const projectBody = {
+        name: req.body.name,
+        description: req.body.description,
+      };
+
+      const projectUpdate = await projectGeneral.updateProject(
+        projectId,
+        projectBody
+      );
 
       if (projectUpdate !== null) {
-        responseHandler.success(res, messages.UPDATE_SUCCESS, { updatedImage, project: projectUpdate });
+        responseHandler.success(res, messages.UPDATE_SUCCESS, {
+          updatedImage,
+          project: projectUpdate,
+        });
       } else {
-        responseHandler.error(res, messages.UPDATE_FAILED, null, StatusCodes.BAD_REQUEST);
+        responseHandler.error(
+          res,
+          messages.UPDATE_FAILED,
+          null,
+          StatusCodes.BAD_REQUEST
+        );
       }
     } catch (error) {
-      responseHandler.error(res, messages.INTERNAL_SERVER_ERROR, error, StatusCodes.INTERNAL_SERVER_ERROR);
+      responseHandler.error(
+        res,
+        messages.INTERNAL_SERVER_ERROR,
+        error,
+        StatusCodes.INTERNAL_SERVER_ERROR
+      );
     }
   };
 
@@ -141,14 +223,23 @@ class ProjectGeneralController {
       const projectId = req.params.id;
       const path = req.body.path;
 
+      console.log("pasa por aqui maquina");
+
       const projectImg = { project_id: projectId, path: path };
 
-      const updatedImage = await projectGeneral.updateProjectHomeImage(projectImg);
+      const updatedImage = await projectGeneral.updateProjectHomeImage(
+        projectImg
+      );
 
       responseHandler.success(res, messages.UPDATE_SUCCESS, { updatedImage });
     } catch (error) {
       console.error("Error updating project image:", error);
-      responseHandler.error(res, messages.INTERNAL_SERVER_ERROR, error, StatusCodes.INTERNAL_SERVER_ERROR);
+      responseHandler.error(
+        res,
+        messages.INTERNAL_SERVER_ERROR,
+        error,
+        StatusCodes.INTERNAL_SERVER_ERROR
+      );
     }
   };
 
@@ -160,10 +251,20 @@ class ProjectGeneralController {
       if (projectDelete) {
         responseHandler.success(res, messages.DELETE_SUCCESS);
       } else {
-        responseHandler.error(res, messages.DELETE_FAILED, null, StatusCodes.BAD_REQUEST);
+        responseHandler.error(
+          res,
+          messages.DELETE_FAILED,
+          null,
+          StatusCodes.BAD_REQUEST
+        );
       }
     } catch (error) {
-      responseHandler.error(res, messages.INTERNAL_SERVER_ERROR, error, StatusCodes.INTERNAL_SERVER_ERROR);
+      responseHandler.error(
+        res,
+        messages.INTERNAL_SERVER_ERROR,
+        error,
+        StatusCodes.INTERNAL_SERVER_ERROR
+      );
     }
   };
 }

@@ -1,6 +1,10 @@
 const { StatusCodes } = require("http-status-codes");
-const { uploadImageToDropbox } = require("../../../helpers/dropboxImageUploader");
-const { getImagesFromDropbox } = require("../../../helpers/getImagesFromDropbox");
+const {
+  uploadImageToDropbox,
+} = require("../../../helpers/dropboxImageUploader");
+const {
+  getImagesFromDropbox,
+} = require("../../../helpers/getImagesFromDropbox");
 const projectImage = require("./project-image.database");
 const responseHandler = require("../../../helpers/responseHandler");
 const messages = require("../../../config/messages");
@@ -15,7 +19,12 @@ class ProjectImageController {
 
       responseHandler.success(res, messages.SUCCESS, { images });
     } catch (error) {
-      responseHandler.error(res, messages.INTERNAL_SERVER_ERROR, error, StatusCodes.INTERNAL_SERVER_ERROR);
+      responseHandler.error(
+        res,
+        messages.INTERNAL_SERVER_ERROR,
+        error,
+        StatusCodes.INTERNAL_SERVER_ERROR
+      );
     }
   };
 
@@ -28,13 +37,22 @@ class ProjectImageController {
       // Mapear las rutas de las imágenes a URL de visualización en Dropbox
       images.forEach((entry) => {
         const imagePath = entry.dataValues.path;
-        const imageUrl = `${process.env.REQUEST_URL}${process.env.PORT}${process.env.IMAGE_REQUEST}/show-image?path=${encodeURIComponent(process.env.FOLDER_PATH + "/" + imagePath)}`;
+        const imageUrl = `${process.env.REQUEST_URL}${process.env.PORT}${
+          process.env.IMAGE_REQUEST
+        }/show-image?path=${encodeURIComponent(
+          process.env.FOLDER_PATH + "/" + imagePath
+        )}`;
         entry.dataValues.path = imageUrl;
       });
 
       responseHandler.success(res, messages.SUCCESS, { images });
     } catch (error) {
-      responseHandler.error(res, messages.INTERNAL_SERVER_ERROR, error, StatusCodes.INTERNAL_SERVER_ERROR);
+      responseHandler.error(
+        res,
+        messages.INTERNAL_SERVER_ERROR,
+        error,
+        StatusCodes.INTERNAL_SERVER_ERROR
+      );
     }
   };
 
@@ -42,54 +60,63 @@ class ProjectImageController {
     try {
       const projectId = req.params.id;
       const imageOriginalNames = await uploadImageToDropbox(req);
-      const result = await projectImage.addImageToProject(projectId, imageOriginalNames, req.body);
+      const result = await projectImage.addImageToProject(
+        projectId,
+        imageOriginalNames,
+        req.body
+      );
 
       responseHandler.success(res, messages.UPLOAD_SUCCESS, { result });
     } catch (error) {
       console.error("Error adding images to project:", error);
-      responseHandler.error(res, messages.UPLOAD_FAILED, error, StatusCodes.INTERNAL_SERVER_ERROR);
+      responseHandler.error(
+        res,
+        messages.UPLOAD_FAILED,
+        error,
+        StatusCodes.INTERNAL_SERVER_ERROR
+      );
     }
   };
 
   static updateImageFromProject = async (req, res) => {
-  const projectId = req.params.id;
-  let updatedImage = null;
+    const projectId = req.params.id;
+    let updatedImage = null;
 
-  try {
-    // Si la imagen llega por `req.files`
-    if (req.files) {
-      const imageOriginalName = await uploadImageToDropbox(req);
-      const projectImg = { project_id: projectId, path: imageOriginalName };
+    try {
+      // Si la imagen llega por `req.files`
+      if (req.files) {
+        const imageOriginalName = await uploadImageToDropbox(req);
+        const projectImg = { project_id: projectId, path: imageOriginalName };
 
-      updatedImage = await projectImage.updateImageFromFile(projectImg);
-    } 
-    // Si la imagen llega por `req.body`
-    else if (req.body && req.body.image) {
-      const projectImg = { project_id: projectId, path: req.body.image };
+        updatedImage = await projectImage.updateImageFromFile(projectImg);
+      }
 
-      updatedImage = await projectImage.updateImageFromBody(projectImg);
-    } 
-    // Si no se recibe ninguna imagen
-    else {
-      return responseHandler.error(
+      if (req.body && req.body.image) {
+        const projectImg = { project_id: projectId, path: req.body.image };
+
+        updatedImage = await projectImage.updateImageFromBody(projectImg);
+      }
+
+      // Verifica si la actualización fue exitosa
+      if (updatedImage) {
+        responseHandler.success(res, messages.UPDATE_SUCCESS, { updatedImage });
+      } else {
+        responseHandler.error(
+          res,
+          messages.UPDATE_FAILED,
+          null,
+          StatusCodes.BAD_REQUEST
+        );
+      }
+    } catch (error) {
+      responseHandler.error(
         res,
-        "No image provided in request",
-        null,
-        StatusCodes.BAD_REQUEST
+        messages.INTERNAL_SERVER_ERROR,
+        error,
+        StatusCodes.INTERNAL_SERVER_ERROR
       );
     }
-
-    // Verifica si la actualización fue exitosa
-    if (updatedImage) {
-      responseHandler.success(res, messages.UPDATE_SUCCESS, { updatedImage });
-    } else {
-      responseHandler.error(res, messages.UPDATE_FAILED, null, StatusCodes.BAD_REQUEST);
-    }
-  } catch (error) {
-    responseHandler.error(res, messages.INTERNAL_SERVER_ERROR, error, StatusCodes.INTERNAL_SERVER_ERROR);
-  }
-};
-
+  };
 
   static deleteImage = async (req, res) => {
     try {
@@ -100,11 +127,21 @@ class ProjectImageController {
       if (isDeleted) {
         responseHandler.success(res, messages.DELETE_SUCCESS);
       } else {
-        responseHandler.error(res, messages.DELETE_FAILED, null, StatusCodes.BAD_REQUEST);
+        responseHandler.error(
+          res,
+          messages.DELETE_FAILED,
+          null,
+          StatusCodes.BAD_REQUEST
+        );
       }
     } catch (error) {
       console.error("Error deleting image:", error);
-      responseHandler.error(res, messages.INTERNAL_SERVER_ERROR, error, StatusCodes.INTERNAL_SERVER_ERROR);
+      responseHandler.error(
+        res,
+        messages.INTERNAL_SERVER_ERROR,
+        error,
+        StatusCodes.INTERNAL_SERVER_ERROR
+      );
     }
   };
 }

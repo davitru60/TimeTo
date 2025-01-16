@@ -14,6 +14,7 @@ import { LoaderComponent } from '../../../../shared/components/ui/loader/loader.
 import { ToastService } from '../../../../shared/components/ui/toast/toast.service';
 import { CategoryPostResponse } from '../../../../core/interfaces/category.interface';
 import { ButtonComponent } from '../../../../shared/components/ui/button/button.component';
+import { ImageSelectorComponent } from '../../../../shared/components/ui/image-selector/image-selector.component';
 
 @Component({
   selector: 'app-add-project',
@@ -26,6 +27,7 @@ import { ButtonComponent } from '../../../../shared/components/ui/button/button.
     ModalComponent,
     LoaderComponent,
     ButtonComponent,
+    ImageSelectorComponent,
   ],
 })
 export class AddProjectComponent {
@@ -38,14 +40,23 @@ export class AddProjectComponent {
     path: '',
   };
 
+  images: any[] = [];
+
   isLoading = false;
+  isImageModalOpen = false;
+  imageOption: string = '';
+  isDropdownOpen = false;
+  selectedImage: string = '';
 
   @ViewChild('f', { static: false }) projectForm!: NgForm;
+  imageModalStyle = 'lg:w-1/2';
 
   constructor(
     private projectService: ProjectService,
     private toastService: ToastService
-  ) {}
+  ) {
+    this.getImages();
+  }
 
   closeModal() {
     this.projectForm.resetForm();
@@ -53,19 +64,53 @@ export class AddProjectComponent {
     this.closeEvent.emit();
   }
 
-  onFileChange(event: any) {
-    const file = event.target.files[0];
-    if (file) {
-      this.project.path = file;
-    }
+  openImageModal(index: number) {
+    this.isImageModalOpen = true;
+    this.imageOption = '';
+    this.isDropdownOpen = false;
+  }
+
+  closeImageModal() {
+    this.isImageModalOpen = false;
+  }
+
+  cancelImageUpload() {
+    this.closeImageModal();
+  }
+
+  imageSelected() {
+    this.closeImageModal();
   }
 
   showSuccessToast(message: string) {
     this.toastService.showToast({ text: message, type: 'success' });
   }
 
+  getImages() {
+    this.projectService.getImages().subscribe({
+      next: (response: any) => {
+        this.images = response.data.images;
+      },
+    });
+  }
+
+  handleImageSelection(eventOrImage: any, isFile: boolean) {
+    if (isFile) {
+      const file = eventOrImage.target.files[0];
+      if (file) {
+        this.selectedImage = file;
+      }
+    } else {
+      this.selectedImage = eventOrImage.name;
+      this.project.path = eventOrImage.name;
+
+      this.showSuccessToast(`Imagen seleccionada: ${eventOrImage.name}`);
+    }
+  }
+
   createProject() {
     this.isLoading = true;
+    this.project.path = this.selectedImage;
 
     const formData = new FormData();
 

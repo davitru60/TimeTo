@@ -7,9 +7,7 @@ const uploadImageMiddleware = multer().any("image");
 const handleUploadImage = async (req, res, next) => {
   try {
     if (!req.files || req.files.length === 0) {
-      return res
-        .status(StatusCodes.BAD_REQUEST)
-        .json({ error: "Images haven't been provided" });
+      return next(); 
     }
 
     // Verificar que todos los archivos sean imágenes

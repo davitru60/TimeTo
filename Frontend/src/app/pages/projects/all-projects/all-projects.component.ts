@@ -13,11 +13,11 @@ import { RouterLink } from '@angular/router';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { PaginationComponent } from '../../../shared/components/ui/pagination/pagination.component';
 import { ModalComponent } from './../../../shared/components/ui/modal/modal.component';
-import { FormsModule, NgForm } from '@angular/forms';
+import { FormsModule} from '@angular/forms';
 import { ToastService } from '../../../shared/components/ui/toast/toast.service';
 import { ToastComponent } from '../../../shared/components/ui/toast/toast.component';
 import { AuthService } from '../../auth/services/auth.service';
-import { ImageSelectorComponent } from "../../../shared/components/ui/image-selector/image-selector.component";
+import { ImageSelectorComponent } from '../../../shared/components/ui/image-selector/image-selector.component';
 
 @Component({
   selector: 'app-all-projects',
@@ -33,13 +33,15 @@ import { ImageSelectorComponent } from "../../../shared/components/ui/image-sele
     PaginationComponent,
     ModalComponent,
     ToastComponent,
-    ImageSelectorComponent
-],
+    ImageSelectorComponent,
+  ],
 })
 export class AllProjectsComponent {
   projects: Project[] = [];
   images: any[] = [];
   selectedProject: Project | null = null;
+  currentImage: string | null = null;
+  selectedImage: string = '';
 
   currentPage = 1;
   itemsPerPage = 4;
@@ -48,6 +50,7 @@ export class AllProjectsComponent {
   isImageModalOpen: boolean[] = [];
   isLoading = false;
   isDropdownOpen = false;
+  originalImage: string | null = null;
 
   project: ProjectPutData = {
     name: '',
@@ -119,13 +122,15 @@ export class AllProjectsComponent {
   }
 
   openModal(index: number) {
-    this.selectedProject = this.projects.find((project) => project.project_id === index) || null;
+    this.selectedProject =
+      this.projects.find((project) => project.project_id === index) || null;
     this.isModalOpen[index] = true;
   }
 
   closeModal(index: number) {
     this.isModalOpen[index] = false;
     this.isDropdownOpen = false;
+    this.selectedImage = '';
   }
 
   openDeleteModal(index: number) {
@@ -140,12 +145,12 @@ export class AllProjectsComponent {
     this.isImageModalOpen[index] = true;
     this.imageOption = '';
     this.isDropdownOpen = false;
+    this.originalImage = this.selectedProject?.path || null;
   }
 
   closeImageModal(index: number) {
     this.isImageModalOpen[index] = false;
   }
-
 
   getImages() {
     this.projectService.getImages().subscribe({
@@ -155,19 +160,33 @@ export class AllProjectsComponent {
     });
   }
 
-  selectImage(image: any) {
-    console.log('Imagen seleccionada:', image);
-
-    if (this.selectedProject) {
-      this.selectedProject.path = image.url;
-      this.projectHomeImage.path = image.name;
-
-      this.showSuccessToast(`Imagen seleccionada: ${image.name}`);
- 
-      //Si la imagen proviene de mi explorador de archivos
-      if (image.file) {
-        this.selectedProject.path = URL.createObjectURL(image.file);
+  handleImageSelection(eventOrImage: any, isFile: boolean) {
+    if (isFile) {
+      const file = eventOrImage.target.files[0];
+      if (file && this.selectedProject != null) {
+        this.selectedImage = file;
       }
+    } else {
+      if (this.selectedProject) {
+        this.selectedImage = eventOrImage.name;
+        this.projectHomeImage.path = eventOrImage.name;
+
+        this.showSuccessToast(`Imagen seleccionada: ${eventOrImage.name}`);
+      }
+    }
+  }
+
+  cancelImageUpload(index: number) {
+    if (this.originalImage !== null && this.selectedProject) {
+      this.selectedProject.path = this.originalImage; // Restaura la imagen original
+      this.originalImage = null;
+    }
+    this.closeImageModal(index);
+  }
+
+  imageSelected(index: number) {
+    if (this.selectedProject) {
+      this.closeImageModal(index);
     }
   }
 
@@ -181,35 +200,25 @@ export class AllProjectsComponent {
     });
   }
 
-  updateProjectHomeImage(projectId: number, index: number) {
-    if (this.selectedProject) {
-      this.projectHomeImage.project_id = projectId;
-      this.projectService
-        .updateProjectHomeImage(projectId, this.projectHomeImage)
-        .subscribe({
-          next: (response: any) => {
-            if (response.success) {
-              this.showSuccessToast('Imagen actualizada con éxito');
-              this.closeImageModal(index);
-            }
-          },
-        });
-    }
-  }
-
   updateProject(projectId: number) {
     if (this.selectedProject) {
-      console.log('Proj', this.selectedProject);
+      this.selectedProject.path = this.selectedImage;
+
       const formData = new FormData();
       formData.append('name', this.selectedProject.name);
       formData.append('description', this.selectedProject.description);
-      formData.append('path', this.selectedProject.path);
+
+      if (this.selectedImage != '') {
+        formData.append('path', this.selectedProject.path);
+      }
 
       this.projectService.updateProject(projectId, formData).subscribe({
         next: (response: ProjectPutResponse) => {
           if (response.success) {
             this.showSuccessToast('Proyecto actualizado exitosamente');
             this.closeModal(projectId);
+            this.selectedImage = '';
+            this.getAllProjects();
           }
         },
         error: (error: any) => {
