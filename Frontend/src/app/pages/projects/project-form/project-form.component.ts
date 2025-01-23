@@ -45,8 +45,8 @@ import { ProjectService } from '../services/project.service';
     ModalComponent,
     ButtonGroupComponent,
     ToastComponent,
-    ImageSelectorComponent
-],
+    ImageSelectorComponent,
+  ],
 })
 export class ProjectFormComponent {
   form: FormGroup;
@@ -54,8 +54,6 @@ export class ProjectFormComponent {
   projectId: number = 0;
   imageOption: string = '';
   imageModalStyle = 'lg:w-1/2';
-
-
 
   isEditingText: boolean = false;
   isDropdownOpen = false;
@@ -91,6 +89,8 @@ export class ProjectFormComponent {
   };
 
   editorModules = editorModules;
+  selectedImage: string = '';
+  isImageAddModalOpen: any;
 
   constructor(
     private fb: FormBuilder,
@@ -100,14 +100,14 @@ export class ProjectFormComponent {
     private projectInteractionsService: ProjectInteractionsService,
     private route: ActivatedRoute,
     private toastService: ToastService,
-     private projectService: ProjectService,
+    private projectService: ProjectService
   ) {
     this.form = this.fb.group({
       dynamicFields: this.fb.array([]),
     });
     this.projectId = this.route.snapshot.params['id'];
     this.loadProjectData(this.projectId);
-    this.getImages()
+    this.getImages();
   }
 
   get dynamicFields(): FormArray {
@@ -131,11 +131,18 @@ export class ProjectFormComponent {
   }
 
   openImageModal(index: number) {
-    console.log(index)
     this.isImageModalOpen[index] = true;
     this.imageOption = '';
     this.isDropdownOpen = false;
   }
+
+  openImageAddModal(index:number){
+    console.log('venga coño')
+    this.isImageAddModalOpen[index] = true;
+    this.imageOption = '';
+    this.isDropdownOpen = false;
+  }
+
 
   closeImageModal(index: number) {
     this.isImageModalOpen[index] = false;
@@ -214,7 +221,6 @@ export class ProjectFormComponent {
   getImages() {
     this.projectService.getImages().subscribe({
       next: (response: any) => {
-        console.log(response)
         this.images = response.data.images;
       },
     });
@@ -284,21 +290,27 @@ export class ProjectFormComponent {
 
   updateTextImageField(index: number): void {}
 
-  selectImage(image: any, index: number) {
-    const field = this.dynamicFields.at(index); // Accede al campo en el FormArray
-  
-    if (field) {
-      // Actualiza el valor del campo 'path' con la imagen seleccionada
-      field.get('path')?.setValue(image.name);
-
-      if(image.file){
-        const url = URL.createObjectURL(image.file)
-        field.get('path')?.setValue(url);
+  handleImageSelection(eventOrImage: any, isFile: boolean,index:number) {
+    if (isFile) {
+      const file = eventOrImage.target.files[0];
+      if (file) {
+        this.dynamicFields.at(index).get('path')?.setValue(file);
       }
-
-      this.showSuccessToast(`Imagen seleccionada: ${image.name}`);
     } else {
-      console.error(`No se encontró el campo para el índice: ${index}`);
+      this.selectedImage = eventOrImage.name;
+      console.log(this.selectedImage)
+
+
+      this.showSuccessToast(`Imagen seleccionada: ${eventOrImage.name}`);
     }
+  }
+
+  cancelImageUpload(index: number) {
+    this.closeImageModal(index);
+  }
+
+  imageSelected(index: number) {
+    this.dynamicFields.at(index).get('path')?.setValue(this.selectedImage);
+    this.closeImageModal(index);
   }
 }

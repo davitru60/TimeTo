@@ -19,11 +19,11 @@ class ProjectImage {
     }
   };
 
-  static addImageToProject = async (projectId, imageOriginalName, body) => {
+  static addImageToProject = async (projectId, imageOriginalNames, body) => {
     const createdImages = [];
-
+  
     try {
-      for (const item of imageOriginalName) {
+      for (const item of imageOriginalNames || []) {
         const image = await models.sequelize.query(queries.addImageToProject, {
           replacements: {
             project_id: projectId,
@@ -33,43 +33,22 @@ class ProjectImage {
           },
           type: QueryTypes.INSERT,
         });
-
+  
         if (!image) {
-          result = false;
-          break;
+          console.error("Error inserting image:", item);
+          throw new Error("Failed to insert image into the project.");
         }
-
+  
         createdImages.push(image);
       }
+  
+      return createdImages;
     } catch (error) {
-      console.error("Error al crear la imagen:", error);
-      result = false;
-    }
-
-    return createdImages;
-  };
-
-  static updateImageFromFile = async (body) => {
-    try {  
-      const imagePath = body.path[0];
-  
-      const image = await models.ProjectImage.findOne({
-        where: {
-          project_id: body.project_id,
-        },
-      });
-  
-      if (image) {
-        await image.update({ path: imagePath })
-      } else {
-        throw new Error(`Image for project ID ${body.project_id} not found.`);
-      }
-  
-      return image;
-    } catch (error) {
-      throw new Error(`Failed to update image from file: ${error.message}`);
+      console.error("Error in addImageToProject:", error);
+      return [];
     }
   };
+  
   
   static updateImageFromBody = async (body) => {
     try {
@@ -88,7 +67,7 @@ class ProjectImage {
         throw new Error(`Image for project ID ${body.project_id} not found.`);
       }
   
-      return image; // Devuelve la imagen actualizada
+      return image; 
     } catch (error) {
       throw new Error(`Failed to update image from body: ${error.message}`);
     }

@@ -64,7 +64,7 @@ export class AddProjectComponent {
     this.closeEvent.emit();
   }
 
-  openImageModal(index: number) {
+  openImageModal() {
     this.isImageModalOpen = true;
     this.imageOption = '';
     this.isDropdownOpen = false;

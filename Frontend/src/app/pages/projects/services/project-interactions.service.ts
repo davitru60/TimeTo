@@ -27,19 +27,20 @@ export class ProjectInteractionsService {
 
   addImageToProject(projectId: number,index: number,dynamicFields: FormArray): void {
     const field = dynamicFields.at(index);
+    
     if (field.get('type')?.value === 'image') {
       const imageFile = field.get('path')?.value;
-
+      console.log(imageFile);
+  
       if (imageFile) {
         const formData = new FormData();
         formData.append('image', imageFile);
         formData.append('f_type_id', '1');
         formData.append('index', index.toString());
-
-        this.projectService.addImageToProject(projectId, formData).subscribe(
-          (response) => {
+  
+        this.projectService.addImageToProject(projectId, formData).subscribe({
+          next: (response) => {
             if (response.success) {
-              field.get('proj_img_id')?.setValue(response.data.result[0][0]);
               this.showSuccessToast('Imagen subida correctamente');
             } else {
               this.showErrorToast('Error al subir la imagen');
@@ -48,10 +49,11 @@ export class ProjectInteractionsService {
               );
             }
           },
-          (error) => {
+          error: (error) => {
             console.error('Error al subir la imagen:', error);
-          }
-        );
+            this.showErrorToast('Ocurrió un error al subir la imagen. Inténtalo de nuevo más tarde.');
+          },
+        });
       } else {
         this.showErrorToast('Campo de imagen vacío');
       }
@@ -59,6 +61,7 @@ export class ProjectInteractionsService {
       this.showErrorToast('El elemento subido no es una imagen');
     }
   }
+  
 
   addProjectTexts(projectId: number,index: number,dynamicFields: FormArray): void {
     const field = dynamicFields.at(index);
@@ -97,6 +100,7 @@ export class ProjectInteractionsService {
 
   updateImageField(projectId:number,index: number,dynamicFields: FormArray){
     const field = dynamicFields.at(index);
+
     if (field.get('type')?.value === 'image') {
       const imageFile = field.get('path')?.value;
   

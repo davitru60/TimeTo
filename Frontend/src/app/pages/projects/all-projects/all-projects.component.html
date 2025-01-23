@@ -86,6 +86,10 @@
     <app-image-selector [isImageModalOpen]="isImageModalOpen[i]" [index]="i" (toggleModal)="openImageModal($event)"
       (imageSelected)="handleImageSelection($event,true)">
     </app-image-selector>
+
+    <div class="form-group flex">
+      <button type="submit" class="w-full bg-black text-white font-bold py-3 hover:bg-gray-800 ">Actualizar</button>
+    </div>
   </form>
 </app-modal>
 

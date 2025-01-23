@@ -47,6 +47,10 @@ body {
   @apply w-full bg-black text-white font-bold py-3 hover:bg-gray-800 
 }
 
+.img-dropdown-btn{
+  @apply bg-black text-white font-bold  hover:bg-gray-800 
+}
+
 
 //Checkbox styles
 .custom-checkbox {

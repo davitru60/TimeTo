@@ -139,12 +139,12 @@ export class AllProjectsComponent {
 
   closeDeleteModal(index: number) {
     this.isDeleteModalOpen[index] = false;
+    this.isDropdownOpen = false;
   }
 
   openImageModal(index: number) {
     this.isImageModalOpen[index] = true;
     this.imageOption = '';
-    this.isDropdownOpen = false;
     this.originalImage = this.selectedProject?.path || null;
   }
 

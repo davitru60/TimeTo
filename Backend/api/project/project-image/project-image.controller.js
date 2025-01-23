@@ -59,17 +59,35 @@ class ProjectImageController {
   static addImageToProject = async (req, res) => {
     try {
       const projectId = req.params.id;
-      const imageOriginalNames = await uploadImageToDropbox(req);
-      const result = await projectImage.addImageToProject(
-        projectId,
-        imageOriginalNames,
-        req.body
-      );
-
-      responseHandler.success(res, messages.UPLOAD_SUCCESS, { result });
+  
+      if (req.files && req.files.length > 0) {
+        const imageOriginalNames = await uploadImageToDropbox(req);
+        const result = await projectImage.addImageToProject(
+          projectId,
+          imageOriginalNames,
+          req.body
+        );
+  
+        return responseHandler.success(res, messages.UPLOAD_SUCCESS, { result });
+      } else if (req.body.image) {
+        const result = await projectImage.addImageToProject(
+          projectId,
+          [req.body.image], 
+          req.body
+        );
+  
+        return responseHandler.success(res, messages.UPLOAD_SUCCESS, { result });
+      } else {
+        return responseHandler.error(
+          res,
+          messages.NO_FILES_UPLOADED,
+          null,
+          StatusCodes.BAD_REQUEST
+        );
+      }
     } catch (error) {
       console.error("Error adding images to project:", error);
-      responseHandler.error(
+      return responseHandler.error(
         res,
         messages.UPLOAD_FAILED,
         error,
@@ -77,6 +95,7 @@ class ProjectImageController {
       );
     }
   };
+  
 
   static updateImageFromProject = async (req, res) => {
     const projectId = req.params.id;
@@ -84,18 +103,17 @@ class ProjectImageController {
 
     try {
       // Si la imagen llega por `req.files`
-      if (req.files) {
+      if (req.files.length > 0) {
         const imageOriginalName = await uploadImageToDropbox(req);
         const projectImg = { project_id: projectId, path: imageOriginalName };
 
         updatedImage = await projectImage.updateImageFromFile(projectImg);
-      }
-
-      if (req.body && req.body.image) {
+      }else{
+        console.log(req.body)
         const projectImg = { project_id: projectId, path: req.body.image };
-
         updatedImage = await projectImage.updateImageFromBody(projectImg);
       }
+
 
       // Verifica si la actualización fue exitosa
       if (updatedImage) {
