@@ -1,8 +1,8 @@
 # TimeTo
 ## 🧩 Introducción al proyecto
-Este proyecto ofrece a un equipo de diseñadores una plataforma digital donde pueden añadir y gestionar sus proyectos de manera sencilla y profesional. En un mundo donde la presencia digital es clave para destacar y atraer oportunidades, esta plataforma permite a los diseñadores mostrar sus trabajos de forma efectiva, reflejando los valores y la personalidad de sus marcas.
+TimeTo ofrece a un equipo de diseñadores una plataforma digital donde pueden añadir y gestionar sus proyectos de manera sencilla y profesional. En un mundo donde la presencia digital es clave para destacar y atraer oportunidades, esta plataforma permite a los diseñadores mostrar sus trabajos de forma efectiva, reflejando los valores y la personalidad de sus marcas.
 
-El objetivo principal es proporcionar una herramienta que facilite la organización y presentación de proyectos, ayudando a los diseñadores a destacar y conectar con su público objetivo. Además, la plataforma es flexible y permite actualizar fácilmente los portfolios para adaptarse a las nuevas tendencias y necesidades del mercado..
+El objetivo principal es proporcionar una herramienta que facilite la organización y presentación de proyectos, ayudando a los diseñadores a destacar y conectar con su público objetivo. Además, la plataforma es flexible y permite actualizar fácilmente los portfolios para adaptarse a las nuevas tendencias y necesidades del mercado.
 
 ## 💻 Características
 ### Requisitos funcionales de los usuarios
