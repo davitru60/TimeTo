@@ -228,14 +228,17 @@ export class AllProjectsComponent {
     }
   }
 
-  deleteProject(projectId: number) {
+  deleteProject(projectId: number,index:number) {
     this.projectService.deleteProject(projectId).subscribe({
       next: (response: any) => {
-        this.showInfoToast('Eliminación del proyecto en progreso...');
-        setTimeout(() => {
-          this.showSuccessToast('Proyecto eliminado exitosamente');
-          this.getAllProjects(); // Refrescar la lista de proyectos después de la eliminación
-        }, 2000);
+        if (response.success) {
+          this.showInfoToast('Eliminación del proyecto en progreso...');
+          this.closeDeleteModal(index)
+          setTimeout(() => {
+            this.showSuccessToast('Proyecto eliminado exitosamente');
+            this.getAllProjects();
+          }, 2000);
+        }
       },
       error: (error: any) => {
         this.showErrorToast(
