@@ -1,10 +1,8 @@
 # TimeTo
 ## 🧩 Introducción al proyecto
-Este proyecto se centra en proporcionar a los diseñadores una herramienta digital que les permita crear portfolios web interactivos y personalizados. En un mundo donde el diseño de marca es esencial para destacar y conectar con los consumidores, esta plataforma busca amplificar la presencia y el impacto de los diseñadores en el mercado.
+Este proyecto ofrece a un equipo de diseñadores una plataforma digital donde pueden añadir y gestionar sus proyectos de manera sencilla y profesional. En un mundo donde la presencia digital es clave para destacar y atraer oportunidades, esta plataforma permite a los diseñadores mostrar sus trabajos de forma efectiva, reflejando los valores y la personalidad de sus marcas.
 
-El objetivo principal es ayudar a los diseñadores a mostrar sus identidades visuales de manera profesional, reflejando los valores y la personalidad de sus marcas, mientras conectan de forma efectiva con su público objetivo. Además, la plataforma permite a los diseñadores adaptar y actualizar fácilmente sus portfolios para alinearse con las tendencias del mercado y las necesidades cambiantes de los clientes.
-
-En resumen, este proyecto tiene como meta fortalecer la presencia digital de los diseñadores, facilitando la creación de portfolios atractivos y funcionales que les ayuden a destacar y generar oportunidades en el entorno corporativo.
+El objetivo principal es proporcionar una herramienta que facilite la organización y presentación de proyectos, ayudando a los diseñadores a destacar y conectar con su público objetivo. Además, la plataforma es flexible y permite actualizar fácilmente los portfolios para adaptarse a las nuevas tendencias y necesidades del mercado..
 
 ## 💻 Características
 ### Requisitos funcionales de los usuarios
