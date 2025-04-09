@@ -1,0 +1,14 @@
+.testimonial-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 10px;
+  }
+  
+  @media (max-width: 767px) {
+    .testimonial-item {
+      padding: 0 5px;
+    }
+  }
+  
+

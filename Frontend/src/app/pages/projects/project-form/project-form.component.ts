@@ -1,90 +1,150 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import {
   FormArray,
   FormBuilder,
   FormGroup,
+  FormsModule,
   ReactiveFormsModule,
-  Validators,
 } from '@angular/forms';
-import { NavbarComponent } from '../../../shared/navbar/navbar.component';
 import { QuillModule } from 'ngx-quill';
+import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop';
+import { ActivatedRoute } from '@angular/router';
 import {
-  CdkDragDrop,
-  moveItemInArray,
-  DragDropModule,
-} from '@angular/cdk/drag-drop';
+  EditorOrderPut,
+  FormFields,
+  ImageOrderPut,
+  Project,
+  ProjectHomeImagePutData,
+} from '../../../core/interfaces/project.interface';
+import { TextPutData } from '../../../core/interfaces/project-text.interface';
+import { ModalComponent } from '../../../shared/components/ui/modal/modal.component';
+import { ButtonGroupComponent } from './button-group/button-group.component';
+import { combineLatest } from 'rxjs';
+import { ProjectLoaderService } from '../services/project-loader.service';
+import { DynamicFieldService } from '../services/dynamicfield.service';
+import { ProjectInteractionsService } from '../services/project-interactions.service';
+import { OnDropService } from '../services/on-drop.service';
+import { editorModules } from '../../../shared/conf/editor-config';
+import { ToastComponent } from '../../../shared/components/ui/toast/toast.component';
+import { ImageSelectorComponent } from '../../../shared/components/ui/image-selector/image-selector.component';
+import { ToastService } from '../../../shared/components/ui/toast/toast.service';
 import { ProjectService } from '../services/project.service';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { combineLatest, filter, map } from 'rxjs';
-import { EditorOrderPut, FormFields, ImageOrderPut } from '../interfaces/project.interface';
 
 @Component({
   selector: 'app-project-form',
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    NavbarComponent,
-    QuillModule,
-    DragDropModule,
-  ],
   templateUrl: './project-form.component.html',
   styleUrl: './project-form.component.scss',
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    QuillModule,
+    DragDropModule,
+    ModalComponent,
+    ButtonGroupComponent,
+    ToastComponent,
+    ImageSelectorComponent,
+  ],
 })
-export class ProjectFormComponent implements OnInit {
+export class ProjectFormComponent {
   form: FormGroup;
   content: any = '';
   projectId: number = 0;
+  imageOption: string = '';
+  imageModalStyle = 'lg:w-1/2';
 
-  fields: FormFields[] = []
+  isEditingText: boolean = false;
+  isDropdownOpen = false;
+  isEditModalOpen: boolean[] = [];
+  isAddModalOpen: boolean[] = [];
+  isImageModalOpen: boolean[] = [];
 
-  imageOrder:ImageOrderPut = {
+  fields: FormFields[] = [];
+  images: any[] = [];
+
+  imageOrder: ImageOrderPut = {
     proj_img_id: 0,
     previousIndex: 0,
     newIndex: 0,
-    
-  }
-  
-  editorOrder:EditorOrderPut = {
+  };
+
+  editorOrder: EditorOrderPut = {
     proj_text_id: 0,
     previousIndex: 0,
     newIndex: 0,
-  }
-
-
-  editorModules = {
-    toolbar: [
-      ['bold', 'italic', 'underline', 'strike'],
-      [{ font: [] }],
-      [{ color: [] }, { background: [] }],
-      [{ size: ['small', false, 'large', 'huge'] }],
-      [{ header: [1, 2, 3, 4, 5, 6, false] }],
-      [{ align: [] }],
-      ['blockquote', 'code-block'],
-      [{ list: 'ordered' }, { list: 'bullet' }],
-      ['clean'],
-    ],
   };
+
+  textAdd: TextPutData = {
+    title: '',
+    text: '',
+    proj_text_id: '',
+    previousIndex: 0,
+  };
+
+  projectHomeImage: ProjectHomeImagePutData = {
+    project_id: 0,
+    path: '',
+  };
+
+  editorModules = editorModules;
+  selectedImage: string = '';
+  isImageAddModalOpen: any;
 
   constructor(
     private fb: FormBuilder,
-    private projectService: ProjectService,
+    private onDropService: OnDropService,
+    private projectLoaderService: ProjectLoaderService,
+    private dynamicFieldService: DynamicFieldService,
+    private projectInteractionsService: ProjectInteractionsService,
     private route: ActivatedRoute,
+    private toastService: ToastService,
+    private projectService: ProjectService
   ) {
     this.form = this.fb.group({
       dynamicFields: this.fb.array([]),
     });
-
-  }
-
-  ngOnInit(): void {
     this.projectId = this.route.snapshot.params['id'];
     this.loadProjectData(this.projectId);
+    this.getImages();
   }
 
   get dynamicFields(): FormArray {
     return this.form.get('dynamicFields') as FormArray;
+  }
+
+  openEditModal(index: number) {
+    this.isEditModalOpen[index] = true;
+  }
+
+  closeEditModal(index: number) {
+    this.isEditModalOpen[index] = false;
+  }
+
+  openAddModal(index: number) {
+    this.isAddModalOpen[index] = true;
+  }
+
+  closeAddModal(index: number) {
+    this.isAddModalOpen[index] = false;
+  }
+
+  openImageModal(index: number) {
+    this.isImageModalOpen[index] = true;
+    this.imageOption = '';
+    this.isDropdownOpen = false;
+  }
+
+  openImageAddModal(index:number){
+    this.isImageAddModalOpen[index] = true;
+    this.imageOption = '';
+    this.isDropdownOpen = false;
+  }
+
+
+  closeImageModal(index: number) {
+    this.isImageModalOpen[index] = false;
   }
 
   onChangedEditor(event: any): void {
@@ -93,73 +153,56 @@ export class ProjectFormComponent implements OnInit {
     }
   }
 
+  disableDrag() {
+    this.isEditingText = true;
+  }
+
+  enableDrag() {
+    this.isEditingText = false;
+  }
+
+  showSuccessToast(message: string) {
+    this.toastService.showToast({ text: message, type: 'success' });
+  }
+
   loadProjectData(projectId: number): void {
-    const imagesObservable = this.getImagesObservable(projectId);
-    const textsObservable = this.getTextsObservable(projectId);
+    const imagesObservable =
+      this.projectLoaderService.getImagesObservable(projectId);
+    const textsObservable =
+      this.projectLoaderService.getTextsObservable(projectId);
 
     combineLatest([imagesObservable, textsObservable]).subscribe(
       ([images, texts]) => {
-        this.fields = this.combineAndSortFields(images, texts);
-        this.populateForm(this.fields)
-  
+        const fields = this.projectLoaderService.combineAndSortFields(
+          images,
+          texts
+        );
+        this.populateForm(fields);
       },
       (error) => {
-        console.error("Error al combinar datos:", error);
+        console.error('Error al combinar datos:', error);
       }
     );
   }
 
-  getImagesObservable(projectId: number) {
-    return this.projectService.getProjectImages(projectId).pipe(
-      map((response) => {
-        if (response.success) {
-          return response.data.images;
-
-        } else {
-          throw new Error("Error al obtener imágenes");
-        }
-      })
-    );
-  }
-
-  getTextsObservable(projectId: number) {
-    return this.projectService.getProjectTexts(projectId).pipe(
-      map((response) => {
-        if (response.success) {
-          return response.data.texts;
-        } else {
-          throw new Error("Error al obtener textos");
-        }
-      })
-    );
-  }
-
-  combineAndSortFields(images: any[], texts: any[]) {
-    if (!Array.isArray(images) || !Array.isArray(texts)) {
-      console.error("Error: Los datos no son arrays.");
-      return [];
-    }
-
-    const combinedFields = [...images, ...texts].sort((a, b) => a.index - b.index);
-    return combinedFields;
-  }
-
-  populateForm(fields: FormFields []): void {
-  
+  populateForm(fields: FormFields[]): void {
     fields.forEach((field) => {
       switch (field.f_type_id) {
-        case 1: // Imágenes
-          this.addImageField(field);
+        case 1:
+          this.dynamicFieldService.addImageField(this.dynamicFields, field);
           break;
-  
-        case 2: // Editores de texto
-          this.addTextEditor(field);
+
+        case 2:
+          this.dynamicFieldService.addTextEditorField(
+            this.dynamicFields,
+            field
+          );
           break;
-  
-        case 3: // Texto con imagen
-          this.addTextImageField(field);
+
+        case 3:
+          this.dynamicFieldService.addTextImageField(this.dynamicFields, field);
           break;
-  
+
         default:
           console.warn('Tipo de campo desconocido:', field.f_type_id);
           break;
@@ -167,232 +210,106 @@ export class ProjectFormComponent implements OnInit {
     });
   }
 
-  addImageField(field?: FormFields): void {
-    const imagePath = field?.path || '';
-    const projImgId = field?.proj_img_id || '';
-    const index = field?.index || '';
-
-
-    this.dynamicFields.push(
-      this.fb.group({
-        type: 'image',
-        path: imagePath,
-        proj_img_id: projImgId, 
-        index: index
-      })
-    );
-  }
-
-  addTextEditor(field?: FormFields): void {
-    const text = field?.text || '';
-    const title = field?.title || '';
-    const projTextId = field?.proj_text_id || ''; 
-    const index = field?.index || '';
-  
-    this.dynamicFields.push(
-      this.fb.group({
-        type: 'editor',
-        title,
-        content: text,
-        proj_text_id: projTextId, 
-        index: index
-      })
-    );
-  }
-
-  addTextImageField(field?: FormFields): void {
-    const text = field?.text || '';
-    const image = field?.image || null;
-    const index = field?.index || '';
-
-    this.dynamicFields.push(
-      this.fb.group({
-        type: 'text-image',
-        text,
-        image,
-        index: index
-      })
-    );
-  }
-
-  removeField(index: number): void {
-    this.dynamicFields.removeAt(index);
-
-    this.dynamicFields.controls.forEach((control, i) => {
-      control.get('index')?.setValue(i);
-    });
-  }
-
-  onDrop(event: CdkDragDrop<FormArray>): void {
-    const prevIndex = event.previousIndex;
-    const newIndex = event.currentIndex;
-    console.log("New index",newIndex)
-
-    moveItemInArray(this.dynamicFields.controls, prevIndex, newIndex);
-
-    this.dynamicFields.controls.forEach((control, i) => {
-      control.get('index')?.setValue(i);
-    });
-
-
-
-    const reorderedFields = this.dynamicFields.controls.map((control) => {
-      const type = control.get('type')?.value ?? 'unknown';
-      const index = control.get('index')?.value;
-      const proj_text_id = control.get('proj_text_id')?.value ?? null;
-      const proj_img_id = control.get('proj_img_id')?.value ?? null;  
-    
-  
-      if (type === 'image') {
-        return { 
-          type, 
-          previousIndex: prevIndex, 
-          newIndex: index, 
-          proj_img_id,
-          proj_text_id: null,
-        };
-      }
-    
-
-      if (type === 'editor') {
-        return { 
-          type, 
-          previousIndex: prevIndex, 
-          newIndex: index, 
-          proj_text_id, 
-          proj_img_id: null,
-        };
-      }
-    
-      return { 
-        type, 
-        previousIndex: prevIndex, 
-        newIndex: index, 
-        proj_text_id, 
-        proj_img_id,
-      };
-    });
-
-
-    reorderedFields.forEach((field) => {
-      switch (field.type) {
-        case 'image':
-            this.imageOrder.proj_img_id= field.proj_img_id
-            this.imageOrder.previousIndex=field.previousIndex
-            this.imageOrder.newIndex=field.newIndex
-            this.updateImageOrder(this.imageOrder)
-          break;
-  
-        case 'editor':
-          this.editorOrder.proj_text_id= field.proj_text_id
-          this.editorOrder.previousIndex=field.previousIndex
-          this.editorOrder.newIndex=field.newIndex
-          this.updateEditorOrder(this.editorOrder)
-          break;
-  
-        case 'text-image':
-         
-          break;
-  
-        default:
-          console.warn(`Tipo de campo desconocido: ${field.type}`);
-          break;
-      }
-    });
-
-
-  }
-
   onFileChange(event: any, index: number): void {
     const file = event.target.files[0];
     if (file) {
-      this.dynamicFields.at(index).get('value')?.setValue(file);
+      this.dynamicFields.at(index).get('path')?.setValue(file);
     }
   }
 
-  submitForm(): void {
-    if (!this.form.valid) {
-      console.warn(
-        'El formulario no es válido. Asegúrate de que todos los campos requeridos estén llenos.'
-      );
-      return;
-    }
-
-    const formData = new FormData();
-    let validFields = 0;
-
-    this.dynamicFields.controls.forEach((field, index) => {
-      const fieldType = field.get('type')?.value;
-
-      switch (fieldType) {
-        case 'image': {
-          const file = field.get('value')?.value;
-          if (file) {
-            formData.append(`image_${index}`, file);
-            console.log(`Imagen agregada: image_${index}`);
-            validFields++;
-          } else {
-            console.warn(`Campo de imagen vacío: image_${index}`);
-          }
-          break;
-        }
-
-        default: {
-          console.warn(
-            `Tipo de campo desconocido o no soportado: ${fieldType}`
-          );
-          break;
-        }
-      }
+  getImages() {
+    this.projectService.getImages().subscribe({
+      next: (response: any) => {
+        this.images = response.data.images;
+      },
     });
+  }
 
-    if (validFields > 0) {
-      this.imageServiceHandler(formData);
+  //Form building
+  addImageField() {
+    this.dynamicFieldService.addImageField(this.dynamicFields);
+  }
+
+  addTextEditor() {
+    this.dynamicFieldService.addTextEditorField(this.dynamicFields);
+  }
+
+  addTextImageField() {
+    this.dynamicFieldService.addTextImageField(this.dynamicFields);
+  }
+
+  removeField(index: number): void {
+    this.dynamicFieldService.removeField(
+      this.dynamicFields,
+      index,
+      this.projectId
+    );
+  }
+
+  onDrop(event: CdkDragDrop<FormArray>): void {
+    this.onDropService.onDrop(this.projectId, this.dynamicFields, event);
+  }
+
+  //Project operations
+  addImageToProject(index: number): void {
+    this.projectInteractionsService.addImageToProject(
+      this.projectId,
+      index,
+      this.dynamicFields
+    );
+    this.closeAddModal(index);
+  }
+
+  addProjectTexts(index: number): void {
+    this.projectInteractionsService.addProjectTexts(
+      this.projectId,
+      index,
+      this.dynamicFields
+    );
+  }
+
+  addNewTextImage(index: number): void {}
+
+  updateImageField(index: number): void {
+    this.projectInteractionsService.updateImageField(
+      this.projectId,
+      index,
+      this.dynamicFields
+    );
+  }
+
+  updateProjectTexts(index: number): void {
+    this.projectInteractionsService.updateProjectTexts(
+      this.projectId,
+      index,
+      this.dynamicFields
+    );
+    this.closeEditModal(index);
+  }
+
+  updateTextImageField(index: number): void {}
+
+  handleImageSelection(eventOrImage: any, isFile: boolean,index:number) {
+    if (isFile) {
+      const file = eventOrImage.target.files[0];
+      if (file) {
+        this.dynamicFields.at(index).get('path')?.setValue(file);
+      }
     } else {
-      console.warn('No se encontraron campos válidos para procesar.');
+      this.selectedImage = eventOrImage.name;
+      console.log(this.selectedImage)
+
+
+      this.showSuccessToast(`Imagen seleccionada: ${eventOrImage.name}`);
     }
   }
 
-  imageServiceHandler(formData: FormData): void {
-    this.projectService.uploadImage(this.projectId, formData).subscribe(
-      (response) => {
-        console.log('Imagen subida con éxito:', response);
-      },
-      (error) => {
-        console.error('Error al subir la imagen:', error);
-      }
-    );
+  cancelImageUpload(index: number) {
+    this.closeImageModal(index);
   }
 
-  updateImageOrder(imageOrder:ImageOrderPut) {
-    this.projectService.updateImageOrder(this.projectId, imageOrder).subscribe(
-      (response: any) => {
-        if (response.success) {
-          console.log('Image order updated successfully');
-        } else {
-          console.warn('Failed to update order:', response);
-        }
-      },
-      (error: any) => {
-        console.error('Error while updating image order:', error);
-      }
-    );
+  imageSelected(index: number) {
+    this.dynamicFields.at(index).get('path')?.setValue(this.selectedImage);
+    this.closeImageModal(index);
   }
-
-  updateEditorOrder(editorOrder: EditorOrderPut) {
-    this.projectService.updateEditorOrder(this.projectId,editorOrder).subscribe(
-      (response:any)=>{
-        if(response.success){
-          console.log('Editor updated successfully');
-        }else{
-          console.warn('Failed to update editor order:', response);
-        }
-      },
-      (error:any) =>{
-        console.error('Error while updating editor order:', error);
-      }
-    )
-    
-  }
-  
 }

@@ -1,0 +1,256 @@
+<div class="px-[5vw] py-[3.5vh] mx-auto w-auto">
+    <!--Fullscreen menu-->
+    <div class="relative flex items-center justify-between lg:justify-between lg:space-x-16">
+        <ul class="items-center hidden lg:flex">
+
+            <div class="group relative cursor-pointer py-2">
+                <div class="bg-white mr-8">
+                    <a routerLink="" aria-label="Home" title="Home"
+                        class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400">
+                        Inicio
+                    </a>
+                </div>
+
+            </div>
+
+
+            <div class="group relative cursor-pointer py-2">
+                <div class="bg-white">
+                    <a aria-label="Our product" title="Our product"
+                        class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400">
+                        Proyectos
+                    </a>
+                </div>
+
+                <div
+                    class="invisible absolute z-50 flex w-28 flex-col bg-black py-1 text-gray-800 shadow-xl group-hover:visible">
+
+                    <a routerLink="/projects" aria-label="Product pricing" title="Product pricing"
+                        class="my-2  border-gray-100 py-1 font-normal text-white hover:text-gray-500 md:mx-2">
+                        Todos
+                    </a>
+
+                    <a routerLink="/projects-preferences" aria-label="Product pricing" title="Product pricing"
+                        class="my-2 border-gray-100 py-1 font-normal text-white hover:text-gray-500 md:mx-2">
+                        Para tí
+                    </a>
+                </div>
+            </div>
+
+
+
+        </ul>
+        <div class="flex items-center justify-between w-full lg:w-fit p-2">
+            <a href="/" aria-label="Company" title="Company" class="inline-flex justify-center items-center">
+                <img src="assets/LOGO.svg" alt="Imagen 1" class="w-8 h-8">
+
+            </a>
+
+            <!-- Mobile menu and profile -->
+            <div class="flex items-center lg:hidden">
+                <button type="button" id="triggerEl" (click)="toggleMenu()"
+                    class="mr-4 p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+                    aria-controls="navbar-dropdown" [ariaExpanded]="false">
+                    <span class="sr-only">Open main menu</span>
+                    <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 17 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M1 1h15M1 7h15M1 13h15" />
+                    </svg>
+                </button>
+
+            </div>
+        </div>
+
+        <ul class="items-center lg:space-x-8 lg:flex sm:block">
+            <div class="group relative cursor-pointer py-2 hidden sm:hidden lg:inline-block">
+                <div class="bg-white">
+                    <a aria-label="Our product" title="Our product"
+                        class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400">
+                        Aprende
+                    </a>
+                </div>
+
+                <div
+                    class="invisible absolute z-50 flex w-auto flex-col bg-black py-1 text-gray-800 group-hover:visible">
+                    <a routerLink="" aria-label="Product pricing" title="Product pricing"
+                        class="my-2 border-gray-100 py-1 font-normal text-white hover:text-gray-500 md:mx-2">
+                        Recursos
+                    </a>
+
+                    <a routerLink="" aria-label="Product pricing" title="Product pricing"
+                        class="my-2 border-gray-100 py-1 font-normal text-white hover:text-gray-500 md:mx-2">
+                        Asesorías
+                    </a>
+                </div>
+            </div>
+
+
+            <li>
+                <a href="/" aria-label="About us" title="About us"
+                    class="hidden font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400 sm:hidden lg:inline-block">Sobre
+                    nosotros</a>
+            </li>
+            @if(!authService.isLogged()){
+            <li class="w-16">
+                <a routerLink="/login"
+                    class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400">Sign
+                    in</a>
+            </li>
+
+            }@else {
+            <app-user-profile></app-user-profile>
+            }
+        </ul>
+    </div>
+
+    <!-- Fullscreen menu overlay -->
+    <div [class.hidden]="!isMenuOpen" [@slideDown]="isMenuOpen ? 'visible' : 'hidden'"
+        class="fixed inset-0 bg-gray-100 z-50">
+        <!-- Menú desplegable -->
+        <div class="px-10 py-10 mx-auto lg:py-8 md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 border">
+            <div class="flex justify-between items-center">
+                <a href="/" aria-label="Company" title="Company" class="inline-flex justify-center items-center">
+                    <img src="assets/LOGO.svg" alt="Imagen 1" class="w-8 h-8">
+
+                </a>
+                <!-- Botón para cerrar el menú -->
+                <button type="button" (click)="toggleMenu()"
+                    class="text-gray-500 hover:text-gray-700 focus:outline-none">
+                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+
+            <ul class="py-5 flex justify-center items-start flex-col">
+                <li class="w-full py-2">
+                    <div class="relative">
+                        <a routerLink=""
+                            class="py-2 text-3xl font-medium text-gray-700 hover:text-deep-purple-accent-400 flex justify-between items-center w-full dropdown-toggle">
+                            Inicio
+                        </a>
+
+                    </div>
+                </li>
+
+                <li class="w-full py-2" (mouseenter)="toggleSubMenu(MenuOption.Projects)"
+                    (mouseleave)="toggleSubMenu(MenuOption.None)" (click)="toggleSubMenu(MenuOption.Projects)">
+                    <div class="relative">
+                        <a routerLink="#"
+                            class="py-2 text-3xl font-medium text-gray-700 hover:text-deep-purple-accent-400 flex justify-between items-center w-full dropdown-toggle">
+                            Proyectos
+                            <div class="ml-auto flex items-center">
+                                <svg class="w-6 h-6"
+                                    [@chevronAnimation]="subMenuOpen === MenuOption.Projects ? 'expanded' : 'collapsed'"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </div>
+                        </a>
+
+                        @if(subMenuOpen === MenuOption.Projects){
+                        <ul class="py-2 flex justify-center items-start flex-col w-full">
+                            <li class="w-full">
+                                <a routerLink="/projects"
+                                    class="py-2 text-xl font-medium text-gray-700 hover:text-deep-purple-accent-400 flex justify-between items-center w-full">
+                                    Todos
+                                </a>
+                            </li>
+                            <li class="w-full">
+                                <a href="#"
+                                    class="py-2 text-xl font-medium text-gray-700 hover:text-deep-purple-accent-400 flex justify-between items-center w-full">
+                                    Para ti
+                                </a>
+                            </li>
+                        </ul>
+                        }
+
+                    </div>
+                </li>
+
+                <li class="w-full py-2" (mouseenter)="toggleSubMenu(MenuOption.Learn)"
+                    (mouseleave)="toggleSubMenu(MenuOption.None)">
+                    <div class="relative">
+                        <a routerLink="#"
+                            class="py-2 text-3xl font-medium text-gray-700 hover:text-deep-purple-accent-400 flex justify-between items-center w-full dropdown-toggle">
+                            Aprende
+                            <div class="ml-auto flex items-center">
+                                <svg class="w-6 h-6"
+                                    [@chevronAnimation]="subMenuOpen === MenuOption.Learn ? 'expanded' : 'collapsed'"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </div>
+                        </a>
+
+                        @if(subMenuOpen === MenuOption.Learn){
+                        <ul class="py-2 flex justify-center items-start flex-col w-full">
+                            <li class="w-full">
+                                <a href="#"
+                                    class="py-2 text-xl font-medium text-gray-700 hover:text-deep-purple-accent-400 flex justify-between items-center w-full">
+                                    Recursos
+                                </a>
+                            </li>
+                            <li class="w-full">
+                                <a href="#"
+                                    class="py-2 text-xl font-medium text-gray-700 hover:text-deep-purple-accent-400 flex justify-between items-center w-full">
+                                    Asesorías
+                                </a>
+                            </li>
+                        </ul>
+                        }
+
+                    </div>
+                </li>
+
+                <li class="w-full py-2">
+                    <a href="/"
+                        class="py-2 text-3xl font-medium text-gray-700 hover:text-deep-purple-accent-400 flex justify-between items-center w-full">
+                        Sobre nosotros
+                        <div class="ml-auto flex items-center">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </div>
+                    </a>
+                </li>
+                <li class="w-full py-2">
+                    <a href="/login"
+                        class="py-2 text-3xl font-medium text-gray-700 hover:text-deep-purple-accent-400 flex justify-between items-center w-full">
+                        Sign in
+                        <div class="ml-auto flex items-center">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </div>
+                    </a>
+                </li>
+                <li class="w-full py-2">
+                    <a href="/"
+                        class="py-2 text-3xl font-medium text-gray-700 hover:text-deep-purple-accent-400 flex justify-between items-center w-full">
+                        Sign up
+                        <div class="ml-auto flex items-center">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+
+        </div>
+    </div>
+</div>

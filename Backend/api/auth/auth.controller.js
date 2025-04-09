@@ -1,7 +1,9 @@
 const { generateJWT } = require("../../helpers/generateJWT");
 const { StatusCodes } = require("http-status-codes");
-const auth = require("./auth.database");
 const { googleVerify } = require("../../helpers/googleVerify");
+const auth = require("./auth.database");
+const responseHandler = require("../../helpers/responseHandler");
+const messages = require("../../config/messages");
 
 class AuthController {
   static login = async (req, res) => {
@@ -12,82 +14,54 @@ class AuthController {
       if (user) {
         const roles = await this.getRoles(user.dataValues.user_id);
 
-        const token = generateJWT(user.dataValues.user_id, roles);
-
-        const response = {
-          success: true,
-          msg: "Logged succesfully",
-          data: {
-            token: token,
-          },
+        const userData = {
+          user_id: user.dataValues.user_id,
+          roles: roles,
         };
 
-        res.status(StatusCodes.OK).json(response);
+        const token = generateJWT(userData);
+
+        responseHandler.success(res, messages.AUTH_SUCCESS, { token });
+
       } else {
-        const response = {
-          success: false,
-          msg: "Login failed",
-          data: {},
-        };
-
-        res.status(StatusCodes.BAD_REQUEST).json(response);
+        responseHandler.error(res, messages.AUTH_FAILED, StatusCodes.UNAUTHORIZED);
       }
     } catch (error) {
-      console.log(error);
-      const response = {
-        success: false,
-        msg: "Server fail",
-        data: {},
-      };
-
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(response);
+      responseHandler.error(res, messages.INTERNAL_SERVER_ERROR , StatusCodes.INTERNAL_SERVER_ERROR);
     }
   };
 
-  static googleSignIn = async(req,res) =>{
+  static googleSignIn = async (req, res) => {
     const idToken = req.body.id_token;
 
     try {
       const googleUser = await googleVerify(idToken);
       const user = await auth.emailExists(googleUser.email);
 
-      const userId = user.dataValues.user_id
-      
-      const roles = await this.getRoles(userId)
-      const token = generateJWT(userId, roles);
-
-     if(!user){
+      if (!user) {
         const newUser = {
           name: googleUser.given_name,
           first_surname: googleUser.family_name,
-          second_surname: '', 
+          second_surname: "",
           email: googleUser.email,
-          password: '', 
+          password: "",
         };
         const userId = await auth.register(newUser);
         await auth.createRoleUser(userId, 2);
+
+        responseHandler.success(res, messages.GOOGLE_AUTH_SUCCESS, { token: generateJWT({ user_id: userId, roles: [2] }) });
+      } else {
+        const userId = user.dataValues.user_id;
+        const roles = await this.getRoles(userId);
+        const token = generateJWT({ user_id: userId, roles });
+
+        responseHandler.success(res, messages.GOOGLE_AUTH_SUCCESS, { token });
       }
-
-      const response = {
-        success: true,
-        msg: 'Google Auth Success',
-        data: {
-          token:token
-        },
-      }; 
-  
-      return res.status(StatusCodes.OK).json(response);
-  
     } catch (error) {
-      console.error('Error interno:', error);
-  
-      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-        success: false,
-        msg: 'Error interno al verificar el token',
-      });
+      console.error("Error interno:", error);
+      responseHandler.error(res, messages.GOOGLE_AUTH_FAILED, StatusCodes.INTERNAL_SERVER_ERROR);
     }
-
-  }
+  };
 
   static getRoles = async (userId) => {
     try {
@@ -101,26 +75,16 @@ class AuthController {
   static register = async (req, res) => {
     try {
       const user = await auth.register(req.body);
-      const roleUserMsg = await this.createRoleUser(user, 2);
-
-      const response = {
-        success: true,
-        data: {
-          msg: "User created",
-          roleUserMsg,
-        },
-      };
-
-      res.status(StatusCodes.CREATED).json({ response });
+      const roleUser = await this.createRoleUser(user, 2);
+      responseHandler.success(res, messages.CREATE_SUCCESS, roleUser);
     } catch (error) {
-      
+      responseHandler.error(res, messages.CREATE_FAILED, StatusCodes.INTERNAL_SERVER_ERROR);
     }
   };
 
   static createRoleUser = async (userId, roleId) => {
     try {
-      await auth.createRoleUser(userId, roleId);
-      return "Role assigned successfully";
+      return await auth.createRoleUser(userId, roleId);
     } catch (error) {
       throw error;
     }

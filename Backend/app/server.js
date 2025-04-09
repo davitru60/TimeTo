@@ -6,6 +6,7 @@ class Server {
         this.app = express()
         this.authPath = '/api/auth'
         this.projectsPath = '/api/projects'
+        this.userPath = '/api/user'
 
 
         this.expressServer = require('http').createServer(this.app)
@@ -23,6 +24,7 @@ class Server {
     routes(){
         this.app.use(this.authPath, require('../api/auth/auth.routes')),
         this.app.use(this.projectsPath, require('../api/project/project.routes'))
+        this.app.use(this.userPath, require('../api/user/user.routes'))
     }
 
     listen() {

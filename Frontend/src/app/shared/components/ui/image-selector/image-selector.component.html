@@ -1,0 +1,39 @@
+<div class="form-group mb-4">
+    <label class="block text-gray-700 font-bold mb-2">Imagen:</label>
+
+    <button
+        class="text-white img-dropdown-btn font-medium px-5 py-2 text-center inline-flex items-center"
+        type="button" (click)="toggleDropdown()">
+        Añadir imagen
+        <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+            viewBox="0 0 10 6">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="m1 1 4 4 4-4" />
+        </svg>
+    </button>
+
+    <!-- Menú dropdown -->
+    @if(isDropdownOpen){
+    <div class="absolute bg-white divide-y divide-gray-100 shadow w-44 dark:bg-gray-700">
+        <ul class="py-2 text-sm text-black dark:text-gray-200">
+            <li>
+                <a (click)="openImageModal()"
+                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">Añadir imagen
+                    existente</a>
+            </li>
+            <li>
+                <a (click)="selectImageOption('new')"
+                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">Añadir nueva
+                    imagen</a>
+            </li>
+        </ul>
+    </div>
+    }
+
+
+    @if(imageOption==='new'){
+    <input (change)="onFileChange($event)" type="file" name="image"
+        class="w-full p-3 rounded-lg focus:outline-none focus:border-blue-500 transition duration-200" required />
+    }
+
+</div>

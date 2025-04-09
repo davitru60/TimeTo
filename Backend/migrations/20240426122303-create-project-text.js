@@ -16,7 +16,7 @@ module.exports = {
             tableName: "projects"
           },
           key: "project_id",
-          primaryKey:true,
+          primaryKey:false,
           allowNull:false,
 
         }
@@ -33,11 +33,6 @@ module.exports = {
           allowNull:false,
 
         }
-      },
-
-
-      category: {
-        type: Sequelize.STRING
       },
 
       title: {

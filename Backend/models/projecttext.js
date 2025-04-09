@@ -10,14 +10,18 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      ProjectText.belongsTo(models.Project, {
+        foreignKey: 'project_id',
+      })
     }
   }
   ProjectText.init({
-    proj_text_id: DataTypes.INTEGER,
+    proj_text_id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true 
+    },
     project_id: DataTypes.INTEGER,
     f_type_id: DataTypes.INTEGER,
-    category: DataTypes.STRING,
     title: DataTypes.STRING,
     text: DataTypes.STRING,
     index: DataTypes.INTEGER

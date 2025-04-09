@@ -1,38 +1,182 @@
 <app-navbar></app-navbar>
 
+<app-toast></app-toast>
+
+
 <!-- Proyectos Paginados -->
-<div *ngFor="let project of paginatedProjects">
+@for(project of paginatedProjects; track project.project_id ; let i = $index){
+<div>
   <div class="w-full px-25 py-12 mx-auto sm:max-w-xl md:max-w-full lg:w-auto md:px-24">
+
+    @if(authService.isAdmin()){
+    <button type="button" (click)="openModal(project.project_id)" class="mx-5 my-5 p-2 edit-btn">Editar</button>
+    <button (click)="openDeleteModal(i)" class="p-2 delete-btn">Eliminar</button>
+    }
+
+
+
     <a [routerLink]="['/projects', project.project_id]" class="block">
 
-      <div class="px-5 mt-[-30px] grid gap-5 row-gap-8 lg:grid-cols-[1fr,1.5fr]"> 
+      <div class="px-5 mt-[-30px] grid gap-5 row-gap-8 lg:grid-cols-[1fr,1.5fr]">
         <div>
-          <h5 class="flex items-center font-3vh mt-5 mb-3 font-sans text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+          <h5
+            class="flex items-center font-3vh mt-5 mb-3 font-sans  font-bold tracking-tight text-gray-900 sm:text-4xl">
             &#9679; {{ project.name }}
           </h5>
-          <h1 class="mt-2 text-[3.1em] font-bold w-96 leading-tight"> 
+          <h1 class="mt-2 text-[3.1em] font-bold w-96 leading-tight">
             {{ project.description }}
           </h1>
         </div>
         <div class="h-custom">
-          <img
-            class="object-cover h-custom w-full sm:h-128" 
-            [src]="project.path"
-            alt=""
-          />
+          <img class="object-cover h-custom w-full sm:h-128" [src]="project.path" alt="" />
         </div>
       </div>
     </a>
+
   </div>
 </div>
 
+<!--Modal de edición-->
+<app-modal [isModalOpen]="isModalOpen[project.project_id]">
+  <form name="form" #f="ngForm" (ngSubmit)="f.form.valid && updateProject(project.project_id)" novalidate>
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-lg font-bold text-gray-700">Editar proyecto</h2>
+      <button type="button" (click)="closeModal(project.project_id)" class="text-gray-600 hover:text-gray-900">
+        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+        </svg>
+        <span class="sr-only">Cerrar modal</span>
+      </button>
+    </div>
+
+    <div class="form-group mb-4">
+      <label class="block text-gray-700 font-bold mb-2">Nombre del proyecto:</label>
+      <input type="text" class="w-full text-lg py-2 border-b border-black focus:outline-none custom-field" name="name"
+        [(ngModel)]="project.name" required #name="ngModel" [ngClass]="{ 'is-invalid': f.submitted && name.errors }" />
+
+      @if(f.submitted && name.errors){
+      @if(name.errors['required']){
+      <div class="text-red-500">Nombre del proyecto obligatorio.</div>
+      }
+      }
+    </div>
+
+    <div class="form-group mb-4">
+      <label class="block text-gray-700 font-bold mb-2">Descripción:</label>
+      <input type="text" class="w-full text-lg py-2 border-b border-black focus:outline-none custom-field"
+        name="description" [(ngModel)]="project.description" required minlength="6" maxlength="50"
+        #description="ngModel" [ngClass]="{ 'is-invalid': f.submitted && description.errors }" />
+
+      @if(f.submitted && description.errors){
+      @if(description.errors['required']){
+      <div class="text-red-500">Descripción obligatoria</div>
+      }
+
+      @if(description.errors['minlength']){
+      <div class="text-red-500">La descripción debe tener al menos de 6 caracteres</div>
+      }
+
+      @if(description.errors['maxlength']){
+      <div class="text-red-500">La descripción debe tener como máximo 20 caracteres</div>
+      }
+      }
+    </div>
+
+    <app-image-selector [isImageModalOpen]="isImageModalOpen[i]" [index]="i" (toggleModal)="openImageModal($event)"
+      (imageSelected)="handleImageSelection($event,true)">
+    </app-image-selector>
+
+    <div class="form-group flex">
+      <button type="submit" class="w-full bg-black text-white font-bold py-3 hover:bg-gray-800 ">Actualizar</button>
+    </div>
+  </form>
+</app-modal>
+
+<app-modal [isModalOpen]="isImageModalOpen[i]" [modalClasses]="imageModalStyle">
+  <div class="bg-white py-3 px-3">
+    <div class="sm:flex sm:items-start">
+      <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+        <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+          Seleccionar imagen
+        </h3>
+        <div class="mt-2">
+          <p class="text-sm text-gray-500">
+            Selecciona una imagen de la lista a continuación para usar en tu proyecto.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenedor de imágenes -->
+  <div class="max-h-96 overflow-y-auto px-4 py-4">
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 px-4 py-4">
+      @for(image of images; track image.image_id; let i = $index){
+        <div class="flex flex-col items-center">
+          <img [src]="image.url" [alt]="image.name"
+            class="h-24 w-24 object-cover rounded-lg shadow-md cursor-pointer hover:opacity-80 transition duration-200"
+            (click)="handleImageSelection(image,false)" />
+          <span class="mt-2 text-sm text-gray-700 dark:text-gray-300">{{ image.name }}</span>
+        </div>
+      }
+     
+    </div>
+  </div>
+
+  <!-- Botones de acción -->
+  <div class="px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+    <button type="button" class="w-full inline-flex justify-center px-3 py-2 ml-4 sm:w-auto sm:px-3 cancel-btn"
+      (click)="cancelImageUpload(i)">
+      Cancelar
+    </button>
+    <button type="button" class="w-full inline-flex justify-center px-3 py-2 ml-4 sm:w-auto sm:px-3 cancel-btn"
+      (click)="imageSelected(i)">
+      Aceptar
+    </button>
+  </div>
+</app-modal>
+
+
+<!--Modal de eliminación-->
+<app-modal [isModalOpen]="isDeleteModalOpen[i]" [modalClasses]="deleteModalStyle">
+  <div class="bg-white py-3 px-3">
+    <div class="sm:flex sm:items-start">
+      <div
+        class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-gray-100 sm:mx-0 sm:h-10 sm:w-10">
+        <svg class="h-6 w-6 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </div>
+      <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+        <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+          Eliminar proyecto
+        </h3>
+        <div class="mt-2">
+          <p class="text-sm text-gray-500">
+            ¿Estás seguro de que deseas eliminar este proyecto? Esta acción no se puede deshacer.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+    <button type="button" class="w-full inline-flex justify-center px-3 py-2 ml-4 sm:w-auto sm:px-3 delete-btn"
+      (click)="deleteProject(project.project_id)">
+      Eliminar
+    </button>
+    <button type="button" class="w-full inline-flex justify-center px-3 py-2 ml-4 sm:w-auto sm:px-3 cancel-btn"
+      (click)="closeDeleteModal(i)">
+      Cancelar
+    </button>
+  </div>
+</app-modal>
+
+
+}
 
 
 
-<app-pagination
-  [currentPage]="currentPage"
-  [totalPages]="totalPages"
-  (pageChange)="onPageChange($event)"
-  (itemsPerPageChange)="onItemsPerPageChange($event)"
-></app-pagination>
 
+<app-pagination [currentPage]="currentPage" [totalPages]="totalPages" (pageChange)="onPageChange($event)"
+  (itemsPerPageChange)="onItemsPerPageChange($event)"></app-pagination>
