@@ -1,17 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ProjectService } from '../../projects/services/project.service';
 import {
   Category,
   CategoryGetResponse,
-  CategoryPutResponse,
   CategoryPutData,
+  CategoryPutResponse,
 } from '../../../core/interfaces/category.interface';
-import { PaginationComponent } from '../../../shared/components/ui/pagination/pagination.component';
-import { AddCategoryComponent } from './add-category/add-category.component';
 import { ModalComponent } from '../../../shared/components/ui/modal/modal.component';
-import { ToastService } from '../../../shared/components/ui/toast/toast.service';
+import { PaginationComponent } from '../../../shared/components/ui/pagination/pagination.component';
+import { ToastFacade } from '../../../shared/components/ui/toast/toast.facade';
+import { ErrorCategoryToastMessages, SuccessCategoryToastMessages } from '../../../shared/components/ui/toast/toastMessages';
+import { CategoryFacade } from '../facades/category.facade';
+import { AddCategoryComponent } from './add-category/add-category.component';
 
 @Component({
   selector: 'app-category-admin',
@@ -41,8 +42,8 @@ export class CategoryAdminComponent {
   totalPages: number = 0;
 
   constructor(
-    private projectService: ProjectService,
-    private toastService: ToastService
+    private categoryFacade: CategoryFacade,
+    private toastFacade: ToastFacade
   ) {
     this.getCategories();
   }
@@ -94,16 +95,9 @@ export class CategoryAdminComponent {
     this.isDeleteCategoryModalOpen[index] = false;
   }
 
-  showSuccessToast(message: string) {
-    this.toastService.showToast({ text: message, type: 'success' });
-  }
-
-  showErrorToast(message:string){
-    this.toastService.showToast({ text: message, type: 'error' });
-  }
-
+  
   getCategories() {
-    this.projectService.getCategories().subscribe({
+    this.categoryFacade.getCategories().subscribe({
       next: (response: CategoryGetResponse) => {
         this.categories = response.data.categories;
         this.totalPages = Math.ceil(this.categories.length / this.itemsPerPage);
@@ -120,10 +114,10 @@ export class CategoryAdminComponent {
         name: this.selectedCategory.name,
       };
 
-      this.projectService.updateCategory(categoryId, categoryData).subscribe({
+      this.categoryFacade.updateCategory(categoryId, categoryData).subscribe({
         next: (response: CategoryPutResponse) => {
           if (response.success) {
-            this.showSuccessToast('Categoría actualizada exitosamente');
+            this.toastFacade.showSuccessToast(SuccessCategoryToastMessages.CATEGORY_UPDATE_MESSAGE);
             this.closeEditCategoryModal(
               this.categories.findIndex(
                 (category) => category.category_id === categoryId
@@ -137,16 +131,16 @@ export class CategoryAdminComponent {
   }
 
   deleteCategory(categoryId: number) {
-    this.projectService.deleteCategory(categoryId).subscribe({
+    this.categoryFacade.deleteCategory(categoryId).subscribe({
       next: (response) => {
         if (response.success) {
-          this.showSuccessToast('Categoría eliminada correctamente');
+          this.toastFacade.showSuccessToast(SuccessCategoryToastMessages.CATEGORY_DELETE_MESSAGE);
           this.closeDeleteCategoryModal(categoryId);
           this.getCategories();
         }
       },
       error: (err:any)=>{
-        this.showErrorToast('No se puede eliminar la categoría ya que está en uso')
+        this.toastFacade.showErrorToast(ErrorCategoryToastMessages.CATEGORY_DELETE_MESSAGE);
       }
     });
 

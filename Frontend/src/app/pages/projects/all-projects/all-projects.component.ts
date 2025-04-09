@@ -3,6 +3,7 @@ import { NavbarComponent } from '../../../shared/components/layout/navbar/navbar
 import { ProjectService } from '../services/project.service';
 import {
   Project,
+  ProjectDeleteResponse,
   ProjectGetResponse,
   ProjectHomeImagePutData,
   ProjectPutData,
@@ -13,11 +14,12 @@ import { RouterLink } from '@angular/router';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { PaginationComponent } from '../../../shared/components/ui/pagination/pagination.component';
 import { ModalComponent } from './../../../shared/components/ui/modal/modal.component';
-import { FormsModule} from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { ToastService } from '../../../shared/components/ui/toast/toast.service';
 import { ToastComponent } from '../../../shared/components/ui/toast/toast.component';
 import { AuthService } from '../../auth/services/auth.service';
 import { ImageSelectorComponent } from '../../../shared/components/ui/image-selector/image-selector.component';
+import { ProjectUIFacade } from '../../../shared/shared-ui-facades/project-ui.facade';
 
 @Component({
   selector: 'app-all-projects',
@@ -25,7 +27,7 @@ import { ImageSelectorComponent } from '../../../shared/components/ui/image-sele
   templateUrl: './all-projects.component.html',
   styleUrl: './all-projects.component.scss',
   imports: [
-    CommonModule,
+  CommonModule,
     NavbarComponent,
     RouterLink,
     NgxPaginationModule,
@@ -71,6 +73,7 @@ export class AllProjectsComponent {
   constructor(
     private projectService: ProjectService,
     private toastService: ToastService,
+    private projectUIFacade: ProjectUIFacade,
     public authService: AuthService
   ) {
     this.getAllProjects();
@@ -200,51 +203,20 @@ export class AllProjectsComponent {
     });
   }
 
-  updateProject(projectId: number) {
-    if (this.selectedProject) {
-      this.selectedProject.path = this.selectedImage;
-
-      const formData = new FormData();
-      formData.append('name', this.selectedProject.name);
-      formData.append('description', this.selectedProject.description);
-
-      if (this.selectedImage != '') {
-        formData.append('path', this.selectedProject.path);
-      }
-
-      this.projectService.updateProject(projectId, formData).subscribe({
-        next: (response: ProjectPutResponse) => {
-          if (response.success) {
-            this.showSuccessToast('Proyecto actualizado exitosamente');
-            this.closeModal(projectId);
-            this.selectedImage = '';
-            this.getAllProjects();
-          }
-        },
-        error: (error: any) => {
-          this.showErrorToast('Error al actualizar el proyecto');
-        },
-      });
-    }
+  updateProject(projectId: number): void {
+    this.projectUIFacade.updateProject(
+      projectId,
+      this.selectedProject,
+      this.selectedImage,
+      this.closeModal.bind(this),
+      this.getAllProjects.bind(this)
+    );
   }
 
-  deleteProject(projectId: number,index:number) {
-    this.projectService.deleteProject(projectId).subscribe({
-      next: (response: any) => {
-        if (response.success) {
-          this.showInfoToast('Eliminación del proyecto en progreso...');
-          this.closeDeleteModal(index)
-          setTimeout(() => {
-            this.showSuccessToast('Proyecto eliminado exitosamente');
-            this.getAllProjects();
-          }, 2000);
-        }
-      },
-      error: (error: any) => {
-        this.showErrorToast(
-          `Error al eliminar el proyecto: ${error.message || error}`
-        );
-      },
-    });
+  deleteProject(projectId: number) {
+    this.projectUIFacade.deleteProject(
+      projectId,
+      this.getAllProjects.bind(this)
+    );
   }
 }

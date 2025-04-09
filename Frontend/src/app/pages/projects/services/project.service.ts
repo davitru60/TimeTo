@@ -43,23 +43,6 @@ export class ProjectService {
     return this.http.delete<ProjectDeleteResponse>(projectRoutes.deleteProject(projectId))
   }
 
-  getCategories():Observable<CategoryGetResponse>{
-    return this.http.get<CategoryGetResponse>(projectRoutes.getCategories,{params:{auth:'true'}})
-  }
-
-
-  createCategory(category:CategoryPostData): Observable<CategoryPostResponse>{
-    return this.http.post<CategoryPostResponse>(projectRoutes.createCategory, category)
-  }
-
-  updateCategory(categoryId:number,category:CategoryPutData): Observable<CategoryPutResponse>{
-    return this.http.put<CategoryPutResponse>(projectRoutes.updateCategory(categoryId),category)
-  }
-
-  deleteCategory(categoryId:number):Observable<any>{
-    return this.http.delete<any>(projectRoutes.deleteCategory(categoryId))
-  }
-
   getProjectCategories(projectId:number): Observable<ProjectCategoryGetResponse>{
     return this.http.get<ProjectCategoryGetResponse>(projectRoutes.getProjectCategories(projectId))
   }
@@ -127,7 +110,7 @@ export class ProjectService {
     );
   }
 
-  getProjectFormImages(projectId: number): Observable<ProjectImagesResponse> {
+  getProjectFromImages(projectId: number): Observable<ProjectImagesResponse> {
     return this.http.get<ProjectImagesResponse>(projectRoutes.getProjectImages + projectId);
   }
 

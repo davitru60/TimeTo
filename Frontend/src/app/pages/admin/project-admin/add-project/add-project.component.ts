@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   Component,
   EventEmitter,
@@ -5,16 +6,16 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { ModalComponent } from './../../../../shared/components/ui/modal/modal.component';
-import { ProjectPostData } from '../../../../core/interfaces/project.interface';
-import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
-import { ProjectService } from '../../../projects/services/project.service';
-import { LoaderComponent } from '../../../../shared/components/ui/loader/loader.component';
-import { ToastService } from '../../../../shared/components/ui/toast/toast.service';
 import { CategoryPostResponse } from '../../../../core/interfaces/category.interface';
+import { ProjectPostData } from '../../../../core/interfaces/project.interface';
 import { ButtonComponent } from '../../../../shared/components/ui/button/button.component';
 import { ImageSelectorComponent } from '../../../../shared/components/ui/image-selector/image-selector.component';
+import { LoaderComponent } from '../../../../shared/components/ui/loader/loader.component';
+import { ToastFacade } from '../../../../shared/components/ui/toast/toast.facade';
+import { SuccessProjectToastMessages } from '../../../../shared/components/ui/toast/toastMessages';
+import { ProjectService } from '../../../projects/services/project.service';
+import { ModalComponent } from './../../../../shared/components/ui/modal/modal.component';
 
 @Component({
   selector: 'app-add-project',
@@ -53,7 +54,7 @@ export class AddProjectComponent {
 
   constructor(
     private projectService: ProjectService,
-    private toastService: ToastService
+    private toastFacade: ToastFacade
   ) {
     this.getImages();
   }
@@ -82,9 +83,7 @@ export class AddProjectComponent {
     this.closeImageModal();
   }
 
-  showSuccessToast(message: string) {
-    this.toastService.showToast({ text: message, type: 'success' });
-  }
+
 
   getImages() {
     this.projectService.getImages().subscribe({
@@ -104,7 +103,8 @@ export class AddProjectComponent {
       this.selectedImage = eventOrImage.name;
       this.project.path = eventOrImage.name;
 
-      this.showSuccessToast(`Imagen seleccionada: ${eventOrImage.name}`);
+      this.toastFacade.showSuccessToast(`Imagen seleccionada: ${eventOrImage.name}`);
+
     }
   }
 
@@ -122,7 +122,7 @@ export class AddProjectComponent {
       next: (response: CategoryPostResponse) => {
         if (response.success) {
           //this.isLoading = false;
-          this.showSuccessToast('Proyecto creado exitosamente');
+          this.toastFacade.showSuccessToast(SuccessProjectToastMessages.PROJECT_CREATE_MESSAGE);
           this.closeModal();
         }
       },

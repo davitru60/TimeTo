@@ -1,14 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { ModalComponent } from '../../../../shared/components/ui/modal/modal.component';
 import { FormsModule } from '@angular/forms';
 import {
   CategoryPostData,
   CategoryPostResponse,
 } from '../../../../core/interfaces/category.interface';
-import { ProjectService } from '../../../projects/services/project.service';
-import { ToastService } from '../../../../shared/components/ui/toast/toast.service';
 import { ButtonComponent } from '../../../../shared/components/ui/button/button.component';
+import { ModalComponent } from '../../../../shared/components/ui/modal/modal.component';
+import { ToastFacade } from '../../../../shared/components/ui/toast/toast.facade';
+import { SuccessCategoryToastMessages } from '../../../../shared/components/ui/toast/toastMessages';
+import { CategoryFacade } from '../../facades/category.facade';
 
 @Component({
   selector: 'app-add-category',
@@ -26,13 +27,9 @@ export class AddCategoryComponent {
   };
 
   constructor(
-    private projectService: ProjectService,
-    private toastService: ToastService
+    private categoryFacade: CategoryFacade,
+    private toastFacade: ToastFacade
   ) {}
-
-  showSuccessToast(message: string) {
-    this.toastService.showToast({ text: message, type: 'success' });
-  }
 
   closeModal() {
     this.isModalOpen = false;
@@ -40,10 +37,10 @@ export class AddCategoryComponent {
   }
 
   createCategory() {
-    this.projectService.createCategory(this.category).subscribe({
+    this.categoryFacade.createCategory(this.category).subscribe({
       next: (response: CategoryPostResponse) => {
         if (response.success) {
-          this.showSuccessToast('Categoría creada exitosamente');
+          this.toastFacade.showSuccessToast(SuccessCategoryToastMessages.CATEGORY_CREATE_MESSAGE)
           this.closeModal();
         }
       },

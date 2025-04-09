@@ -1,12 +1,11 @@
-import { Component } from '@angular/core';
-import { NavbarComponent } from '../../../shared/components/layout/navbar/navbar.component';
-import { ProjectFormComponent } from '../project-form/project-form.component';
 import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { combineLatest, filter } from 'rxjs';
-import { GoogleAuthComponent } from "../../auth/login/google-auth/google-auth.component";
 import { AngularSplitModule } from 'angular-split';
+import { combineLatest, filter } from 'rxjs';
+import { NavbarComponent } from '../../../shared/components/layout/navbar/navbar.component';
 import { AuthService } from '../../auth/services/auth.service';
+import { ProjectFormComponent } from '../project-form/project-form.component';
 import { ProjectLoaderService } from '../services/project-loader.service';
 
 
@@ -15,7 +14,7 @@ import { ProjectLoaderService } from '../services/project-loader.service';
     standalone: true,
     templateUrl: './single-project.component.html',
     styleUrl: './single-project.component.scss',
-    imports: [CommonModule, NavbarComponent, ProjectFormComponent, GoogleAuthComponent,AngularSplitModule]
+    imports: [CommonModule, NavbarComponent, ProjectFormComponent, AngularSplitModule]
 })
 export class SingleProjectComponent {
   isEditMode = false;

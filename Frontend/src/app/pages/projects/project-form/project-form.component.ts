@@ -137,7 +137,6 @@ export class ProjectFormComponent {
   }
 
   openImageAddModal(index:number){
-    console.log('venga coño')
     this.isImageAddModalOpen[index] = true;
     this.imageOption = '';
     this.isDropdownOpen = false;

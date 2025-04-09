@@ -36,7 +36,7 @@ export class ProjectLoaderService {
 
    // Funciones para el modo edición
   getImagesObservable(projectId: number) {
-    return this.projectService.getProjectFormImages(projectId).pipe(
+    return this.projectService.getProjectFromImages(projectId).pipe(
       map((response) => {
         if (response.success) {
           return response.data.images;

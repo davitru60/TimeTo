@@ -19,6 +19,7 @@ import { UserInterest, UserInterestDeleteResponse, UserInterestGetResponse, User
 import { UserService } from '../service/user.service';
 import { ToastService } from '../../../shared/components/ui/toast/toast.service';
 import { ToastComponent } from "../../../shared/components/ui/toast/toast.component";
+import { CategoryFacade } from '../../admin/facades/category.facade';
 
 
 @Component({
@@ -52,6 +53,7 @@ export class MyAccountComponent {
     private projectService: ProjectService,
     private userService: UserService,
     private toastService: ToastService,
+    private categoryFacade: CategoryFacade,
     public router: Router
   ) {
     this.registerForm = this.formBuilder.group({
@@ -117,7 +119,7 @@ export class MyAccountComponent {
   }
 
   getCategories() {
-    this.projectService
+    this.categoryFacade
       .getCategories()
       .subscribe((response: CategoryGetResponse) => {
         this.categories = response.data.categories;
