@@ -17,7 +17,7 @@ import { MenuOption } from './menuoption.enum';
   selector: 'app-navbar',
   standalone: true,
   templateUrl: './navbar.component.html',
-  styleUrl: './navbar.component.scss',
+  styleUrls: ['./navbar.component.scss'], 
   animations: [
     trigger('slideDown', [
       state(
@@ -52,8 +52,7 @@ import { MenuOption } from './menuoption.enum';
   imports: [CommonModule, RouterLink, UserProfileComponent],
 })
 export class NavbarComponent implements OnInit {
-  [x: string]: any;
-  isMenuOpen: boolean = true;
+  isMenuOpen: boolean = false; // inicia cerrado
 
   MenuOption = MenuOption;
   subMenuOpen: MenuOption = MenuOption.None;
@@ -66,19 +65,20 @@ export class NavbarComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    // Cerrar el menú desplegable cuando la pantalla se expande más allá de 'lg'
-    this.breakpointObserver.observe([Breakpoints.Large]).subscribe((result) => {
-      if (result.matches) {
-        this.closeMenu();
-      }
-    });
-
-    // Cerrar el menú desplegable cuando la pantalla se reduce a un tamaño más pequeño
     this.breakpointObserver
-      .observe([Breakpoints.Handset])
-      .subscribe((result) => {
+      .observe([Breakpoints.Large, Breakpoints.Handset, Breakpoints.Tablet])
+      .subscribe(result => {
         if (result.matches) {
-          this.closeMenu();
+          if (result.breakpoints[Breakpoints.Large]) {
+            // En pantallas grandes cerramos menú
+            this.isMenuOpen = false;
+          } else if (
+            result.breakpoints[Breakpoints.Handset] ||
+            result.breakpoints[Breakpoints.Tablet]
+          ) {
+            // En móviles y tablets lo cerramos también por defecto
+            this.isMenuOpen = false;
+          }
         }
       });
 
@@ -105,5 +105,13 @@ export class NavbarComponent implements OnInit {
     } else {
       this.subMenuOpen = menu;
     }
+  }
+
+  // Método opcional para saber si estamos en móvil/tablet
+  isMobile(): boolean {
+    return (
+      this.breakpointObserver.isMatched(Breakpoints.Handset) ||
+      this.breakpointObserver.isMatched(Breakpoints.Tablet)
+    );
   }
 }

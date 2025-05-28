@@ -60,7 +60,8 @@ export class LoginComponent {
   }
 
  
-  togglePasswordVisibility(): void {
+  togglePasswordVisibility(event:Event): void {
+    event.preventDefault();
     this.showPassword = !this.showPassword;
   }
 
