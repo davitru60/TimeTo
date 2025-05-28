@@ -16,16 +16,18 @@ const validateJWT = (req, res, next) => {
     req.roles = decodedToken.roles;
     next();
   } catch (error) {
+
     if (error instanceof jwt.TokenExpiredError) {
       return res
         .status(StatusCodes.UNAUTHORIZED)
         .json({ msg: "Token expired. Please log in again." });
+
     } else if (error instanceof jwt.JsonWebTokenError) {
       return res
         .status(StatusCodes.UNAUTHORIZED)
         .json({ msg: "Invalid token. Please log in again." });
+
     } else {
-      console.error("Error verifying JWT:", error.message);
       return res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
         .json({ msg: "Internal server error." });

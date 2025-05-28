@@ -1,15 +1,13 @@
 import { Routes } from '@angular/router';
-import { HomeComponent } from './pages/home/home.component';
-import { LoginComponent } from './pages/auth/login/login.component';
-import { RegisterComponent } from './pages/auth/register/register.component';
-import { AllProjectsComponent } from './pages/projects/all-projects/all-projects.component';
-import { SingleProjectComponent } from './pages/projects/single-project/single-project.component';
+import { adminGuard } from './core/guards/admin.guard';
 import { authGuard } from './core/guards/auth.guard';
 import { AdministrationComponent } from './pages/admin/administration/administration.component';
-import { MyAccountComponent } from './pages/user/my-account/my-account.component';
-import { authRedirectGuard } from './core/guards/authRedirect.guard';
-import { adminGuard } from './core/guards/admin.guard';
+import { LoginComponent } from './pages/auth/login/login.component';
+import { RegisterComponent } from './pages/auth/register/register.component';
+import { HomeComponent } from './pages/home/home.component';
+import { AllProjectsComponent } from './pages/projects/all-projects/all-projects.component';
 import { ProjectPreferencesComponent } from './pages/projects/project-preferences/project-preferences.component';
+import { SingleProjectComponent } from './pages/projects/single-project/single-project.component';
 
 
 export const routes: Routes = [
@@ -20,7 +18,7 @@ export const routes: Routes = [
   { path: 'projects/:id', component: SingleProjectComponent },
   { path: 'projects-preferences', component: ProjectPreferencesComponent},
   { path: 'administration', component:AdministrationComponent, canActivate:[adminGuard]},
-  { path: 'my-account', component:MyAccountComponent, canActivate: [authRedirectGuard]}
+  //{ path: 'my-account', component:MyAccountComponent, canActivate: [authRedirectGuard]}
  
 
 ];

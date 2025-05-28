@@ -1,12 +1,11 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable, Subject, interval, startWith, switchMap, tap } from 'rxjs';
 import { projectRoutes } from '../../../../environments/environment.development';
-import { ProjectGetResponse, ProjectImagesResponse, ImageOrderPut, EditorOrderPut, ProjectPutResponse, ProjectDeleteResponse, ProjectHomeImagePutData } from '../../../core/interfaces/project.interface';
-import { TextPutData, TextPostData } from '../../../core/interfaces/project-text.interface';
-import { ProjectCategoryDeleteResponse, ProjectCategoryPostData, ProjectCategoryPostResponse } from '../../../core/interfaces/project-category.interface';
-import { CategoryGetResponse, CategoryPostData ,CategoryPutResponse,CategoryPutData, CategoryPostResponse } from '../../../core/interfaces/category.interface';
-import { ProjectCategoryGetResponse } from '../../../core/interfaces/project-category.interface';
+import { CategoryPostResponse } from '../../../core/interfaces/category.interface';
+import { ProjectCategoryDeleteResponse, ProjectCategoryGetResponse, ProjectCategoryPostData, ProjectCategoryPostResponse } from '../../../core/interfaces/project-category.interface';
+import { TextPostData, TextPutData } from '../../../core/interfaces/project-text.interface';
+import { EditorOrderPut, ImageOrderPut, ProjectDeleteResponse, ProjectGetResponse, ProjectHomeImagePutData, ProjectImagesResponse, ProjectPutResponse } from '../../../core/interfaces/project.interface';
 
 
 @Injectable({

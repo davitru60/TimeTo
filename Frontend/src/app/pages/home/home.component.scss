@@ -1,18 +1,31 @@
-.custom-img{
+@tailwind utilities;
+
+
+@layer utilities {
+    .custom-top-padding {
+        padding-top: 144.6px;
+    }
+}
+
+.custom-img {
     width: 750px;
     height: 350px;
     object-fit: cover;
 }
 
-.custom-text-xl{
+.custom-text-xl {
     font-size: 110px;
 }
 
-.w-125{
+.custom-text-lg {
+    font-size: 85px;
+}
+
+
+.w-125 {
     width: 930px;
 }
 
-.border-b-1{
+.border-b-1 {
     border-bottom: 1px solid;
 }
-

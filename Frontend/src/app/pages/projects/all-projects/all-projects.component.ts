@@ -1,25 +1,23 @@
-import { Component } from '@angular/core';
-import { NavbarComponent } from '../../../shared/components/layout/navbar/navbar.component';
-import { ProjectService } from '../services/project.service';
-import {
-  Project,
-  ProjectDeleteResponse,
-  ProjectGetResponse,
-  ProjectHomeImagePutData,
-  ProjectPutData,
-  ProjectPutResponse,
-} from '../../../core/interfaces/project.interface';
 import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { NgxPaginationModule } from 'ngx-pagination';
-import { PaginationComponent } from '../../../shared/components/ui/pagination/pagination.component';
-import { ModalComponent } from './../../../shared/components/ui/modal/modal.component';
-import { FormsModule } from '@angular/forms';
-import { ToastService } from '../../../shared/components/ui/toast/toast.service';
-import { ToastComponent } from '../../../shared/components/ui/toast/toast.component';
-import { AuthService } from '../../auth/services/auth.service';
+import {
+  Project,
+  ProjectGetResponse,
+  ProjectHomeImagePutData,
+  ProjectPutData
+} from '../../../core/interfaces/project.interface';
+import { NavbarComponent } from '../../../shared/components/layout/navbar/navbar.component';
 import { ImageSelectorComponent } from '../../../shared/components/ui/image-selector/image-selector.component';
+import { PaginationComponent } from '../../../shared/components/ui/pagination/pagination.component';
+import { ToastComponent } from '../../../shared/components/ui/toast/toast.component';
+import { ToastService } from '../../../shared/components/ui/toast/toast.service';
 import { ProjectUIFacade } from '../../../shared/shared-ui-facades/project-ui.facade';
+import { AuthService } from '../../auth/services/auth.service';
+import { ProjectService } from '../services/project.service';
+import { ModalComponent } from './../../../shared/components/ui/modal/modal.component';
 
 @Component({
   selector: 'app-all-projects',

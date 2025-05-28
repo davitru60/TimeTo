@@ -5,13 +5,14 @@ import { NavbarComponent } from '../../shared/components/layout/navbar/navbar.co
 import { TestimonialsComponent } from "./testimonials/testimonials.component";
 import { LatestProjectsComponent } from "./latest-projects/latest-projects.component";
 import { FooterComponent } from "../../shared/components/layout/footer/footer.component";
+import { CopyrightIconComponent } from "../../shared/components/ui/copyright-icon/copyright-icon.component";
 
 @Component({
     selector: 'app-home',
     standalone: true,
     templateUrl: './home.component.html',
     styleUrl: './home.component.scss',
-    imports: [CommonModule, RouterLink, NavbarComponent, TestimonialsComponent, LatestProjectsComponent, FooterComponent]
+    imports: [CommonModule, RouterLink, NavbarComponent, TestimonialsComponent, LatestProjectsComponent, FooterComponent, CopyrightIconComponent]
 })
 export class HomeComponent {
   isSmallScreen = false;
@@ -30,7 +31,7 @@ export class HomeComponent {
   private checkScreenSize() {
     const width = window.innerWidth;
     this.isSmallScreen = width < 768;
-    this.isMediumScreen = width >= 768 && width < 1280;
+    this.isMediumScreen = width >= 768 && width < 1260;
     this.isLargeScreen = width >= 1260;
   }
 
